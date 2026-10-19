@@ -1,0 +1,92 @@
+/* =========================================
+   משתנים: צבעים, פונטים וריווחים (מהפיגמה)
+   ========================================= */
+:root {
+  /* צבעים */
+  --color-background: #5fee9b; /* ירוק הרקע */
+  --color-text: #6f6b6b;       /* אפור הטקסט */
+
+  /* פונטים */
+  --font-main: "80-kb Grunge", monospace;
+  --font-size-big: clamp(1.6rem, 6.1vw, 5.5rem); /* 88px במחשב, קטן יותר במסכים צרים */
+
+  /* ריווחים */
+  --space-page: clamp(1.5rem, 4.6vw, 4.2rem);  /* שוליים מסביב לעמוד (67px בפיגמה) */
+  --space-between: clamp(2rem, 11vw, 10rem);   /* רווח בין המשפט ל-coming soon */
+  --portrait-width: clamp(12rem, 25.5vw, 23rem); /* רוחב התמונה (367px בפיגמה) */
+}
+
+/* הפונט מותקן במחשב שלך, ולכן הדפדפן לוקח אותו משם */
+@font-face {
+  font-family: "80-kb Grunge";
+  src: local("80-kb Grunge"), local("80-kb-Grunge");
+}
+
+/* =========================================
+   בסיס
+   ========================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-weight: normal;
+  line-height: normal;
+}
+
+/* =========================================
+   עמוד "בקרוב": מסך אחד
+   ========================================= */
+.coming-soon {
+  min-height: 100vh;
+  min-height: 100svh; /* גובה המסך האמיתי בטלפונים */
+  padding: var(--space-page);
+  display: flex;
+  flex-direction: column-reverse; /* בטלפון: התמונה למעלה, הטקסט מתחת */
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-page);
+}
+
+/* הטקסט: המשפט ו-coming soon */
+.coming-soon__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-between);
+  text-align: center;
+  font-size: var(--font-size-big);
+}
+
+.intro {
+  font-size: inherit;
+  font-weight: normal;
+  max-width: 10.7em; /* רוחב תיבת הטקסט בפיגמה (939px), כדי שהשורות יישברו באותו מקום */
+  margin-inline: auto;
+}
+
+/* התמונה */
+.portrait {
+  display: block;
+  width: var(--portrait-width);
+  aspect-ratio: 367 / 651; /* אותן פרופורציות כמו בפיגמה */
+  object-fit: cover;
+}
+
+/* =========================================
+   טאבלט ומחשב: תמונה משמאל, טקסט מימין
+   ========================================= */
+@media (min-width: 768px) {
+  .coming-soon {
+    flex-direction: row; /* העמוד מימין לשמאל, לכן הטקסט מימין והתמונה משמאל */
+    justify-content: space-between;
+  }
+
+  .coming-soon__text {
+    flex: 1;
+    padding-top: 5vw; /* הטקסט מתחיל קצת מתחת לראש התמונה, כמו בפיגמה */
+  }
+}
