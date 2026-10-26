@@ -4,22 +4,34 @@
 :root {
   /* צבעים */
   --color-background: #5fee9b; /* ירוק הרקע */
-  --color-text: #6f6b6b;       /* אפור הטקסט */
+  --color-text: #000000;       /* שחור הטקסט והמסגרת של הכפתור */
+  --color-button: #b7b7b7;     /* אפור הרקע של הכפתור */
+
+  --color-process-background: #5b5b5b; /* אפור הרקע בעמוד התהליך */
+  --color-process-text: #ffffff;       /* לבן הטקסט בעמוד התהליך */
 
   /* פונטים */
   --font-main: "80-kb Grunge", monospace;
+  --font-process: "EditorSans Normal", sans-serif; /* הפונט של עמוד התהליך */
   --font-size-big: clamp(1.6rem, 6.1vw, 5.5rem); /* 88px במחשב, קטן יותר במסכים צרים */
+  --font-size-letter: clamp(5rem, 12.8vw, 11.5rem); /* האותיות A, B, C (185px בפיגמה) */
 
   /* ריווחים */
   --space-page: clamp(1.5rem, 4.6vw, 4.2rem);  /* שוליים מסביב לעמוד (67px בפיגמה) */
-  --space-between: clamp(2rem, 11vw, 10rem);   /* רווח בין המשפט ל-coming soon */
-  --portrait-width: clamp(12rem, 25.5vw, 23rem); /* רוחב התמונה (367px בפיגמה) */
+  --space-button: clamp(2.5rem, 14.9vw, 13.4rem); /* רווח מעל הכפתור "התהליך שלי" (214px בפיגמה) */
+  --space-images: 0.7rem;                       /* רווח בין הדימויים בעמוד התהליך (11px בפיגמה) */
+  --process-image-height: clamp(8rem, 16.5vw, 15rem); /* גובה הדימויים בעמוד התהליך (כ-240px בפיגמה) */
 }
 
-/* הפונט מותקן במחשב שלך, ולכן הדפדפן לוקח אותו משם */
+/* הפונטים מותקנים במחשב שלך, ולכן הדפדפן לוקח אותם משם */
 @font-face {
   font-family: "80-kb Grunge";
   src: local("80-kb Grunge"), local("80-kb-Grunge");
+}
+
+@font-face {
+  font-family: "EditorSans Normal";
+  src: local("EditorSans Normal"), local("EditorSans-Normal");
 }
 
 /* =========================================
@@ -39,24 +51,16 @@ body {
 }
 
 /* =========================================
-   עמוד "בקרוב": מסך אחד
+   עמוד "בקרוב": מסך אחד, הכול במרכז
    ========================================= */
 .coming-soon {
   min-height: 100vh;
   min-height: 100svh; /* גובה המסך האמיתי בטלפונים */
   padding: var(--space-page);
   display: flex;
-  flex-direction: column-reverse; /* בטלפון: התמונה למעלה, הטקסט מתחת */
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-page);
-}
-
-/* הטקסט: המשפט ו-coming soon */
-.coming-soon__text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-between);
   text-align: center;
   font-size: var(--font-size-big);
 }
@@ -65,28 +69,101 @@ body {
   font-size: inherit;
   font-weight: normal;
   max-width: 10.7em; /* רוחב תיבת הטקסט בפיגמה (939px), כדי שהשורות יישברו באותו מקום */
-  margin-inline: auto;
 }
 
-/* התמונה */
-.portrait {
-  display: block;
-  width: var(--portrait-width);
-  aspect-ratio: 367 / 651; /* אותן פרופורציות כמו בפיגמה */
-  object-fit: cover;
+.soon {
+  margin-top: 0.2em; /* coming soon צמוד למשפט, כמו בפיגמה */
+}
+
+/* הכפתור "התהליך שלי" (המידות ב-em, כדי שיגדל ויקטן יחד עם הטקסט) */
+.process-button {
+  margin-top: var(--space-button);
+  width: 6.03em;                 /* 531px בפיגמה */
+  padding-block: 0.136em;        /* 12px בפיגמה */
+  background-color: var(--color-button);
+  color: var(--color-text);
+  border: 0.1em solid var(--color-text); /* 9px בפיגמה */
+  border-radius: 0.625em;        /* 55px בפיגמה */
+  text-decoration: none;
 }
 
 /* =========================================
-   טאבלט ומחשב: תמונה משמאל, טקסט מימין
+   עמוד התהליך (process.html)
    ========================================= */
-@media (min-width: 768px) {
-  .coming-soon {
-    flex-direction: row; /* העמוד מימין לשמאל, לכן הטקסט מימין והתמונה משמאל */
-    justify-content: space-between;
+.process-page {
+  background-color: var(--color-process-background);
+  color: var(--color-process-text);
+  font-family: var(--font-process);
+}
+
+.process {
+  padding: clamp(2rem, 7.2vw, 6.5rem) clamp(1rem, 2.6vw, 2.4rem) 2.4rem;
+}
+
+/* הרשימה הממוספרת של הרשומות */
+.process-list {
+  padding: 0;
+  list-style-position: inside; /* המספר צמוד לכותרת, כמו בפיגמה */
+}
+
+/* רשומה אחת */
+.entry {
+  font-size: var(--font-size-big);
+  text-align: center;
+}
+
+.entry + .entry {
+  margin-top: clamp(1.5rem, 5.4vw, 5rem); /* רווח בין הרשומות */
+}
+
+.entry__title {
+  display: inline; /* כך המספר והכותרת באותה שורה */
+  font-size: inherit;
+  font-weight: normal;
+}
+
+/* כל הקבוצות (A, B, C) של רשומה */
+.entry__groups {
+  margin-top: clamp(3rem, 10.4vw, 9.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+/* קבוצה אחת: הדימויים מימין והאות משמאלם */
+.image-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* בעמוד מימין לשמאל: צמוד לימין */
+  gap: var(--space-images);
+}
+
+.image-group img {
+  display: block;
+  height: var(--process-image-height);
+  width: auto; /* הרוחב נקבע לפי הפרופורציות של הדימוי */
+  min-width: 0;
+}
+
+.image-group__letter {
+  order: 1; /* מופיעה אחרי הדימויים, כלומר משמאלם */
+  font-size: var(--font-size-letter);
+  line-height: 1;
+  padding-inline: 0.15em;
+}
+
+/* טלפון: האות מעל, והדימויים זה מתחת לזה ברוחב מלא */
+@media (max-width: 767px) {
+  .image-group {
+    flex-direction: column;
   }
 
-  .coming-soon__text {
-    flex: 1;
-    padding-top: 5vw; /* הטקסט מתחיל קצת מתחת לראש התמונה, כמו בפיגמה */
+  .image-group__letter {
+    order: 0;
+  }
+
+  .image-group img {
+    width: 100%;
+    height: auto;
   }
 }
