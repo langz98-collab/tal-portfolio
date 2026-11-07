@@ -3,19 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>טל המלך – בקרוב</title>
+  <title>טל המלך</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- עמוד "בקרוב": משפט פתיחה וכפתור לעמוד התהליך -->
-  <main class="coming-soon">
+  <!-- עמוד הבית: שם, קו אנכי ורשימת פרויקטים (הטקסט באנגלית, לכן משמאל לימין) -->
+  <main class="home" dir="ltr">
 
-    <h1 class="intro">האתר של טל המלך // אני סטודנט בבצלאל שנה ד׳ ואני עכשיו בונה את האתר שלי</h1>
-    <p class="soon" lang="en" dir="ltr">coming soon...</p>
+    <!-- הכותרת -->
+    <header class="home-header">
+      <h1 class="home-name" tabindex="0"><span class="home-name__latin">TAL</span><span class="home-name__mark">∅</span><span class="home-name__hebrew" lang="he">טל</span></h1>
+      <p class="home-about" tabindex="0"><span class="home-about__text">Ab0Ut &amp; C0NtACT</span><span class="home-arrow"><img src="images/home-arrow.svg" alt=""></span></p>
+    </header>
 
-    <!-- כפתור שמוביל לעמוד התהליך -->
-    <a class="process-button" href="process.html">התהליך שלי</a>
+    <!-- האזור שבאמצע: הקו, ובמצב hover התמונה של הפרויקט -->
+    <div class="home-line">
+      <img class="home-line__line" src="images/home-line.svg" alt="">
+
+      <!-- התמונה שלי: מופיעה במצב hover על השם -->
+      <div class="project-preview" data-project="about">
+        <img src="images/about-tal.png" alt="טל המלך">
+      </div>
+
+      <div class="project-preview" data-project="view">
+        <img src="images/project-view.png" alt="VIEW">
+      </div>
+      <div class="project-preview" data-project="chick-check">
+        <img src="images/project-chick-check.png" alt="CHICK-CHECK">
+      </div>
+      <div class="project-preview" data-project="hed-artzi">
+        <img src="images/project-hed-artzi.png" alt="HED ARTZI REBRANDING">
+      </div>
+      <div class="project-preview" data-project="wikipedia-football">
+        <img src="images/project-wikipedia-football.png" alt="WIKIPEDIA>FOOTBALL">
+      </div>
+      <div class="project-preview" data-project="darom">
+        <img src="images/project-darom.png" alt="DAROM FILM FESTIVAL">
+      </div>
+    </div>
+
+    <!--
+      הפרויקטים (עוד לא קישורים, כי עמודי הפרויקטים עוד לא קיימים).
+      לכל פרויקט: שם, ועיגול שמתרחב במצב hover ומציג תווית.
+      ה-data-project מחבר בין הפרויקט לתמונה שלו למעלה.
+    -->
+    <ul class="project-list">
+      <li class="project" data-project="view" tabindex="0">
+        <span class="project__name">VIEW</span>
+        <span class="project__tag"><span class="project__tag-text">UX/UI</span></span>
+      </li>
+      <li class="project" data-project="chick-check" tabindex="0">
+        <span class="project__name">CHICK-CHECK</span>
+        <span class="project__tag"><span class="project__tag-text">UX/UI</span></span>
+      </li>
+      <li class="project" data-project="hed-artzi" tabindex="0">
+        <span class="project__name">HED ARTZI REBRANDING</span>
+        <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+      </li>
+      <li class="project" data-project="wikipedia-football" tabindex="0">
+        <span class="project__name">WIKIPEDIA&gt;F00TBALL</span>
+        <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+      </li>
+      <li class="project" data-project="darom" tabindex="0">
+        <span class="project__name">DAR0M FILM FESTIVAL</span>
+        <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+      </li>
+    </ul>
 
   </main>
 

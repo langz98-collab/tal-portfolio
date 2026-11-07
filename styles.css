@@ -2,36 +2,60 @@
    משתנים: צבעים, פונטים וריווחים (מהפיגמה)
    ========================================= */
 :root {
-  /* צבעים */
-  --color-background: #5fee9b; /* ירוק הרקע */
-  --color-text: #000000;       /* שחור הטקסט והמסגרת של הכפתור */
-  --color-button: #b7b7b7;     /* אפור הרקע של הכפתור */
+  /* צבעים: עמוד הבית */
+  --color-background: #000000; /* שחור הרקע */
+  --color-text: #ffffff;       /* לבן הטקסט */
+  --color-muted: #6a6a6a;      /* אפור: הסימן ∅ ו-About & Contact */
+  --color-accent: #00ffa2;     /* ירוק: פרויקט במצב hover והמסגרת של התמונה */
 
+  /* צבעים: עמוד התהליך */
   --color-process-background: #5b5b5b; /* אפור הרקע בעמוד התהליך */
   --color-process-text: #ffffff;       /* לבן הטקסט בעמוד התהליך */
 
+  /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
+  --u: min(100vw / 1440, 100vh / 1024);
+
   /* פונטים */
-  --font-main: "80-kb Grunge", monospace;
+  --font-main: "ArbelHagilda", monospace;      /* הפונט של עמוד הבית */
+  --font-hebrew: "TheBasics Regular", sans-serif; /* המילה "טל" בעמוד הבית */
+  --font-symbol: "Arial Unicode MS", "Apple Symbols", sans-serif; /* הסימן ∅ (חסר בפונט ArbelHagilda) */
   --font-process: "EditorSans Normal", sans-serif; /* הפונט של עמוד התהליך */
-  --font-size-big: clamp(1.6rem, 6.1vw, 5.5rem); /* 88px במחשב, קטן יותר במסכים צרים */
+  --font-size-home: calc(80.4 * var(--u));     /* 80px בפיגמה */
+  --font-size-tag: calc(25.12 * var(--u));     /* התווית בתוך הכפסולה (UX/UI, BRAND) */
+  --font-size-big: clamp(1.6rem, 6.1vw, 5.5rem); /* כותרות עמוד התהליך: 88px במחשב */
   --font-size-letter: clamp(5rem, 12.8vw, 11.5rem); /* האותיות A, B, C (185px בפיגמה) */
 
   /* ריווחים */
-  --space-page: clamp(1.5rem, 4.6vw, 4.2rem);  /* שוליים מסביב לעמוד (67px בפיגמה) */
-  --space-button: clamp(2.5rem, 14.9vw, 13.4rem); /* רווח מעל הכפתור "התהליך שלי" (214px בפיגמה) */
+  --space-name-left: calc(23 * var(--u));  /* בין TAL ל-∅ (נקבע לפי מדידה, כדי ששני הרווחים ייראו שווים) */
+  --space-name-right: calc(26.5 * var(--u)); /* בין ∅ ל-טל */
   --space-images: 0.7rem;                       /* רווח בין הדימויים בעמוד התהליך (11px בפיגמה) */
   --process-image-height: clamp(8rem, 16.5vw, 15rem); /* גובה הדימויים בעמוד התהליך (כ-240px בפיגמה) */
+
+  /* אנימציה */
+  --duration-tag: 0.3s; /* כמה זמן לוקח לעיגול להתרחב לכפסולה */
 }
 
-/* הפונטים מותקנים במחשב שלך, ולכן הדפדפן לוקח אותם משם */
+/* קבצי הפונטים נמצאים בתיקייה fonts, כדי שכל דפדפן (גם Safari) יציג אותם */
 @font-face {
-  font-family: "80-kb Grunge";
-  src: local("80-kb Grunge"), local("80-kb-Grunge");
+  font-family: "ArbelHagilda";
+  font-weight: normal;
+  src: url("fonts/arbelhagilda-regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "ArbelHagilda";
+  font-weight: bold;
+  src: url("fonts/arbelhagilda-bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "TheBasics Regular";
+  src: url("fonts/thebasics-regular.otf") format("opentype");
 }
 
 @font-face {
   font-family: "EditorSans Normal";
-  src: local("EditorSans Normal"), local("EditorSans-Normal");
+  src: url("fonts/editorsans-normal.otf") format("opentype");
 }
 
 /* =========================================
@@ -51,40 +75,263 @@ body {
 }
 
 /* =========================================
-   עמוד "בקרוב": מסך אחד, הכול במרכז
+   עמוד הבית: שם למעלה, קו באמצע, פרויקטים למטה
    ========================================= */
-.coming-soon {
+.home {
   min-height: 100vh;
   min-height: 100svh; /* גובה המסך האמיתי בטלפונים */
-  padding: var(--space-page);
+  padding-top: 0; /* בפיגמה 10px, אבל הדפדפן כבר מוסיף מרווח מעל הפונט */
+  padding-bottom: calc(8 * var(--u));
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  font-size: var(--font-size-home);
+  letter-spacing: 0.01em;
   text-align: center;
-  font-size: var(--font-size-big);
 }
 
-.intro {
+/* הכותרת: TAL∅ טל ומתחתיה About & Contact */
+.home-header {
+  width: calc(687 * var(--u)); /* הטקסט והחץ יחד, כמו בפיגמה */
+  line-height: calc(78.5 * var(--u)); /* גובה שורה כמו בפיגמה */
+}
+
+/* השורה TAL∅ טל: שלוש עמודות, וה-∅ בעמודה האמצעית, בדיוק במרכז העמוד (מעל הקו) */
+.home-name {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: baseline; /* שלושת החלקים על אותו קו תחתון, כמו בשורת טקסט */
   font-size: inherit;
   font-weight: normal;
-  max-width: 10.7em; /* רוחב תיבת הטקסט בפיגמה (939px), כדי שהשורות יישברו באותו מקום */
+  cursor: default;
+  outline: none; /* במצב פוקוס ה-∅ הירוק מראה איפה נמצאים */
 }
 
-.soon {
-  margin-top: 0.2em; /* coming soon צמוד למשפט, כמו בפיגמה */
+.home-name__latin {
+  justify-self: end;
+  padding-right: var(--space-name-left);  /* הרווח בין TAL ל-∅ */
 }
 
-/* הכפתור "התהליך שלי" (המידות ב-em, כדי שיגדל ויקטן יחד עם הטקסט) */
-.process-button {
-  margin-top: var(--space-button);
-  width: 6.03em;                 /* 531px בפיגמה */
-  padding-block: 0.136em;        /* 12px בפיגמה */
-  background-color: var(--color-button);
-  color: var(--color-text);
-  border: 0.1em solid var(--color-text); /* 9px בפיגמה */
-  border-radius: 0.625em;        /* 55px בפיגמה */
-  text-decoration: none;
+.home-name__hebrew {
+  justify-self: start;
+  padding-left: var(--space-name-right);  /* הרווח בין ∅ ל-טל */
+}
+
+.home-name,
+.home-about {
+  white-space: nowrap; /* כל שורה נשארת שורה אחת, כמו בפיגמה */
+}
+
+.home-name__mark,
+.home-about__text {
+  color: var(--color-muted);
+}
+
+.home-about {
+  cursor: default;
+  outline: none; /* במצב פוקוס הצבע הירוק מראה איפה נמצאים */
+}
+
+.home-name__mark {
+  font-family: var(--font-symbol);
+}
+
+.home-name__hebrew {
+  font-family: var(--font-hebrew);
+}
+
+/*
+  החץ ↗ אחרי About & Contact: יושב בשורה כמו עוד תו.
+  הקופסה בגודל החץ אחרי הסיבוב (47×41), והתחתית שלה על הקו התחתון של הטקסט.
+*/
+.home-arrow {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+  width: calc(47 * var(--u));
+  height: calc(41 * var(--u));
+  margin-left: calc(11 * var(--u)); /* הרווח מהטקסט, כמו בפיגמה */
+}
+
+.home-arrow img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(64.37 * var(--u));
+  height: calc(29.46 * var(--u));
+  transform: translate(-50%, -50%) rotate(-41.1deg); /* באמצע הקופסה, באותה זווית כמו בפיגמה */
+}
+
+/* האזור שבין הכותרת לפרויקטים: בו נמצאים הקו והתמונות של הפרויקטים */
+.home-line {
+  position: relative; /* החלון עם התמונה ממוקם בתוך האזור הזה */
+  flex: 1;
+  min-height: calc(458 * var(--u));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: calc(-3 * var(--u));
+  margin-bottom: calc(14 * var(--u));
+}
+
+/* הקו האנכי: נמתח לכל הגובה של האזור */
+.home-line__line {
+  align-self: stretch;
+  width: max(2px, calc(6 * var(--u)));
+}
+
+/*
+  החלון עם התמונה (פרויקט או התמונה שלי): מוסתר, ומופיע רק במצב hover.
+  הוא תמיד ממלא את כל הגובה בין About & Contact לבין VIEW, כמו הקו.
+*/
+.project-preview {
+  display: none;
+  position: absolute; /* מעל הקו, כך שהתמונה לא משנה את גובה האזור */
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%); /* באמצע העמוד */
+  padding-inline: calc(24 * var(--u));
+  border-inline: calc(6 * var(--u)) solid var(--color-accent); /* שני הפסים הירוקים */
+}
+
+.project-preview img {
+  display: block;
+  height: 100%;   /* כל הגובה של החלון */
+  width: auto;    /* הרוחב נקבע לפי הפרופורציות (aspect-ratio) של כל תמונה */
+  max-width: calc(100vw - 2 * 30 * var(--u) - 2rem); /* בטלפון: לא רחב יותר מהמסך */
+  object-fit: cover;
+}
+
+/* הפרופורציות (רוחב / גובה) של כל תמונה, כמו בפיגמה */
+.project-preview[data-project="view"] img            { aspect-ratio: 627 / 458; }
+.project-preview[data-project="chick-check"] img     { aspect-ratio: 849 / 458; }
+.project-preview[data-project="hed-artzi"] img       { aspect-ratio: 310 / 458; }
+.project-preview[data-project="darom"] img           { aspect-ratio: 321 / 458; }
+.project-preview[data-project="wikipedia-football"] img {
+  aspect-ratio: 1 / 1;
+  object-position: 50% 10.5%; /* אותו חיתוך כמו בפיגמה */
+  mix-blend-mode: screen;
+}
+.project-preview[data-project="about"] img {
+  aspect-ratio: 518 / 576; /* כמו בפיגמה */
+  object-fit: fill;        /* כמו בפיגמה: כל התמונה נכנסת למסגרת, בלי חיתוך */
+}
+
+/* רשימת הפרויקטים */
+.project-list {
+  padding: 0;
+  list-style: none;
+}
+
+.project {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(20.1 * var(--u));
+  height: calc(76 * var(--u));
+  cursor: default;
+  outline: none; /* במצב פוקוס הצבע הירוק מראה איפה נמצאים */
+  transition: gap var(--duration-tag) ease;
+}
+
+/*
+  העיגול האפור שליד כל פרויקט.
+  במצב hover הוא מתרחב לכפסולה, ואחר כך מופיעה בתוכו התווית (UX/UI, BRAND).
+*/
+.project__tag {
+  position: relative;
+  width: calc(59.29 * var(--u));
+  height: calc(59.29 * var(--u));
+  border: calc(6.03 * var(--u)) solid var(--color-muted);
+  border-radius: 50%; /* עיגול */
+  transition:
+    width var(--duration-tag) ease,
+    border-radius var(--duration-tag) ease;
+}
+
+.project__tag-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: calc(5 * var(--u)); /* קצת מתחת לאמצע, כמו בפיגמה */
+  font-size: var(--font-size-tag);
+  font-weight: bold;
+  color: var(--color-muted);
+  white-space: nowrap;
+  opacity: 0; /* מוסתרת עד שהעיגול מתרחב */
+  transition: opacity 0.1s ease; /* ביציאה מ-hover: נעלמת מיד */
+}
+
+/* =========================================
+   מצב hover של פרויקט (גם בלחיצה בטלפון)
+   ========================================= */
+.project:is(:hover, :focus) {
+  gap: calc(10.05 * var(--u));
+  color: var(--color-accent);
+}
+
+/* 1. העיגול מתרחב לכפסולה */
+.project:is(:hover, :focus) .project__tag {
+  width: calc(112.05 * var(--u));
+  border-radius: 33% / 50%; /* צורת הכפסולה מפיגמה */
+}
+
+/* 2. ואחרי שהתרחב, התווית מופיעה */
+.project:is(:hover, :focus) .project__tag-text {
+  opacity: 1;
+  /* מתחילה להופיע מיד, בהדרגה, יחד עם ההתרחבות, ונראית במלואה כשהכפסולה פתוחה */
+  transition: opacity var(--duration-tag) ease;
+}
+
+/* למי שביקש במחשב פחות תנועה: בלי אנימציה */
+@media (prefers-reduced-motion: reduce) {
+  .project,
+  .project__tag,
+  .project__tag-text {
+    transition: none !important;
+  }
+}
+
+/* כשמצביעים על פרויקט כלשהו, הקו נעלם... */
+.home:has(.project:is(:hover, :focus)) .home-line__line {
+  display: none;
+}
+
+/* ...ובמקומו מופיעה התמונה של אותו פרויקט */
+.home:has(.project[data-project="view"]:is(:hover, :focus)) .project-preview[data-project="view"],
+.home:has(.project[data-project="chick-check"]:is(:hover, :focus)) .project-preview[data-project="chick-check"],
+.home:has(.project[data-project="hed-artzi"]:is(:hover, :focus)) .project-preview[data-project="hed-artzi"],
+.home:has(.project[data-project="wikipedia-football"]:is(:hover, :focus)) .project-preview[data-project="wikipedia-football"],
+.home:has(.project[data-project="darom"]:is(:hover, :focus)) .project-preview[data-project="darom"] {
+  display: block;
+}
+
+/* =========================================
+   מצב hover על השם TAL∅ טל
+   ========================================= */
+/* ה-∅ נצבע בירוק... */
+.home-name:is(:hover, :focus) .home-name__mark {
+  color: var(--color-accent);
+}
+
+/* ...הקו נעלם... */
+.home:has(.home-name:is(:hover, :focus)) .home-line__line {
+  display: none;
+}
+
+/* ...ובמקומו מופיעה התמונה שלי */
+.home:has(.home-name:is(:hover, :focus)) .project-preview[data-project="about"] {
+  display: block;
+}
+
+/* =========================================
+   מצב hover על About & Contact: רק הטקסט נצבע בירוק, החץ נשאר לבן
+   ========================================= */
+.home-about:is(:hover, :focus) .home-about__text {
+  color: var(--color-accent);
 }
 
 /* =========================================
