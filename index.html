@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טל המלך</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 
@@ -13,7 +13,7 @@
 
     <!-- הכותרת -->
     <header class="home-header">
-      <h1 class="home-name" tabindex="0"><span class="home-name__latin">TAL</span><span class="home-name__mark">∅</span><span class="home-name__hebrew" lang="he">טל</span></h1>
+      <h1 class="home-name" data-project="about" tabindex="0"><span class="home-name__latin">TAL</span><span class="home-name__mark">∅</span><span class="home-name__hebrew" lang="he">טל</span></h1>
       <p class="home-about" tabindex="0"><span class="home-about__text">Ab0Ut &amp; C0NtACT</span><span class="home-arrow"><img src="images/home-arrow.svg" alt=""></span></p>
     </header>
 
@@ -21,30 +21,24 @@
     <div class="home-line">
       <img class="home-line__line" src="images/home-line.svg" alt="">
 
-      <!-- התמונה שלי: מופיעה במצב hover על השם -->
-      <div class="project-preview" data-project="about">
-        <img src="images/about-tal.png" alt="טל המלך">
-      </div>
-
-      <div class="project-preview" data-project="view">
-        <img src="images/project-view.png" alt="VIEW">
-      </div>
-      <div class="project-preview" data-project="chick-check">
-        <img src="images/project-chick-check.png" alt="CHICK-CHECK">
-      </div>
-      <div class="project-preview" data-project="hed-artzi">
-        <img src="images/project-hed-artzi.png" alt="HED ARTZI REBRANDING">
-      </div>
-      <div class="project-preview" data-project="wikipedia-football">
-        <img src="images/project-wikipedia-football.png" alt="WIKIPEDIA>FOOTBALL">
-      </div>
-      <div class="project-preview" data-project="darom">
-        <img src="images/project-darom.png" alt="DAROM FILM FESTIVAL">
+      <!-- התריס: חלון אחד לכל התמונות, נפתח במצב hover על השם או על פרויקט -->
+      <div class="preview-area">
+        <div class="preview-window">
+          <div class="preview-window__images">
+            <img data-project="about" src="images/about-tal.png" alt="טל המלך">
+            <img data-project="view" src="images/project-view.png" alt="VIEW">
+            <img data-project="chick-check" src="images/project-chick-check.png" alt="CHICK-CHECK">
+            <img data-project="hed-artzi" src="images/project-hed-artzi.png" alt="HED ARTZI REBRANDING">
+            <img data-project="wikipedia-football" src="images/project-wikipedia-football.png" alt="WIKIPEDIA>FOOTBALL">
+            <img data-project="darom" src="images/project-darom.png" alt="DAROM FILM FESTIVAL">
+          </div>
+        </div>
       </div>
     </div>
 
     <!--
-      הפרויקטים (עוד לא קישורים, כי עמודי הפרויקטים עוד לא קיימים).
+      הפרויקטים. פרויקט שיש לו עמוד: השם והעיגול עטופים בקישור (<a>).
+      לפרויקטים שעוד אין להם עמוד אין קישור.
       לכל פרויקט: שם, ועיגול שמתרחב במצב hover ומציג תווית.
       ה-data-project מחבר בין הפרויקט לתמונה שלו למעלה.
     -->
@@ -61,9 +55,11 @@
         <span class="project__name">HED ARTZI REBRANDING</span>
         <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
       </li>
-      <li class="project" data-project="wikipedia-football" tabindex="0">
-        <span class="project__name">WIKIPEDIA&gt;F00TBALL</span>
-        <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+      <li class="project" data-project="wikipedia-football">
+        <a class="project__link" href="wikipedia-football.html">
+          <span class="project__name">WIKIPEDIA&gt;F00TBALL</span>
+          <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+        </a>
       </li>
       <li class="project" data-project="darom" tabindex="0">
         <span class="project__name">DAR0M FILM FESTIVAL</span>
@@ -72,6 +68,43 @@
     </ul>
 
   </main>
+
+  <!--
+    התריס: כשמצביעים על השם או על פרויקט, החלון נפתח ומציג את התמונה שלו.
+    במעבר ישיר מפרויקט לפרויקט החלון לא נסגר, רק משנה את הרוחב.
+    כשיוצאים, החלון נסגר אבל התמונה האחרונה נשארת בו עד שהוא סגור.
+  -->
+  <script>
+    const previewWindow = document.querySelector(".preview-window");
+    const previewTriggers = document.querySelectorAll(".home-name, .project");
+    let hoveredTrigger = null;
+
+    // מה להציג עכשיו: מה שהעכבר עליו, ואם אין, מה שנבחר בלחיצה (בטלפון)
+    function updatePreview() {
+      const focusedTrigger = [...previewTriggers].find((trigger) => trigger.contains(document.activeElement));
+      const activeTrigger = hoveredTrigger || focusedTrigger;
+
+      if (activeTrigger) {
+        previewWindow.dataset.showing = activeTrigger.dataset.project;
+        previewWindow.classList.add("is-open");
+      } else {
+        previewWindow.classList.remove("is-open");
+      }
+    }
+
+    previewTriggers.forEach((trigger) => {
+      trigger.addEventListener("mouseenter", () => {
+        hoveredTrigger = trigger;
+        updatePreview();
+      });
+      trigger.addEventListener("mouseleave", () => {
+        if (hoveredTrigger === trigger) hoveredTrigger = null;
+        updatePreview();
+      });
+      trigger.addEventListener("focusin", updatePreview);
+      trigger.addEventListener("focusout", () => setTimeout(updatePreview)); // אחרי שהפוקוס עבר
+    });
+  </script>
 
 </body>
 </html>

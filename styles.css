@@ -12,6 +12,9 @@
   --color-process-background: #5b5b5b; /* אפור הרקע בעמוד התהליך */
   --color-process-text: #ffffff;       /* לבן הטקסט בעמוד התהליך */
 
+  /* צבעים: עמודי הפרויקטים */
+  --color-project-accent: #0ae60d; /* ירוק: הלשונית הפעילה ומילים מודגשות */
+
   /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
   --u: min(100vw / 1440, 100vh / 1024);
 
@@ -20,6 +23,10 @@
   --font-hebrew: "TheBasics Regular", sans-serif; /* המילה "טל" בעמוד הבית */
   --font-symbol: "Arial Unicode MS", "Apple Symbols", sans-serif; /* הסימן ∅ (חסר בפונט ArbelHagilda) */
   --font-process: "EditorSans Normal", sans-serif; /* הפונט של עמוד התהליך */
+  --font-project-headline: "Inter", sans-serif;        /* הכותרת הגדולה בעמוד פרויקט */
+  --font-project-text: "Poly", serif;                   /* הטקסט על הפרויקט */
+  --font-caption: "TheBasics Regular", sans-serif;      /* הכיתובים מעל התמונות */
+  --font-caption-number: "TheBasics Black", sans-serif; /* המספר בכיתוב (1 >) */
   --font-size-home: calc(80.4 * var(--u));     /* 80px בפיגמה */
   --font-size-tag: calc(25.12 * var(--u));     /* התווית בתוך הכפסולה (UX/UI, BRAND) */
   --font-size-big: clamp(1.6rem, 6.1vw, 5.5rem); /* כותרות עמוד התהליך: 88px במחשב */
@@ -28,11 +35,17 @@
   /* ריווחים */
   --space-name-left: calc(23 * var(--u));  /* בין TAL ל-∅ (נקבע לפי מדידה, כדי ששני הרווחים ייראו שווים) */
   --space-name-right: calc(26.5 * var(--u)); /* בין ∅ ל-טל */
+  --space-tabs: 16; /* הרווח בין הלשוניות בעמוד פרויקט, בפיקסלים של הפיגמה (בפיגמה 24) */
   --space-images: 0.7rem;                       /* רווח בין הדימויים בעמוד התהליך (11px בפיגמה) */
   --process-image-height: clamp(8rem, 16.5vw, 15rem); /* גובה הדימויים בעמוד התהליך (כ-240px בפיגמה) */
 
   /* אנימציה */
   --duration-tag: 0.3s; /* כמה זמן לוקח לעיגול להתרחב לכפסולה */
+  --duration-shutter: 0.6s; /* כמה זמן לוקח לתריס להיפתח */
+  --duration-reveal: 0.9s;  /* כמה זמן לוקח לתוכן בעמוד פרויקט לעלות ולהופיע */
+  --distance-reveal: 24px;  /* מאיזה מרחק מלמטה התוכן עולה */
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1); /* יוצא מהר ונעצר לאט ובעדינות */
+  --ease-shutter: cubic-bezier(0.65, 0, 0.35, 1); /* מתחיל לאט, מאיץ, ונעצר בעדינות */
 }
 
 /* קבצי הפונטים נמצאים בתיקייה fonts, כדי שכל דפדפן (גם Safari) יציג אותם */
@@ -54,6 +67,29 @@
 }
 
 @font-face {
+  font-family: "TheBasics Black";
+  src: url("fonts/thebasics-black.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: bold;
+  src: url("fonts/inter-bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poly";
+  font-style: normal;
+  src: url("fonts/poly-regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poly";
+  font-style: italic;
+  src: url("fonts/poly-italic.woff2") format("woff2");
+}
+
+@font-face {
   font-family: "EditorSans Normal";
   src: url("fonts/editorsans-normal.otf") format("opentype");
 }
@@ -72,6 +108,9 @@ body {
   font-family: var(--font-main);
   font-weight: normal;
   line-height: normal;
+  /* במק הדפדפן מצייר טקסט בהיר על רקע כהה עבה יותר. כך הוא עדין, כמו בפיגמה */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* =========================================
@@ -181,41 +220,120 @@ body {
 }
 
 /*
-  החלון עם התמונה (פרויקט או התמונה שלי): מוסתר, ומופיע רק במצב hover.
-  הוא תמיד ממלא את כל הגובה בין About & Contact לבין VIEW, כמו הקו.
+  החלון עם התמונה (תריס): אחד לכל הפרויקטים.
+  סגור הוא רק שני הפסים הירוקים צמודים באמצע, מעל הקו.
+  פתוח הוא ברוחב של התמונה, ובמעבר בין פרויקטים הרוחב משתנה בהדרגה לרוחב של התמונה הבאה.
+  הסקריפט בסוף index.html מוסיף את is-open ואת data-showing (איזו תמונה להציג).
 */
-.project-preview {
-  display: none;
-  position: absolute; /* מעל הקו, כך שהתמונה לא משנה את גובה האזור */
+/* שכבה בגודל האזור, כדי שהחלון יוכל לחשב את הרוחב שלו לפי הגובה של האזור (cqh) */
+.preview-area {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+
+  /* הפרופורציות (רוחב / גובה) של כל תמונה, כמו בפיגמה */
+  --ratio-about: 518 / 576;
+  --ratio-view: 627 / 458;
+  --ratio-chick-check: 849 / 458;
+  --ratio-hed-artzi: 310 / 458;
+  --ratio-wikipedia-football: 1;
+  --ratio-darom: 321 / 458;
+}
+
+.preview-window {
+  --ratio: 1; /* רוחב / גובה של התמונה המוצגת (נקבע למטה) */
+  position: absolute; /* מעל הקו, כך שהחלון לא משנה את גובה האזור */
   top: 0;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%); /* באמצע העמוד */
-  padding-inline: calc(24 * var(--u));
-  border-inline: calc(6 * var(--u)) solid var(--color-accent); /* שני הפסים הירוקים */
+  width: calc(12 * var(--u)); /* סגור: שני הפסים צמודים */
+  overflow: hidden;
+  background-color: var(--color-background); /* מסתיר את הקו הלבן שמתחתיו */
+  visibility: hidden;
+  transition:
+    width var(--duration-shutter) var(--ease-shutter),
+    visibility 0s linear var(--duration-shutter); /* נעלם רק אחרי שסיים להיסגר */
 }
 
-.project-preview img {
-  display: block;
-  height: 100%;   /* כל הגובה של החלון */
-  width: auto;    /* הרוחב נקבע לפי הפרופורציות (aspect-ratio) של כל תמונה */
-  max-width: calc(100vw - 2 * 30 * var(--u) - 2rem); /* בטלפון: לא רחב יותר מהמסך */
+.preview-window.is-open {
+  /* הגובה של האזור × הפרופורציות של התמונה, ועוד 30 מכל צד לפסים ולרווח */
+  width: min(calc(100cqh * var(--ratio) + 60 * var(--u)), 100vw - 2rem); /* בטלפון: לא רחב יותר מהמסך */
+  visibility: visible;
+  transition:
+    width var(--duration-shutter) var(--ease-shutter),
+    visibility 0s;
+}
+
+/* שני הפסים הירוקים, בקצוות של החלון */
+.preview-window::before,
+.preview-window::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(6 * var(--u));
+  background-color: var(--color-accent);
+}
+
+.preview-window::before { left: 0; }
+.preview-window::after  { right: 0; }
+
+/* המסגרת של התמונות: בתוך החלון, 30 מכל צד (6 לפס + 24 רווח). מה שמחוץ לה לא נראה */
+.preview-window__images {
+  position: absolute;
+  inset: 0 calc(30 * var(--u));
+  overflow: hidden;
+}
+
+/*
+  התמונות: כולן באמצע המסגרת, ורק אחת מוצגת.
+  כל תמונה תמיד בגודל הסופי שלה (בלי זום), והחלון רק חושף או מסתיר אותה מהצדדים.
+*/
+.preview-window img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(calc(100cqh * var(--ratio)), 100vw - 2rem - 60 * var(--u)); /* בטלפון: לא רחבה יותר מהמסך */
+  max-width: none;
+  height: 100%;
   object-fit: cover;
+  opacity: 0;
 }
 
-/* הפרופורציות (רוחב / גובה) של כל תמונה, כמו בפיגמה */
-.project-preview[data-project="view"] img            { aspect-ratio: 627 / 458; }
-.project-preview[data-project="chick-check"] img     { aspect-ratio: 849 / 458; }
-.project-preview[data-project="hed-artzi"] img       { aspect-ratio: 310 / 458; }
-.project-preview[data-project="darom"] img           { aspect-ratio: 321 / 458; }
-.project-preview[data-project="wikipedia-football"] img {
-  aspect-ratio: 1 / 1;
+.preview-window[data-showing="about"] img[data-project="about"],
+.preview-window[data-showing="view"] img[data-project="view"],
+.preview-window[data-showing="chick-check"] img[data-project="chick-check"],
+.preview-window[data-showing="hed-artzi"] img[data-project="hed-artzi"],
+.preview-window[data-showing="wikipedia-football"] img[data-project="wikipedia-football"],
+.preview-window[data-showing="darom"] img[data-project="darom"] {
+  opacity: 1;
+}
+
+/* הרוחב של החלון: לפי התמונה המוצגת */
+.preview-window[data-showing="about"]              { --ratio: var(--ratio-about); }
+.preview-window[data-showing="view"]               { --ratio: var(--ratio-view); }
+.preview-window[data-showing="chick-check"]        { --ratio: var(--ratio-chick-check); }
+.preview-window[data-showing="hed-artzi"]          { --ratio: var(--ratio-hed-artzi); }
+.preview-window[data-showing="wikipedia-football"] { --ratio: var(--ratio-wikipedia-football); }
+.preview-window[data-showing="darom"]              { --ratio: var(--ratio-darom); }
+
+/* הרוחב של כל תמונה: לפי הפרופורציות שלה עצמה */
+.preview-window img[data-project="about"]              { --ratio: var(--ratio-about); }
+.preview-window img[data-project="view"]               { --ratio: var(--ratio-view); }
+.preview-window img[data-project="chick-check"]        { --ratio: var(--ratio-chick-check); }
+.preview-window img[data-project="hed-artzi"]          { --ratio: var(--ratio-hed-artzi); }
+.preview-window img[data-project="wikipedia-football"] { --ratio: var(--ratio-wikipedia-football); }
+.preview-window img[data-project="darom"]              { --ratio: var(--ratio-darom); }
+
+.preview-window img[data-project="wikipedia-football"] {
   object-position: 50% 10.5%; /* אותו חיתוך כמו בפיגמה */
   mix-blend-mode: screen;
 }
-.project-preview[data-project="about"] img {
-  aspect-ratio: 518 / 576; /* כמו בפיגמה */
-  object-fit: fill;        /* כמו בפיגמה: כל התמונה נכנסת למסגרת, בלי חיתוך */
+
+.preview-window img[data-project="about"] {
+  object-fit: fill; /* כמו בפיגמה: כל התמונה נכנסת למסגרת, בלי חיתוך */
 }
 
 /* רשימת הפרויקטים */
@@ -233,6 +351,20 @@ body {
   cursor: default;
   outline: none; /* במצב פוקוס הצבע הירוק מראה איפה נמצאים */
   transition: gap var(--duration-tag) ease;
+}
+
+/* קישור לעמוד הפרויקט: לא משנה את העיצוב, השם והעיגול נשארים בשורה כמו בשאר הפרויקטים */
+.project__link {
+  display: flex;
+  align-items: center;
+  gap: inherit; /* אותו רווח (והתנועה שלו) כמו בשורת הפרויקט */
+  color: inherit;
+  text-decoration: none;
+  outline: none; /* במצב פוקוס הצבע הירוק מראה איפה נמצאים */
+}
+
+.project:has(.project__link) {
+  cursor: pointer;
 }
 
 /*
@@ -268,19 +400,19 @@ body {
 /* =========================================
    מצב hover של פרויקט (גם בלחיצה בטלפון)
    ========================================= */
-.project:is(:hover, :focus) {
+.project:is(:hover, :focus-within) {
   gap: calc(10.05 * var(--u));
   color: var(--color-accent);
 }
 
 /* 1. העיגול מתרחב לכפסולה */
-.project:is(:hover, :focus) .project__tag {
+.project:is(:hover, :focus-within) .project__tag {
   width: calc(112.05 * var(--u));
   border-radius: 33% / 50%; /* צורת הכפסולה מפיגמה */
 }
 
 /* 2. ואחרי שהתרחב, התווית מופיעה */
-.project:is(:hover, :focus) .project__tag-text {
+.project:is(:hover, :focus-within) .project__tag-text {
   opacity: 1;
   /* מתחילה להופיע מיד, בהדרגה, יחד עם ההתרחבות, ונראית במלואה כשהכפסולה פתוחה */
   transition: opacity var(--duration-tag) ease;
@@ -293,38 +425,18 @@ body {
   .project__tag-text {
     transition: none !important;
   }
-}
 
-/* כשמצביעים על פרויקט כלשהו, הקו נעלם... */
-.home:has(.project:is(:hover, :focus)) .home-line__line {
-  display: none;
-}
-
-/* ...ובמקומו מופיעה התמונה של אותו פרויקט */
-.home:has(.project[data-project="view"]:is(:hover, :focus)) .project-preview[data-project="view"],
-.home:has(.project[data-project="chick-check"]:is(:hover, :focus)) .project-preview[data-project="chick-check"],
-.home:has(.project[data-project="hed-artzi"]:is(:hover, :focus)) .project-preview[data-project="hed-artzi"],
-.home:has(.project[data-project="wikipedia-football"]:is(:hover, :focus)) .project-preview[data-project="wikipedia-football"],
-.home:has(.project[data-project="darom"]:is(:hover, :focus)) .project-preview[data-project="darom"] {
-  display: block;
+  .preview-window {
+    transition: none !important;
+  }
 }
 
 /* =========================================
    מצב hover על השם TAL∅ טל
    ========================================= */
-/* ה-∅ נצבע בירוק... */
+/* ה-∅ נצבע בירוק (והתמונה שלי נפתחת בתריס, דרך הסקריפט) */
 .home-name:is(:hover, :focus) .home-name__mark {
   color: var(--color-accent);
-}
-
-/* ...הקו נעלם... */
-.home:has(.home-name:is(:hover, :focus)) .home-line__line {
-  display: none;
-}
-
-/* ...ובמקומו מופיעה התמונה שלי */
-.home:has(.home-name:is(:hover, :focus)) .project-preview[data-project="about"] {
-  display: block;
 }
 
 /* =========================================
@@ -414,3 +526,384 @@ body {
     height: auto;
   }
 }
+
+
+/* =========================================
+   עמוד פרויקט (למשל wikipedia-football.html)
+   במחשב: כמו הפריים בפיגמה, מותאם לרוחב המסך (בלי שוליים מיותרים),
+   והעמודות ממלאות את כל הגובה, וכל אחת נגללת לבד. כל המידות ב-u (פיקסל בפיגמה).
+   ========================================= */
+.project-page {
+  --u: calc(100vw / 1440); /* כאן לפי הרוחב בלבד, כדי שהעמוד ימלא את כל רוחב המסך */
+  /* הגובה המקסימלי של תמונה או סרטון: מה שנשאר במסך מתחת ללשוניות (86) ועוד רווח קטן למטה */
+  --media-height: calc(100svh - 107 * var(--u));
+  /*
+    יחידת מידה של הבר העליון (חץ, שם הפרויקט, OVERVIEW, לשוניות, חץ):
+    תמיד בגודל של הפיגמה (1px). רק במסך צר מ-1378, שבו הבר לא נכנס, הוא מוקטן.
+  */
+  --bar-u: min(1px, 100vw / 1378);
+  /* רוחב העמודה השמאלית: כמו בפיגמה (661), אבל לפחות הרוחב של הבר (654), כדי שהשם ו-OVERVIEW ייכנסו */
+  --left-width: max(661 * var(--u), 654 * var(--bar-u));
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* ---------- העמודה השמאלית ---------- */
+.project-info {
+  position: absolute;
+  top: calc(21 * var(--u));
+  left: calc(33 * var(--u));
+  width: var(--left-width);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(25 * var(--u));
+}
+
+/* השורה העליונה: חץ חזרה, שם הפרויקט, OVERVIEW */
+.project-header {
+  display: flex;
+  align-items: center;
+  gap: calc(24 * var(--bar-u));
+  height: calc(40 * var(--bar-u));
+}
+
+.project-header__back img {
+  display: block;
+  width: calc(39 * var(--bar-u));
+  height: calc(34 * var(--bar-u));
+}
+
+.project-header__title {
+  position: relative;
+  top: 0.06em; /* כמו בכפתורים: מוריד את הטקסט לאמצע הגובה של הבר */
+  font-size: calc(38.556 * var(--bar-u));
+  font-weight: normal;
+  letter-spacing: 0.01em;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+/* הכפתורים (OVERVIEW והלשוניות): המסגרת בפיגמה "בפנים", לכן הריפוד קטן ב-3 (עובי הקו) */
+.overview-button,
+.project-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(10 * var(--bar-u));
+  height: calc(40 * var(--bar-u));
+  padding: 0 calc(9 * var(--bar-u)); /* 12 פחות 3 */
+  border: calc(3 * var(--bar-u)) solid var(--color-text); /* קו בעובי 3, כמו בלשוניות ובחיצים */
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: calc(25 * var(--bar-u));
+  font-weight: bold;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  /*
+    בפונט ArbelHagilda יש יותר מקום מתחת לאותיות מאשר מעליהן, ולכן הטקסט נראה גבוה מדי.
+    הריפוד הזה מוריד אותו בדיוק לאמצע (נמדד: 0.06 מגובה הטקסט).
+  */
+  padding-top: 0.12em;
+}
+
+/* OVERVIEW: בקצה הימני של העמודה השמאלית, ליד הקו שבאמצע (כמו בפיגמה: 30 מהקו) */
+.overview-button {
+  margin-left: auto;
+  margin-right: calc(7 * var(--u));
+}
+
+.overview-button img {
+  width: calc(24 * var(--bar-u));
+  height: calc(24 * var(--bar-u));
+  margin-top: -0.12em; /* העין נשארת באמצע, רק הטקסט יורד */
+}
+
+/* התמונה, הכותרת והטקסט: נגללים בתוך העמודה */
+.project-info__scroll {
+  flex: 1;
+  overflow-x: clip;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(24 * var(--u));
+  padding-bottom: calc(143 * var(--u)); /* רווח בסוף, כמו בפיגמה */
+}
+
+/*
+  תמונות וסרטונים תמיד נכנסים במסך: הרוחב הוא 100%,
+  אבל אם כך הם יוצאים גבוהים מהמסך, הם מוקטנים (לפי הפרופורציות שלהם, ב---ratio).
+*/
+.project-cover,
+.work-video,
+.work-poster {
+  flex-shrink: 0;
+  width: min(100%, var(--media-height) * var(--ratio));
+}
+
+.project-cover {
+  --ratio: 1;
+  aspect-ratio: 1 / 1;
+  overflow: hidden; /* כדי שהתמונה לא תמתח את הריבוע לגובה */
+}
+
+.project-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 10.5%; /* אותו חיתוך כמו בפיגמה */
+  mix-blend-mode: screen;
+}
+
+.project-headline {
+  font-family: var(--font-project-headline);
+  font-size: calc(38 * var(--u));
+  font-weight: bold;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.project-text {
+  font-family: var(--font-project-text);
+  font-size: calc(28 * var(--u));
+  font-style: italic; /* בפיגמה: נטוי, חוץ מהפסקה הראשונה ותחילת השנייה */
+  line-height: 1.1;
+  text-wrap: pretty;
+}
+
+.project-text p:first-child,
+.project-text p:nth-child(2) {
+  font-style: normal;
+}
+
+/* מילים מודגשות בירוק (נטויות) */
+.project-text__highlight {
+  font-style: italic;
+  color: var(--color-project-accent);
+}
+
+em.project-text__highlight {
+  text-transform: uppercase;
+}
+
+/* ---------- הקו שבאמצע ---------- */
+.project-divider {
+  position: absolute;
+  top: calc(17.5 * var(--u));
+  height: calc(100% - 35 * var(--u)); /* כל הגובה של המסך, עם אותו רווח למעלה ולמטה */
+  left: calc(33 * var(--u) + var(--left-width) + 23 * var(--u)); /* 23 אחרי העמודה השמאלית, כמו בפיגמה */
+  width: calc(6 * var(--u));
+}
+
+/* ---------- העמודה הימנית ---------- */
+.project-work {
+  position: absolute;
+  top: calc(21 * var(--u));
+  left: calc(33 * var(--u) + var(--left-width) + 52 * var(--u)); /* 52 אחרי העמודה השמאלית, כמו בפיגמה */
+  right: calc(20 * var(--u)); /* ממלאת את מה שנשאר, עד 20 מהקצה */
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(25 * var(--u));
+}
+
+.project-top {
+  position: relative;
+  height: calc(40 * var(--bar-u));
+}
+
+.project-tabs {
+  display: flex;
+  gap: calc(var(--space-tabs) * var(--bar-u));
+  padding-inline: calc(2 * var(--u));
+}
+
+/* לשונית רגילה: קו דק יותר (3) וריווח אותיות צפוף, כמו בקומפוננטה בפיגמה */
+.project-tab {
+  height: calc(40 * var(--bar-u));
+  padding-inline: calc(9 * var(--bar-u)); /* 12 פחות 3 של הקו */
+  border-width: calc(3 * var(--bar-u));
+  border-radius: calc(20 * var(--bar-u));
+  font-size: calc(25 * var(--bar-u));
+  letter-spacing: -0.04em; /* -1px */
+  cursor: pointer;
+}
+
+/* hover: הפינות כמעט ישרות */
+.project-tab:hover {
+  border-radius: calc(2 * var(--bar-u));
+}
+
+/* הלשונית שפתוחה עכשיו (אחרי לחיצה): ירוקה, עם פינות כמעט ישרות ומספר הפריטים */
+.project-tab.is-active {
+  border-color: var(--color-project-accent);
+  border-radius: calc(1 * var(--bar-u));
+  color: var(--color-project-accent);
+  letter-spacing: -0.03em; /* -0.75px */
+  cursor: default;
+}
+
+.project-tab__count {
+  display: none;
+  white-space: pre; /* שומר על הרווח לפני הסוגריים */
+}
+
+.project-tab.is-active .project-tab__count {
+  display: inline;
+}
+
+/* החץ לפרויקט הבא: בקצה הימני, באמצע הגובה של הבר */
+.project-next {
+  position: absolute;
+  top: 50%;
+  right: calc(4 * var(--u));
+  transform: translateY(-50%);
+}
+
+.project-next img {
+  display: block;
+  width: calc(91 * var(--bar-u));
+  height: calc(29.46 * var(--bar-u));
+}
+
+/* התוכן של הלשונית: נגלל בתוך העמודה. רק התוכן של הלשונית הפתוחה מוצג */
+.project-panel {
+  display: none;
+}
+
+.project-panel.is-active {
+  flex: 1;
+  overflow-x: clip;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
+  padding-inline: calc(2 * var(--u));
+}
+
+.work-caption {
+  font-family: var(--font-caption);
+  font-size: calc(22 * var(--u));
+  line-height: 1.1;
+  color: var(--color-muted);
+}
+
+.work-caption b {
+  font-family: var(--font-caption-number);
+  font-weight: normal;
+}
+
+.work-video {
+  display: block;
+  object-fit: cover;
+  aspect-ratio: var(--ratio);
+}
+
+.work-video--magazine { --ratio: 2074 / 1536; }
+.work-video--website  { --ratio: 674 / 445; }
+
+/* הפוסטר של האירוע: 657×937, עם החיתוך מהפיגמה */
+.work-poster {
+  --ratio: 657 / 937;
+  position: relative;
+  width: min(calc(657 * var(--u)), var(--media-height) * var(--ratio));
+  aspect-ratio: 657 / 937;
+  overflow: hidden;
+}
+
+.work-poster img {
+  position: absolute;
+  top: -0.63%;
+  left: -0.87%;
+  width: 101.73%;
+  height: 101.26%;
+  max-width: none;
+}
+
+.work-image {
+  display: block;
+  align-self: flex-start; /* שהעמודה לא תמתח אותה לכל הרוחב */
+  width: auto;   /* הרוחב לפי הפרופורציות של התמונה */
+  max-width: 100%;
+  max-height: var(--media-height); /* לא גבוהה מהמסך */
+}
+
+/*
+  הופעת התוכן: כל אלמנט עולה קצת מלמטה ומופיע בעדינות כשהוא נכנס למסך.
+  הסקריפט בסוף העמוד מוסיף את reveal לאלמנטים, ואת is-visible כשהם נראים.
+  (בלי הסקריפט אין reveal, ולכן הכל פשוט מוצג.)
+*/
+.reveal {
+  opacity: 0;
+  transform: translateY(var(--distance-reveal));
+  transition:
+    opacity var(--duration-reveal) var(--ease-reveal),
+    transform var(--duration-reveal) var(--ease-reveal);
+  transition-delay: var(--reveal-delay, 0s); /* כמה אלמנטים יחד: אחד אחרי השני */
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/*
+  טלפון וטאבלט לאורך: העמודות אחת מתחת לשנייה, והעמוד כולו נגלל.
+  u כאן נקבע לפי רוחב המסך, כדי שהעמודה (674) תמלא אותו.
+*/
+@media (max-width: 900px), (orientation: portrait) {
+  .project-page {
+    --u: calc((100vw - 32px) / 674);
+    --media-height: calc(100svh - 32px);
+    --bar-u: min(var(--u), 1px); /* בטלפון הבר מוקטן לרוחב המסך */
+    width: auto;
+    height: auto;
+    padding: 21px 16px 40px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: calc(40 * var(--u));
+  }
+
+  .project-info,
+  .project-work,
+  .project-divider {
+    position: static;
+    width: 100%;
+  }
+
+  .project-divider {
+    flex-shrink: 0;
+  }
+
+  .project-info__scroll,
+  .project-panel.is-active {
+    overflow: visible;
+  }
+
+  /* ירידות השורה מהפיגמה מתאימות רק לרוחב של מחשב */
+  .project-text p:first-child br {
+    display: none;
+  }
+
+  /* הקו הופך לקו אופקי בין שני החלקים */
+  .project-divider {
+    height: calc(6 * var(--u));
+  }
+}
+

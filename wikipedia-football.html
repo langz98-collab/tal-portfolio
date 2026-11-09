@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WIKIPEDIA&gt;FOOTBALL – טל המלך</title>
+  <link rel="stylesheet" href="styles.css?v=5">
+</head>
+<body>
+
+  <!--
+    עמוד פרויקט: שתי עמודות עם קו באמצע.
+    משמאל: כותרת, תמונה וטקסט על הפרויקט.
+    מימין: לשוניות (MAGAZINE, EVENT POSTER, WEBSITE) ומתחתן התוכן של הלשונית.
+    במחשב כל עמודה נגללת לבד. בטלפון הן אחת מתחת לשנייה.
+  -->
+  <main class="project-page">
+
+    <!-- העמודה השמאלית -->
+    <section class="project-info">
+
+      <header class="project-header">
+        <a class="project-header__back" href="index.html" aria-label="חזרה לעמוד הבית">
+          <img src="images/arrow-back.svg" alt="">
+        </a>
+        <h1 class="project-header__title">WIKIPEDIA&gt;F00TBALL</h1>
+        <!-- הכפתור OVERVIEW: בינתיים לא עושה כלום -->
+        <span class="overview-button">OVERVIEW <img src="images/wikipedia-eye.svg" alt=""></span>
+      </header>
+
+      <div class="project-info__scroll">
+        <div class="project-cover">
+          <img src="images/project-wikipedia-football.png" alt="קולאז' של פנים משחקני כדורגל">
+        </div>
+
+        <h2 class="project-headline">Exploring the Evolution of the Game, from Its Origins to Digital Simulations and Beyond</h2>
+
+        <div class="project-text">
+          <p>
+            A project based on the <em class="project-text__highlight">"Football"</em> Wikipedia article, combining visual and textual research.<br>
+            The work features a printed edition of the Wikipedia entry, as well as a poster and<br>
+            a one-page website designed for a conceptual event inspired by the research.
+          </p>
+          <p>
+            In this project, I focused on <span class="project-text__highlight">the history of football and the diverse range of simulation games</span> based on the sport. The research explores their evolution and refinement over the years, highlighting the contrast between the old and the new, while speculating on what the future holds.
+          </p>
+          <p>
+            <br>
+            Developed within a Graphic-Typographic Design course at Bezalel Academy of Arts and Design.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- הקו שבאמצע -->
+    <img class="project-divider" src="images/home-line.svg" alt="">
+
+    <!-- העמודה הימנית -->
+    <section class="project-work">
+
+      <div class="project-top">
+        <!--
+          הלשוניות. הלשונית הפתוחה ירוקה, ומופיע לידה כמה פריטים יש בה.
+          data-tab מחבר בין לשונית לתוכן שלה למטה.
+        -->
+        <nav class="project-tabs">
+          <button class="project-tab is-active" type="button" data-tab="magazine">MAGAZINE<span class="project-tab__count"> (2)</span></button>
+          <button class="project-tab" type="button" data-tab="event-poster">EVENT POSTER<span class="project-tab__count"> (1)</span></button>
+          <button class="project-tab" type="button" data-tab="website">WEBSITE<span class="project-tab__count"> (2)</span></button>
+        </nav>
+
+        <!-- החץ לפרויקט הבא: יהפוך לקישור כשיוחלט מה הפרויקט הבא -->
+        <span class="project-next" aria-hidden="true">
+          <img src="images/arrow-next.svg" alt="">
+        </span>
+      </div>
+
+      <!-- התוכן של הלשונית MAGAZINE -->
+      <div class="project-panel is-active" data-tab="magazine">
+        <p class="work-caption"><b>1 &gt;</b> Wikipedia&gt;Football : the print addition.</p>
+        <video class="work-video work-video--magazine" src="images/wikipedia-magazine.mp4" autoplay muted loop playsinline></video>
+
+        <p class="work-caption"><b>2 &gt;</b> Magazine unfolded poster presenting the evolution of CR7 face graphics in FIFA games throw the years.</p>
+        <img class="work-image" src="images/wikipedia-cr7-poster.png" alt="פוסטר מקופל מתוך המגזין: הפנים של רונלדו במשחקי FIFA לאורך השנים">
+      </div>
+
+      <!-- התוכן של הלשונית EVENT POSTER -->
+      <div class="project-panel" data-tab="event-poster">
+        <div class="work-poster">
+          <img src="images/wikipedia-event-poster.png" alt="הפוסטר של האירוע סימולטור כדורגל">
+        </div>
+      </div>
+
+      <!-- התוכן של הלשונית WEBSITE -->
+      <div class="project-panel" data-tab="website">
+        <p class="work-caption"><b>1 &gt;</b> The website contains the program of the event, info about the content and place to buy tickets.</p>
+        <video class="work-video work-video--website" src="images/wikipedia-website.mp4" autoplay muted loop playsinline></video>
+
+        <p class="work-caption"><b>2 &gt;</b> The website &amp; Magazine</p>
+        <img class="work-image" src="images/wikipedia-website-context.png" alt="האתר על מסך של מחשב נייד, ליד המגזין המודפס">
+      </div>
+    </section>
+
+  </main>
+
+  <!-- הלשוניות: לחיצה על לשונית פותחת את התוכן שלה -->
+  <script>
+    const projectTabs = document.querySelectorAll(".project-tab");
+    const projectPanels = document.querySelectorAll(".project-panel");
+
+    projectTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        projectTabs.forEach((otherTab) => otherTab.classList.toggle("is-active", otherTab === tab));
+        projectPanels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.tab === tab.dataset.tab));
+        replayReveal(document.querySelector(".project-panel.is-active"));
+      });
+    });
+
+    /*
+      הופעת התוכן: כל אלמנט תוכן (לא הבר העליון) עולה מלמטה ומופיע כשהוא נכנס למסך.
+      אלמנטים שנכנסים יחד מופיעים אחד אחרי השני.
+    */
+    const revealItems = document.querySelectorAll(
+      ".project-cover, .project-headline, .project-text p, .work-caption, .work-video, .work-image, .work-poster"
+    );
+    const revealStep = 0.12; // כמה שניות בין אלמנט לאלמנט
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      const entering = entries.filter((entry) => entry.isIntersecting);
+      entering.forEach((entry, index) => {
+        entry.target.style.setProperty("--reveal-delay", index * revealStep + "s");
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target); // מופיע פעם אחת
+      });
+    });
+
+    revealItems.forEach((item) => {
+      item.classList.add("reveal");
+      revealObserver.observe(item);
+    });
+
+    // כשפותחים לשונית: התוכן שלה מופיע מחדש באותה תנועה
+    function replayReveal(panel) {
+      const items = panel.querySelectorAll(".reveal");
+      items.forEach((item) => item.classList.remove("is-visible"));
+      items.forEach((item) => revealObserver.observe(item));
+    }
+
+  </script>
+
+</body>
+</html>
