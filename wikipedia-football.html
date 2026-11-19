@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WIKIPEDIA&gt;FOOTBALL – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=26">
 </head>
 <body>
 
@@ -20,12 +20,19 @@
     <section class="project-info">
 
       <header class="project-header">
-        <a class="project-header__back" href="index.html" aria-label="חזרה לעמוד הבית">
-          <img src="images/arrow-back.svg" alt="">
+        <!--
+          חזרה לעמוד הבית: החץ ושם הפרויקט הם קישור אחד.
+          במצב hover על החץ, שם הפרויקט מתחלף ל-HOME (כמו ה-NEXT בצד השני).
+        -->
+        <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
+          <span class="project-header__back"><span class="project-header__back-icon"></span></span>
+          <h1 class="project-header__title">
+            <span class="project-header__name">WIKIPEDIA&gt;F00TBALL</span>
+            <span class="project-header__home" aria-hidden="true">HOME</span>
+          </h1>
         </a>
-        <h1 class="project-header__title">WIKIPEDIA&gt;F00TBALL</h1>
-        <!-- הכפתור OVERVIEW: בינתיים לא עושה כלום -->
-        <span class="overview-button">OVERVIEW <img src="images/wikipedia-eye.svg" alt=""></span>
+        <!-- הכפתור OVERVIEW: מראה את כל החומרים בשורה אחת, רק עם הכיתובים -->
+        <button class="overview-button" type="button">OVERVIEW <img src="images/wikipedia-eye.svg" alt=""></button>
       </header>
 
       <div class="project-info__scroll">
@@ -44,16 +51,21 @@
           <p>
             In this project, I focused on <span class="project-text__highlight">the history of football and the diverse range of simulation games</span> based on the sport. The research explores their evolution and refinement over the years, highlighting the contrast between the old and the new, while speculating on what the future holds.
           </p>
-          <p>
+          <p class="project-text__credit">
             <br>
-            Developed within a Graphic-Typographic Design course at Bezalel Academy of Arts and Design.
+            Developed within a Graphic-Typographic Design course<br>at Bezalel Academy of Arts and Design.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- הקו שבאמצע -->
+    <!-- הקו שבאמצע (במצב OVERVIEW הוא גולש שמאלה) -->
     <img class="project-divider" src="images/home-line.svg" alt="">
+
+    <!-- במצב OVERVIEW, משמאל לקו: FULL VIEW (באותיות אחת מתחת לשנייה), חזרה לתצוגה הרגילה של הפרויקט -->
+    <button class="full-view" type="button" aria-label="FULL VIEW: חזרה לתצוגה הרגילה">
+      <span>&lt;</span><span>F</span><span>U</span><span>L</span><span>L</span><span>&nbsp;</span><span>V</span><span>I</span><span>E</span><span>W</span><span>&lt;</span>
+    </button>
 
     <!-- העמודה הימנית -->
     <section class="project-work">
@@ -69,50 +81,87 @@
           <button class="project-tab" type="button" data-tab="website">WEBSITE<span class="project-tab__count"> (2)</span></button>
         </nav>
 
-        <!-- החץ לפרויקט הבא: יהפוך לקישור כשיוחלט מה הפרויקט הבא -->
-        <span class="project-next" aria-hidden="true">
-          <img src="images/arrow-next.svg" alt="">
-        </span>
-      </div>
-
-      <!-- התוכן של הלשונית MAGAZINE -->
-      <div class="project-panel is-active" data-tab="magazine">
-        <p class="work-caption"><b>1 &gt;</b> Wikipedia&gt;Football : the print addition.</p>
-        <video class="work-video work-video--magazine" src="images/wikipedia-magazine.mp4" autoplay muted loop playsinline></video>
-
-        <p class="work-caption"><b>2 &gt;</b> Magazine unfolded poster presenting the evolution of CR7 face graphics in FIFA games throw the years.</p>
-        <img class="work-image" src="images/wikipedia-cr7-poster.png" alt="פוסטר מקופל מתוך המגזין: הפנים של רונלדו במשחקי FIFA לאורך השנים">
-      </div>
-
-      <!-- התוכן של הלשונית EVENT POSTER -->
-      <div class="project-panel" data-tab="event-poster">
-        <div class="work-poster">
-          <img src="images/wikipedia-event-poster.png" alt="הפוסטר של האירוע סימולטור כדורגל">
+        <!--
+          החץ לפרויקט הבא. במצב hover: החץ נהיה ירוק, הלשוניות גולשות הצידה ונעלמות,
+          ובמקומן מופיע השם של הפרויקט הבא. שאר המסך מתעמעם.
+          (יהפוך לקישור כשיהיה עמוד לפרויקט הבא)
+        -->
+        <div class="project-next">
+          <p class="project-next-label">NEXT: DAR0M FILM FESTIVAL</p>
+          <span class="project-next__arrow" aria-label="הפרויקט הבא: DAROM FILM FESTIVAL">
+            <span class="project-next__icon"></span>
+          </span>
         </div>
       </div>
 
-      <!-- התוכן של הלשונית WEBSITE -->
-      <div class="project-panel" data-tab="website">
-        <p class="work-caption"><b>1 &gt;</b> The website contains the program of the event, info about the content and place to buy tickets.</p>
-        <video class="work-video work-video--website" src="images/wikipedia-website.mp4" autoplay muted loop playsinline></video>
+      <!--
+        התוכן של הלשוניות. כל חומר (כיתוב + תמונה או סרטון) עטוף ב-work-item.
+        המספר שבתחילת כל כיתוב (1 >) נכתב לבד ב-CSS: בתצוגה הרגילה לפי הלשונית, וב-OVERVIEW לפי הסדר של כולם.
+        בתצוגה הרגילה רואים רק את הלשונית הפתוחה, אחד מתחת לשני.
+        במצב OVERVIEW רואים את כולם בשורה אחת שנגללת הצידה.
+      -->
+      <div class="project-panels">
+        <div class="project-panel is-active" data-tab="magazine">
+          <div class="work-item">
+            <p class="work-caption"><b></b> Wikipedia&gt;Football : the print addition.</p>
+            <video class="work-video work-video--magazine" src="images/wikipedia-magazine.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div class="work-item">
+            <p class="work-caption"><b></b> Magazine unfolded poster presenting the evolution of CR7 face graphics in FIFA games throw the years.</p>
+            <img class="work-image" src="images/wikipedia-cr7-poster.png" alt="פוסטר מקופל מתוך המגזין: הפנים של רונלדו במשחקי FIFA לאורך השנים">
+          </div>
+        </div>
 
-        <p class="work-caption"><b>2 &gt;</b> The website &amp; Magazine</p>
-        <img class="work-image" src="images/wikipedia-website-context.png" alt="האתר על מסך של מחשב נייד, ליד המגזין המודפס">
+        <div class="project-panel" data-tab="event-poster">
+          <div class="work-item">
+            <p class="work-caption"><b></b> The event poster retains visual elements<br>from the booklet’s design</p>
+            <div class="work-poster">
+              <img src="images/wikipedia-event-poster.png" alt="הפוסטר של האירוע סימולטור כדורגל">
+            </div>
+          </div>
+        </div>
+
+        <div class="project-panel" data-tab="website">
+          <div class="work-item">
+            <p class="work-caption"><b></b> The website contains the program of the event, info about the content and place to buy tickets.</p>
+            <video class="work-video work-video--website" src="images/wikipedia-website.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div class="work-item">
+            <p class="work-caption"><b></b> The website &amp; Magazine</p>
+            <img class="work-image" src="images/wikipedia-website-context.png" alt="האתר על מסך של מחשב נייד, ליד המגזין המודפס">
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- הלשוניות: לחיצה על לשונית פותחת את התוכן שלה -->
+  <!--
+    הלשוניות: בתצוגה הרגילה לחיצה פותחת את התוכן של הלשונית.
+    במצב OVERVIEW לחיצה גוללת את השורה אל החומרים של הלשונית.
+  -->
   <script>
+    const projectPage = document.querySelector(".project-page");
     const projectTabs = document.querySelectorAll(".project-tab");
     const projectPanels = document.querySelectorAll(".project-panel");
+    const panelsRow = document.querySelector(".project-panels");
+
+    const isOverview = () => projectPage.classList.contains("is-overview");
+
+    // מסמנים איזו לשונית פתוחה (ירוקה), ואיזה תוכן שייך לה
+    function setActiveTab(tabName) {
+      projectTabs.forEach((tab) => tab.classList.toggle("is-active", tab.dataset.tab === tabName));
+      projectPanels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.tab === tabName));
+    }
 
     projectTabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        projectTabs.forEach((otherTab) => otherTab.classList.toggle("is-active", otherTab === tab));
-        projectPanels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.tab === tab.dataset.tab));
-        replayReveal(document.querySelector(".project-panel.is-active"));
+        setActiveTab(tab.dataset.tab);
+        if (isOverview()) {
+          scrollRowTo(tab.dataset.tab);
+        } else {
+          replayReveal(document.querySelector(".project-panel.is-active").querySelectorAll(".reveal"));
+        }
       });
     });
 
@@ -139,14 +188,112 @@
       revealObserver.observe(item);
     });
 
-    // כשפותחים לשונית: התוכן שלה מופיע מחדש באותה תנועה
-    function replayReveal(panel) {
-      const items = panel.querySelectorAll(".reveal");
-      items.forEach((item) => item.classList.remove("is-visible"));
-      items.forEach((item) => revealObserver.observe(item));
+    // כשפותחים לשונית או את OVERVIEW: התוכן מופיע מחדש באותה תנועה
+    function replayReveal(items) {
+      items.forEach((item) => {
+        item.style.transition = "none";      // נעלם מיד (בלי אנימציה)...
+        item.classList.remove("is-visible");
+      });
+      document.body.offsetHeight;            // (הדפדפן מעדכן את המסך)
+      items.forEach((item) => {
+        item.style.transition = "";          // ...ואז עולה ומופיע שוב בעדינות
+        revealObserver.observe(item);
+      });
     }
 
+    /*
+      OVERVIEW: העמודה השמאלית נעלמת, הקו גולש שמאלה,
+      וכל החומרים מופיעים בשורה אחת שנגללת הצידה.
+      החץ שמשמאל לקו (או מקש Esc) מחזיר לתצוגה הרגילה.
+    */
+    const overviewButton = document.querySelector(".overview-button");
+    const fullViewButton = document.querySelector(".full-view");
+    const overviewDuration = 900; // כמו --duration-overview ב-CSS
+
+    // לחיצה: הקו גולש והכל זז איתו (ב-CSS), והחומרים עולים ומופיעים במקום החדש
+    function setOverview(open) {
+      projectPage.classList.toggle("is-overview", open);
+      if (open) scrollRowTo(document.querySelector(".project-tab.is-active").dataset.tab, "instant");
+      replayReveal(document.querySelectorAll(".project-panel.is-active .reveal, .is-overview .project-panels .reveal"));
+      setTimeout(measureNextArrow, overviewDuration); // העמודה הימנית שינתה רוחב
+    }
+
+    overviewButton.addEventListener("click", () => setOverview(true));
+    fullViewButton.addEventListener("click", () => setOverview(false));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && isOverview()) setOverview(false);
+    });
+
+    // גלילה של השורה אל החומרים של לשונית: בתנועה רכה (או מיד, כשנכנסים ל-OVERVIEW)
+    const rowScrollDuration = 900; // כמה זמן לוקחת הגלילה, במילישניות
+    let rowScrollAnimation = null;
+
+    function scrollRowTo(tabName, behavior = "smooth") {
+      const panel = document.querySelector(`.project-panel[data-tab="${tabName}"]`);
+      const rowPadding = parseFloat(getComputedStyle(panelsRow).paddingLeft); // הרווח בתחילת השורה
+      const maxScroll = panelsRow.scrollWidth - panelsRow.clientWidth;
+      const target = Math.min(panel.offsetLeft - panelsRow.offsetLeft - rowPadding, maxScroll);
+
+      cancelAnimationFrame(rowScrollAnimation);
+      if (behavior === "instant") {
+        panelsRow.scrollLeft = target;
+        return;
+      }
+
+      const start = panelsRow.scrollLeft;
+      const startTime = performance.now();
+      function step(now) {
+        const progress = Math.min((now - startTime) / rowScrollDuration, 1);
+        const eased = (1 - Math.cos(Math.PI * progress)) / 2; // ease-in-out רך
+        panelsRow.scrollLeft = start + (target - start) * eased;
+        rowScrollAnimation = progress < 1 ? requestAnimationFrame(step) : null;
+      }
+      rowScrollAnimation = requestAnimationFrame(step);
+    }
+
+    // בזמן הגלילה: הלשונית של החומרים שנמצאים עכשיו בתחילת השורה נהיית ירוקה
+    panelsRow.addEventListener("scroll", () => {
+      if (!isOverview() || rowScrollAnimation) return; // בזמן גלילה מלחיצה על לשונית, הלשונית כבר ירוקה
+      const rowStart = panelsRow.scrollLeft + panelsRow.offsetLeft + 40;
+      let current = projectPanels[0];
+      projectPanels.forEach((panel) => {
+        if (panel.offsetLeft <= rowStart) current = panel;
+      });
+      // בסוף השורה: הלשונית האחרונה
+      if (panelsRow.scrollLeft + panelsRow.clientWidth >= panelsRow.scrollWidth - 2) {
+        current = projectPanels[projectPanels.length - 1];
+      }
+      setActiveTab(current.dataset.tab);
+    });
+
+    // גלגלת רגילה של העכבר (למעלה ולמטה) גוללת את השורה הצידה
+    panelsRow.addEventListener("wheel", (event) => {
+      cancelAnimationFrame(rowScrollAnimation); // אם גוללים בעצמנו, התנועה מהלשונית נעצרת
+      rowScrollAnimation = null;
+      if (!isOverview() || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      panelsRow.scrollLeft += event.deltaY;
+    }, { passive: false });
+
+
+    /*
+      החץ לפרויקט הבא: מחשבים כמה הוא צריך להתארך ב-hover,
+      כדי שיגיע בדיוק עד השם של הפרויקט הבא (הרווח ביניהם הוא חלק מהשם, ב-CSS).
+    */
+    const nextArea = document.querySelector(".project-next");
+    const nextLabel = document.querySelector(".project-next-label");
+
+    function measureNextArrow() {
+      const labelEnd = nextLabel.offsetLeft + nextLabel.offsetWidth;
+      nextArea.style.setProperty("--next-arrow-long", nextArea.clientWidth - labelEnd + "px");
+    }
+
+    document.fonts.ready.then(measureNextArrow); // אחרי שהפונט נטען, כי הוא קובע את רוחב השם
+    window.addEventListener("resize", measureNextArrow);
   </script>
+
+  <!-- העכבר של האתר: עיגול לבן שנהיה ירוק על דברים לחיצים -->
+  <script src="cursor.js"></script>
 
 </body>
 </html>

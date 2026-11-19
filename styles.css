@@ -43,6 +43,10 @@
   --duration-tag: 0.3s; /* כמה זמן לוקח לעיגול להתרחב לכפסולה */
   --duration-shutter: 0.6s; /* כמה זמן לוקח לתריס להיפתח */
   --duration-reveal: 0.9s;  /* כמה זמן לוקח לתוכן בעמוד פרויקט לעלות ולהופיע */
+  --duration-next: 0.8s;    /* ה-hover על החץ לפרויקט הבא: הלשוניות יוצאות, השם נכנס והחץ מתארך */
+  --ease-next: cubic-bezier(0.65, 0, 0.35, 1); /* ease-in-out רך: מתחיל לאט ונעצר לאט */
+  --duration-next-arrow: 0.5s; /* החץ מתארך קצת יותר מהר מהשאר */
+  --duration-overview: 0.9s; /* המעבר לתצוגת OVERVIEW וחזרה: הקו גולש והכל זז איתו */
   --distance-reveal: 24px;  /* מאיזה מרחק מלמטה התוכן עולה */
   --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1); /* יוצא מהר ונעצר לאט ובעדינות */
   --ease-shutter: cubic-bezier(0.65, 0, 0.35, 1); /* מתחיל לאט, מאיץ, ונעצר בעדינות */
@@ -570,20 +574,91 @@ body {
   height: calc(40 * var(--bar-u));
 }
 
-.project-header__back img {
+/* החץ חזור מצויר כ"מסכה" מקובץ ה-SVG, כדי שאפשר יהיה לצבוע אותו בירוק ב-hover */
+.project-header__back-icon {
   display: block;
   width: calc(39 * var(--bar-u));
   height: calc(34 * var(--bar-u));
+  background-color: var(--color-text);
+  -webkit-mask: url("images/arrow-back.svg") center / contain no-repeat;
+  mask: url("images/arrow-back.svg") center / contain no-repeat;
+  transition: background-color var(--duration-next) var(--ease-next);
 }
 
 .project-header__title {
   position: relative;
   top: 0.06em; /* כמו בכפתורים: מוריד את הטקסט לאמצע הגובה של הבר */
+  display: grid; /* שם הפרויקט ו-HOME באותו מקום, אחד על השני */
   font-size: calc(38.556 * var(--bar-u));
   font-weight: normal;
   letter-spacing: 0.01em;
   color: var(--color-muted);
   white-space: nowrap;
+}
+
+/*
+  הקישור לעמוד הבית: החץ ושם הפרויקט.
+  כמו בפרויקט הבא: נכנסים רק דרך החץ, אבל אז אפשר לעבור אל המילה HOME,
+  והמצב חוזר רק כשיוצאים משניהם.
+*/
+.project-home {
+  display: flex;
+  align-items: center;
+  gap: calc(24 * var(--bar-u));
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  pointer-events: none;
+}
+
+.project-header__back {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.project-header__name,
+.project-header__home {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--duration-next) var(--ease-next),
+    transform var(--duration-next) var(--ease-next);
+}
+
+/* hover: החץ נהיה ירוק, כמו החץ לפרויקט הבא */
+.project-home:hover .project-header__back-icon {
+  background-color: var(--color-project-accent);
+}
+
+/* HOME מוסתר, ומחכה קצת שמאלה, ליד החץ */
+.project-header__home {
+  opacity: 0;
+  transform: translateX(calc(-24 * var(--bar-u)));
+}
+
+/* hover על החץ: שם הפרויקט גולש ימינה ונעלם, ו-HOME נכנס במקומו */
+.project-home:hover .project-header__name {
+  opacity: 0;
+  transform: translateX(calc(40 * var(--bar-u)));
+}
+
+.project-home:hover .project-header__home {
+  opacity: 1;
+  transform: none;
+}
+
+/* כשהמצב פתוח, גם המילה HOME היא חלק מהקישור */
+.project-home:hover .project-header__title {
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-header__name,
+  .project-header__home,
+  .project-header__back-icon {
+    transition: none;
+  }
 }
 
 /* הכפתורים (OVERVIEW והלשוניות): המסגרת בפיגמה "בפנים", לכן הריפוד קטן ב-3 (עובי הקו) */
@@ -614,6 +689,12 @@ body {
 .overview-button {
   margin-left: auto;
   margin-right: calc(7 * var(--u));
+  transition: border-radius 0.3s var(--ease-next);
+}
+
+/* hover: הפינות מתעגלות (ההפך מהלשוניות, שבהן הפינות נהיות ישרות) */
+.overview-button:hover {
+  border-radius: calc(20 * var(--bar-u));
 }
 
 .overview-button img {
@@ -723,6 +804,9 @@ em.project-text__highlight {
   display: flex;
   gap: calc(var(--space-tabs) * var(--bar-u));
   padding-inline: calc(2 * var(--u));
+  transition:
+    opacity var(--duration-next) var(--ease-next),
+    transform var(--duration-next) var(--ease-next);
 }
 
 /* לשונית רגילה: קו דק יותר (3) וריווח אותיות צפוף, כמו בקומפוננטה בפיגמה */
@@ -759,23 +843,156 @@ em.project-text__highlight {
   display: inline;
 }
 
-/* החץ לפרויקט הבא: בקצה הימני, באמצע הגובה של הבר */
+/*
+  האזור של הפרויקט הבא: השם והחץ, לכל הגובה של הבר.
+  האזור עצמו "שקוף" לעכבר (pointer-events: none), כדי שאפשר יהיה ללחוץ על הלשוניות.
+  רק החץ "תופס" את העכבר, וכשהאזור פתוח, גם השם. כך נכנסים רק דרך החץ,
+  אבל אפשר לעבור עם העכבר אל השם, והאזור נסגר רק כשיוצאים משניהם.
+*/
 .project-next {
   position: absolute;
-  top: 50%;
-  right: calc(4 * var(--u));
-  transform: translateY(-50%);
+  inset: 0 calc(4 * var(--u)) 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* החץ תמיד בקצה הימני */
+  pointer-events: none;
 }
 
-.project-next img {
+/* החץ: תופס את העכבר לכל הגובה של הבר */
+.project-next__arrow {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  pointer-events: auto;
+  cursor: pointer; /* אצבע: ברור שאפשר ללחוץ */
+}
+
+/*
+  החץ מצויר כ"מסכה", כדי שאפשר יהיה לצבוע אותו בירוק ולהאריך אותו ב-hover.
+  שני חלקים: הראש (קובץ SVG, תמיד בצד ימין) והקו (מלבן בעובי 3, שנמתח לכל הרוחב).
+*/
+.project-next__icon {
+  --head-width: calc(16.23 * var(--bar-u));
   display: block;
   width: calc(91 * var(--bar-u));
   height: calc(29.46 * var(--bar-u));
+  background-color: var(--color-text);
+  -webkit-mask:
+    url("images/arrow-next-head.svg") right center / var(--head-width) 100% no-repeat,
+    linear-gradient(#000, #000) left center / calc(100% - 2.5 * var(--bar-u)) calc(3 * var(--bar-u)) no-repeat;
+  mask:
+    url("images/arrow-next-head.svg") right center / var(--head-width) 100% no-repeat,
+    linear-gradient(#000, #000) left center / calc(100% - 2.5 * var(--bar-u)) calc(3 * var(--bar-u)) no-repeat;
+  transition:
+    background-color var(--duration-next) var(--ease-next),
+    width var(--duration-next-arrow) var(--ease-next);
+}
+
+/* השם של הפרויקט הבא: מוסתר, ומופיע במקום הלשוניות */
+.project-next-label {
+  position: absolute; /* לא תופס מקום, כך שהוא אף פעם לא דוחף את החץ */
+  top: 0.06em; /* כמו שם הפרויקט: באמצע הגובה של הבר */
+  left: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: calc(2 * var(--u)); /* מיושר לגריד: לאותו קו שמאלי של הכיתובים והתמונות */
+  padding-right: calc(16 * var(--bar-u)); /* הרווח עד החץ, גם הוא חלק מהאזור */
+  transform: translateX(calc(24 * var(--bar-u))); /* מתחיל קצת ימינה, ליד החץ */
+  font-size: calc(38.5556 * var(--bar-u));
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--color-text);
+  opacity: 0;
+  transition:
+    opacity var(--duration-next) var(--ease-next),
+    transform var(--duration-next) var(--ease-next);
+}
+
+/* ---------- hover על האזור של הפרויקט הבא ---------- */
+/* 1. החץ נהיה ירוק ומתארך שמאלה עד השם (הרוחב מחושב בסקריפט, ב---next-arrow-long) */
+.project-next:hover .project-next__icon {
+  width: var(--next-arrow-long, calc(91 * var(--bar-u)));
+  background-color: var(--color-project-accent);
+}
+
+/* האזור הלחיץ של החץ מתרחב מיד עד השם (רק הציור של החץ מתארך באנימציה), כדי שלא יהיה חור באמצע */
+.project-next:hover .project-next__arrow {
+  justify-content: flex-end;
+  width: var(--next-arrow-long, auto);
+}
+
+/* 2. הלשוניות גולשות שמאלה ונעלמות... */
+.project-top:has(.project-next:hover) .project-tabs {
+  opacity: 0;
+  transform: translateX(calc(-40 * var(--bar-u)));
+  pointer-events: none;
+}
+
+/* ...ובמקומן נכנס השם של הפרויקט הבא, שעכשיו גם הוא חלק מהאזור */
+.project-next:hover .project-next-label {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  cursor: pointer; /* כל האזור (השם, הרווח והחץ) הוא כפתור אחד */
+}
+
+/* 3. כל השאר מתעמעם ל-40% (חוץ מהקו שבאמצע, החץ והשם של הפרויקט הבא) */
+.project-info,
+.project-panel {
+  transition: opacity var(--duration-next) var(--ease-next);
+}
+
+.project-page:has(.project-next:hover) .project-panel,
+.project-page:not(.is-overview):has(.project-next:hover) .project-info {
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-tabs,
+  .project-next__icon,
+  .project-next-label,
+  .project-info,
+  .project-panel {
+    transition: none;
+  }
 }
 
 /* התוכן של הלשונית: נגלל בתוך העמודה. רק התוכן של הלשונית הפתוחה מוצג */
+/* כל הלשוניות יחד: ממלא את מה שנשאר בעמודה מתחת לבר */
+.project-panels {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .project-panel {
   display: none;
+}
+
+/*
+  המספור של החומרים (1 >, 2 >...): נכתב לבד.
+  בתצוגה הרגילה המספור מתחיל מחדש בכל לשונית, וב-OVERVIEW הוא רץ על כל החומרים לפי הסדר.
+*/
+.project-panel {
+  counter-reset: work-number;
+}
+
+.work-item {
+  counter-increment: work-number;
+}
+
+.work-caption b::before {
+  content: counter(work-number) " >";
+}
+
+/* חומר אחד: כיתוב ומתחתיו התמונה או הסרטון */
+.work-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
 }
 
 .project-panel.is-active {
@@ -788,9 +1005,12 @@ em.project-text__highlight {
   padding-inline: calc(2 * var(--u));
 }
 
-.work-caption {
+/* הכיתובים מעל התמונות, וגם השורה האחרונה בתיאור הפרויקט: TheBasics אפור, 18 כמו בפיגמה */
+.work-caption,
+.project-text__credit {
   font-family: var(--font-caption);
-  font-size: calc(22 * var(--u));
+  font-size: calc(18 * var(--u));
+  font-style: normal;
   line-height: 1.1;
   color: var(--color-muted);
 }
@@ -862,6 +1082,167 @@ em.project-text__highlight {
   }
 }
 
+
+/* =========================================
+   תצוגת OVERVIEW (בעמוד פרויקט)
+   העמודה השמאלית נעלמת, הקו גולש שמאלה,
+   וכל החומרים מופיעים בשורה אחת שנגללת הצידה, רק עם הכיתובים.
+   ========================================= */
+.project-page {
+  /* הגובה של כל חומר בשורה: המסך, פחות הבר והכיתוב למעלה ורווח למטה, כמו בפיגמה */
+  --overview-media-height: calc(100svh - 177 * var(--u));
+  --full-view-hint: calc(24 * var(--u)); /* כמה הקו זז ימינה ב-hover על FULL VIEW */
+}
+
+/*
+  המעבר הוא תנועה אחת: הקו גולש שמאלה ו"דוחף" איתו את העמודה השמאלית,
+  והעמודה הימנית נפתחת אחריו. הכל באותו זמן ובאותו איזינג, כך ששום דבר לא עולה על משהו אחר.
+*/
+.project-info {
+  transition:
+    opacity var(--duration-overview) var(--ease-next),
+    transform var(--duration-overview) var(--ease-next);
+}
+
+.project-divider,
+.project-work {
+  transition: left var(--duration-overview) var(--ease-next);
+}
+
+/* העמודה השמאלית זזה שמאלה בדיוק כמו הקו (ונעלמת בדרך), כך שהקו לא עובר מעליה */
+.is-overview .project-info {
+  opacity: 0;
+  transform: translateX(calc(24 * var(--u) - var(--left-width)));
+  pointer-events: none;
+}
+
+/* 2. הקו גולש שמאלה, והעמודה הימנית מתרחבת אחריו */
+.is-overview .project-divider {
+  left: calc(80 * var(--u));
+}
+
+.is-overview .project-work {
+  left: calc(120 * var(--u));
+}
+
+/*
+  השם של הפרויקט הבא נשאר במקום שלו על הגריד, כמו בתצוגה הרגילה
+  (שם העמודה הימנית התחילה ב-33 + רוחב העמודה השמאלית + 52), ולכן גם החץ באורך הרגיל.
+*/
+.is-overview .project-next-label {
+  margin-left: calc(var(--left-width) + 33 * var(--u) + 52 * var(--u) - 120 * var(--u) + 2 * var(--u));
+}
+
+/* 3. כל החומרים בשורה אחת שנגללת הצידה, עד הקצה הימני של המסך */
+.is-overview .project-panels {
+  flex-direction: row;
+  gap: calc(20.77 * var(--u));
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* השורה מתחילה בדיוק בקו (80 + 6 של הקו = 86), כך שהחומרים נחתכים בו כשגוללים */
+  margin: 0 calc(-20 * var(--u)) 0 calc(-34 * var(--u));
+  padding: 0 calc(26 * var(--u)) 0 calc(37 * var(--u)); /* החומר הראשון מתחיל ב-123, כמו בפיגמה */
+  scrollbar-width: none; /* בלי פס גלילה, כמו בפיגמה */
+}
+
+.is-overview .project-panels::-webkit-scrollbar {
+  display: none;
+}
+
+.is-overview .project-panels {
+  counter-reset: work-number; /* מספור אחד לכל החומרים */
+}
+
+.is-overview .project-panel {
+  counter-reset: none;
+  display: flex;
+  flex: none;
+  flex-direction: row;
+  gap: calc(20.77 * var(--u));
+  padding: 0;
+  overflow: visible;
+}
+
+/* הכיתוב לא קובע את הרוחב: הוא נשבר לפי הרוחב של התמונה שמתחתיו */
+.is-overview .work-caption {
+  width: 0;
+  min-width: 100%;
+  min-height: 2.2em; /* שתי שורות, כדי שכל התמונות יתחילו באותו גובה */
+}
+
+/* כל חומר בגובה של השורה, והרוחב לפי הפרופורציות שלו */
+.is-overview :is(.work-video, .work-image, .work-poster) {
+  align-self: flex-start;
+  width: auto;
+  height: var(--overview-media-height);
+  max-width: none;
+  max-height: none;
+}
+
+/* הכפתור FULL VIEW: משמאל לקו, מופיע רק במצב OVERVIEW */
+.full-view {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-overview .full-view {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/*
+  FULL VIEW: חזרה לתצוגה הרגילה.
+  הכפתור הוא כל הרצועה שמשמאל לקו (עד הקו עצמו), כך שבכל מקום בה אפשר ללחוץ.
+  האותיות אחת מתחת לשנייה, באמצע הגובה, 24 מהקצה, כמו בפיגמה.
+*/
+.full-view {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(86 * var(--u)); /* עד הקו (80 + 6 של הקו) */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 0 0 calc(24 * var(--u));
+  border: none;
+  background: none;
+  color: var(--color-muted);
+  font-family: var(--font-main);
+  font-size: calc(25 * var(--bar-u));
+  letter-spacing: 0.01em;
+  line-height: normal;
+  transition:
+    opacity var(--duration-overview) var(--ease-next),
+    color var(--duration-next) var(--ease-next);
+}
+
+/* hover: ירוק, כמו המילים המודגשות. הרצועה גדלה יחד עם הקו שזז, כדי שהעכבר יישאר בתוכה */
+.full-view:hover {
+  width: calc(86 * var(--u) + var(--full-view-hint));
+  color: var(--color-project-accent);
+}
+
+/* ...והקו עם כל התוכן זזים טיפה ימינה, כרמז לכך שהתצוגה הרגילה תיפתח */
+.is-overview:has(.full-view:hover) .project-divider {
+  left: calc(80 * var(--u) + var(--full-view-hint));
+}
+
+.is-overview:has(.full-view:hover) .project-work {
+  left: calc(120 * var(--u) + var(--full-view-hint));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-info,
+  .project-divider,
+  .project-work,
+  .full-view,
+  .overview-button {
+    transition: none;
+  }
+}
+
 /*
   טלפון וטאבלט לאורך: העמודות אחת מתחת לשנייה, והעמוד כולו נגלל.
   u כאן נקבע לפי רוחב המסך, כדי שהעמודה (674) תמלא אותו.
@@ -901,9 +1282,84 @@ em.project-text__highlight {
     display: none;
   }
 
+  /* OVERVIEW בטלפון: בלי העמודה השמאלית והקו, החץ חזור למעלה, והשורה נגללת הצידה */
+  .project-page.is-overview {
+    padding-top: calc(21px + 40 * var(--bar-u) + 24px);
+    --overview-media-height: 60svh;
+  }
+
+  .is-overview .project-info,
+  .is-overview .project-divider {
+    display: none;
+  }
+
+  /* בטלפון אין רצועה משמאל לקו, אז FULL VIEW בשורה אחת למעלה */
+  .full-view,
+  .full-view:hover {
+    top: 21px;
+    bottom: auto;
+    left: 16px;
+    width: auto;
+    height: calc(40 * var(--bar-u));
+    padding: 0;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .is-overview .project-panels {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
   /* הקו הופך לקו אופקי בין שני החלקים */
   .project-divider {
     height: calc(6 * var(--u));
   }
 }
 
+
+/* =========================================
+   העכבר: עיגול לבן (cursor.js)
+   ========================================= */
+:root {
+  --cursor-size: 36px;
+  --cursor-green: var(--color-project-accent); /* בעמודי הפרויקטים */
+  --duration-cursor: 0.3s;
+}
+
+/* בעמוד הבית הירוק של ה-hover אחר, אז גם העכבר מקבל אותו */
+:root:has(.home) {
+  --cursor-green: var(--color-accent);
+}
+
+/* מסתירים את החץ הרגיל של המחשב */
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none !important;
+}
+
+.cursor {
+  position: fixed;
+  top: calc(var(--cursor-size) / -2); /* כך שמרכז העיגול יהיה בדיוק בקצה העכבר */
+  left: calc(var(--cursor-size) / -2);
+  z-index: 1000;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  border-radius: 50%;
+  background-color: var(--color-text);
+  mix-blend-mode: exclusion; /* על ירוק הוא נהיה שחור, כמו בפיגמה */
+  pointer-events: none;      /* העיגול לא מפריע ללחוץ על מה שמתחתיו */
+  opacity: 0;
+  transition:
+    background-color var(--duration-cursor) ease,
+    opacity var(--duration-cursor) ease;
+}
+
+.cursor.is-shown {
+  opacity: 1;
+}
+
+/* על משהו לחיץ: העיגול נצבע בירוק */
+.cursor.is-on-clickable {
+  background-color: var(--cursor-green);
+}
