@@ -24,6 +24,11 @@ const desktopLayout = window.matchMedia("(min-width: 901px) and (orientation: la
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const withMotion = () => desktopLayout.matches && !reducedMotion.matches;
 
+// למי שביקש פחות תנועה: המרקם של הסיסמה לא זז (נשאר במצב העדין)
+if (reducedMotion.matches) {
+  document.querySelectorAll("#gate-texture animate").forEach((animation) => animation.remove());
+}
+
 /* ---------- 1. הגעה מעמוד הבית ---------- */
 if (root.classList.contains("is-entering")) {
   sessionStorage.removeItem("enter-line"); // ברענון של העמוד המעבר לא חוזר

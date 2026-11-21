@@ -59,13 +59,27 @@
   </main>
 
   <!--
-    המרקם של הסיסמה (כמו ה-Texture בפיגמה: radius 1.9, noise size 1.7):
+    המרקם של הסיסמה (כמו ה-Texture בפיגמה):
     רעש אקראי (feTurbulence) מזיז קצת את הקצוות של האותיות (feDisplacementMap), כך שהן נראות מחוספסות.
+    המרקם מתחזק ונחלש לאט, על כל המילים באותה מידה (animate), כדי להקשות טיפה על הקריאה:
+    עדין: radius 1.9 בפיגמה (scale 3.8). חזק: radius 6.5 בפיגמה (scale 13).
+    ככל שהמרקם חזק יותר, הטקסט גם שקוף יותר (feFuncA: מ-100% ל-60%).
+    גודל הגרעינים לא משתנה, כדי שהשינוי יהיה על הכל ביחד (ולא "יזחל" משמאל לימין).
+    כל סיבוב לוקח 5 שניות, בתנועה רכה כמו גל (keySplines: ease-in-out של סינוס).
   -->
   <svg class="gate-filters" width="0" height="0" aria-hidden="true">
     <filter id="gate-texture" x="-5%" y="-20%" width="110%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="1" seed="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.8" xChannelSelector="R" yChannelSelector="G"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.8" xChannelSelector="R" yChannelSelector="G" result="rough">
+        <animate attributeName="scale" values="3.8;13;3.8" dur="5s" repeatCount="indefinite"
+                 calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/>
+      </feDisplacementMap>
+      <feComponentTransfer in="rough">
+        <feFuncA type="linear" slope="1">
+          <animate attributeName="slope" values="1;0.6;1" dur="5s" repeatCount="indefinite"
+                   calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/>
+        </feFuncA>
+      </feComponentTransfer>
     </filter>
   </svg>
 
@@ -73,7 +87,7 @@
   <script src="hed-voice.js?v=6"></script>
 
   <!-- השער: זיהוי הסיסמה והמעברים -->
-  <script src="gate.js?v=3"></script>
+  <script src="gate.js?v=4"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה צבעוני על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>
