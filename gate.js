@@ -24,10 +24,28 @@ const desktopLayout = window.matchMedia("(min-width: 901px) and (orientation: la
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const withMotion = () => desktopLayout.matches && !reducedMotion.matches;
 
-// למי שביקש פחות תנועה: המרקם של הסיסמה לא זז (נשאר במצב העדין)
-if (reducedMotion.matches) {
-  document.querySelectorAll("#gate-texture animate").forEach((animation) => animation.remove());
+/*
+  המרקם של הסיסמה "נושם": מתחזק ונחלש לאט, על כל המילים באותה מידה.
+  בכל פריים מחשבים כמה הוא חזק עכשיו (0 עד 1, בגל רך), ולפי זה:
+  המרקם (radius בפיגמה: מ-1.9 עד 6.5), הטשטוש (עד 3.5 פיקסלים) והשקיפות (עד 60%).
+  למי שביקש פחות תנועה: המרקם נשאר במצב העדין.
+*/
+const TEXTURE_CYCLE = 6500;          // כמה זמן לוקח סיבוב אחד (מילישניות)
+const TEXTURE_SOFT = 3.8, TEXTURE_STRONG = 13; // החוזק של המרקם (פעמיים ה-radius בפיגמה)
+const BLUR_STRONG = 3.5;             // הטשטוש בשיא (פיקסלים)
+const OPACITY_STRONG = 0.6;          // השקיפות בשיא
+const passwordWord = document.querySelector(".gate-text__word");
+const textureStrength = document.querySelector(".gate-texture__strength");
+
+function breathe(now) {
+  const amount = (1 - Math.cos((now / TEXTURE_CYCLE) * 2 * Math.PI)) / 2; // 0 → 1 → 0, רך בקצוות
+  textureStrength.setAttribute("scale", TEXTURE_SOFT + (TEXTURE_STRONG - TEXTURE_SOFT) * amount);
+  passwordWord.style.filter = `url(#gate-texture) blur(${(BLUR_STRONG * amount).toFixed(2)}px)`;
+  passwordWord.style.opacity = 1 - (1 - OPACITY_STRONG) * amount;
+  requestAnimationFrame(breathe);
 }
+
+if (!reducedMotion.matches) requestAnimationFrame(breathe);
 
 /* ---------- 1. הגעה מעמוד הבית ---------- */
 if (root.classList.contains("is-entering")) {

@@ -61,29 +61,12 @@
   <!--
     המרקם של הסיסמה (כמו ה-Texture בפיגמה):
     רעש אקראי (feTurbulence) מזיז קצת את הקצוות של האותיות (feDisplacementMap), כך שהן נראות מחוספסות.
-    המרקם מתחזק ונחלש לאט, על כל המילים באותה מידה (animate), כדי להקשות טיפה על הקריאה:
-    עדין: radius 1.9 בפיגמה (scale 3.8). חזק: radius 6.5 בפיגמה (scale 13).
-    ככל שהמרקם חזק יותר, הטקסט גם מטושטש יותר (feGaussianBlur: עד 3.5) ושקוף יותר (feFuncA: מ-100% ל-60%).
-    גודל הגרעינים לא משתנה, כדי שהשינוי יהיה על הכל ביחד (ולא "יזחל" משמאל לימין).
-    כל סיבוב לוקח 6.5 שניות, בתנועה רכה כמו גל (keySplines: ease-in-out של סינוס).
+    gate.js מחזק ומחליש את המרקם לאט (וגם מטשטש ומשקף את הטקסט), בכל פריים, כדי שהתנועה תהיה חלקה.
   -->
   <svg class="gate-filters" width="0" height="0" aria-hidden="true">
     <filter id="gate-texture" x="-10%" y="-60%" width="120%" height="220%">
       <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" seed="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3.8" xChannelSelector="R" yChannelSelector="G" result="rough">
-        <animate attributeName="scale" values="3.8;13;3.8" dur="6.5s" repeatCount="indefinite"
-                 calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/>
-      </feDisplacementMap>
-      <feGaussianBlur in="rough" stdDeviation="0" result="blurred">
-        <animate attributeName="stdDeviation" values="0;3.5;0" dur="6.5s" repeatCount="indefinite"
-                 calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/>
-      </feGaussianBlur>
-      <feComponentTransfer in="blurred">
-        <feFuncA type="linear" slope="1">
-          <animate attributeName="slope" values="1;0.6;1" dur="6.5s" repeatCount="indefinite"
-                   calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/>
-        </feFuncA>
-      </feComponentTransfer>
+      <feDisplacementMap class="gate-texture__strength" in="SourceGraphic" in2="noise" scale="3.8" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </svg>
 
@@ -91,7 +74,7 @@
   <script src="hed-voice.js?v=6"></script>
 
   <!-- השער: זיהוי הסיסמה והמעברים -->
-  <script src="gate.js?v=4"></script>
+  <script src="gate.js?v=5"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה צבעוני על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>
