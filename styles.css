@@ -14,6 +14,7 @@
 
   /* צבעים: עמודי הפרויקטים */
   --color-project-accent: #0ae60d; /* ירוק: הלשונית הפעילה ומילים מודגשות */
+  --color-hed-artzi: #fe3200;      /* אדום: הצבע של עמוד HED ARTZI (במקום הירוק) */
 
   /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
   --u: min(100vw / 1440, 100vh / 1024);
@@ -47,6 +48,13 @@
   --ease-next: cubic-bezier(0.65, 0, 0.35, 1); /* ease-in-out רך: מתחיל לאט ונעצר לאט */
   --duration-next-arrow: 0.5s; /* החץ מתארך קצת יותר מהר מהשאר */
   --duration-overview: 0.9s; /* המעבר לתצוגת OVERVIEW וחזרה: הקו גולש והכל זז איתו */
+  /* המעבר מעמוד הבית לפרויקט: "גלילה" אחת לאורך הקו, שמתחילה בעמוד הבית ונגמרת בעמוד הפרויקט */
+  --duration-page-out: 0.6s; /* החלק בעמוד הבית: מאיץ */
+  --duration-page-in: 1s;    /* החלק בעמוד הפרויקט: נעצר בעדינות */
+  --ease-page-in: cubic-bezier(0.55, 0, 1, 0.45); /* מתחיל לאט ומאיץ */
+  --ease-page-out: cubic-bezier(0.22, 1, 0.36, 1); /* יוצא מהר ונעצר לאט */
+  --distance-page: 60svh;    /* מאיפה עמוד הפרויקט עולה (מתחת למסך) */
+  --duration-gate-flash: 0.16s; /* הבהוב אחד של הסיסמה בשער של הד ארצי (כתום ↔ לבן) */
   --distance-reveal: 24px;  /* מאיזה מרחק מלמטה התוכן עולה */
   --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1); /* יוצא מהר ונעצר לאט ובעדינות */
   --ease-shutter: cubic-bezier(0.65, 0, 0.35, 1); /* מתחיל לאט, מאיץ, ונעצר בעדינות */
@@ -451,6 +459,85 @@ body {
 }
 
 /* =========================================
+   המעבר מעמוד הבית לעמוד פרויקט (חלק 1, בעמוד הבית)
+   כאילו "גוללים למטה" לאורך הקו, והוא ממשיך והופך לקו המפריד של הפרויקט:
+   1. התריס נסגר חזרה לקו, והרשימה נעלמת, כדי לפנות את הדרך לקו (is-leaving).
+   2. המסך "יורד": הכותרת עולה ויוצאת, והקו עולה איתה ונמשך עד למטה (is-scrolling).
+   3. עוברים לעמוד הפרויקט, ושם הגלילה ממשיכה (חלק 2, בהמשך הקובץ).
+   הסקריפט ב-index.html מוסיף את המחלקות, ומחשב את המרחק (--scroll-distance).
+   ========================================= */
+/* בזמן המעבר כבר אי אפשר להצביע על דברים אחרים */
+.home.is-leaving {
+  pointer-events: none;
+}
+
+/* הרשימה נעלמת בזמן שהתריס נסגר */
+.project-list {
+  transition: opacity var(--duration-shutter) var(--ease-next);
+}
+
+.is-leaving .project-list {
+  opacity: 0;
+}
+
+/* הקו של המעבר: מחליף את הקו של העמוד, ואותו אפשר להזיז ולמתוח */
+.page-line {
+  position: fixed;
+  z-index: 10;
+  background-color: var(--color-text);
+  transition:
+    top var(--duration-page-out) var(--ease-page-in),
+    height var(--duration-page-out) var(--ease-page-in);
+}
+
+/* הכותרת עולה ויוצאת מהמסך, יחד עם הקו (מאיצה, והגלילה ממשיכה בעמוד הפרויקט) */
+.home-header {
+  transition: transform var(--duration-page-out) var(--ease-page-in);
+}
+
+.is-scrolling .home-header {
+  transform: translateY(calc(-1 * var(--scroll-distance)));
+}
+
+/*
+  חוזרים מעמוד פרויקט: אותה גלילה, הפוך.
+  is-returning: ההתחלה. הכותרת למעלה מחוץ למסך, הרשימה מוסתרת, והקו לכל הגובה.
+  is-coming-back: הכותרת והקו יורדים למקום שלהם ונעצרים בעדינות. אחר כך הרשימה מופיעה.
+  (הסקריפט הקטן בראש index.html מוסיף את is-returning, והסקריפט בסוף העמוד ממשיך)
+*/
+.is-returning .home-header {
+  transform: translateY(-100svh);
+  transition: none;
+}
+
+.is-returning .project-list {
+  opacity: 0;
+  transition: none;
+}
+
+/* הרשימה מחכה עד שהקו במקום, ורק אז מופיעה (כמו שנעלמה: בזמן של התריס) */
+.is-coming-back .project-list {
+  opacity: 0;
+}
+
+.is-returning .home-line__line,
+.is-coming-back .home-line__line {
+  visibility: hidden; /* במקומו זז הקו של המעבר */
+}
+
+.is-coming-back .home-header,
+.is-coming-back .page-line {
+  transition:
+    transform var(--duration-page-in) var(--ease-page-out),
+    top var(--duration-page-in) var(--ease-page-out),
+    height var(--duration-page-in) var(--ease-page-out);
+}
+
+.is-coming-back .home {
+  pointer-events: none;
+}
+
+/* =========================================
    עמוד התהליך (process.html)
    ========================================= */
 .process-page {
@@ -720,7 +807,9 @@ body {
 */
 .project-cover,
 .work-video,
-.work-poster {
+.work-poster,
+.work-collage,
+.work-crop {
   flex-shrink: 0;
   width: min(100%, var(--media-height) * var(--ratio));
 }
@@ -736,8 +825,26 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 10.5%; /* אותו חיתוך כמו בפיגמה */
+}
+
+/* התמונה הראשית של כל פרויקט: הפרופורציות והחיתוך מהפיגמה */
+.project-cover--wikipedia img {
+  object-position: 50% 10.5%;
   mix-blend-mode: screen;
+}
+
+/* הד ארצי: סרטון מההופעה בתחתית העמודה, חתוך לרוחב כמו בפיגמה (661×451) */
+.project-cover--hed-artzi {
+  --ratio: 661 / 451;
+  aspect-ratio: 661 / 451;
+}
+
+.project-cover--hed-artzi video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 24%; /* רואים את הבמה, כמו בפיגמה */
 }
 
 .project-headline {
@@ -818,6 +925,7 @@ em.project-text__highlight {
   font-size: calc(25 * var(--bar-u));
   letter-spacing: -0.04em; /* -1px */
   cursor: pointer;
+  transition: border-radius 0.3s var(--ease-next); /* הפינות משתנות באנימציה, כמו ב-OVERVIEW */
 }
 
 /* hover: הפינות כמעט ישרות */
@@ -841,6 +949,20 @@ em.project-text__highlight {
 
 .project-tab.is-active .project-tab__count {
   display: inline;
+}
+
+/*
+  לחיצה (לרגע, בזמן שהכפתור לחוץ): הכפתור מתמלא בצבע של הפרויקט,
+  עם קו וטקסט לבנים ופינות כמעט ישרות (2), כמו בפיגמה.
+  is-pressed נשאר קצת אחרי הלחיצה (בסקריפט), כדי שגם בלחיצה מהירה רואים את זה.
+*/
+:is(.overview-button, .project-tab):is(:active, .is-pressed) {
+  border-color: var(--color-text);
+  border-radius: calc(2 * var(--bar-u));
+  background-color: var(--color-project-accent);
+  color: var(--color-text);
+  letter-spacing: -0.04em; /* -1px */
+  transition: none;
 }
 
 /*
@@ -950,6 +1072,7 @@ em.project-text__highlight {
 
 @media (prefers-reduced-motion: reduce) {
   .project-tabs,
+  .project-tab,
   .project-next__icon,
   .project-next-label,
   .project-info,
@@ -1028,6 +1151,101 @@ em.project-text__highlight {
 
 .work-video--magazine { --ratio: 2074 / 1536; }
 .work-video--website  { --ratio: 674 / 445; }
+.work-video--hed-poster { --ratio: 1080 / 1920; } /* פוסטר אנכי */
+
+/*
+  קולאז': כמה תמונות מסובבות שמונחות אחת על השנייה, כמו בפיגמה.
+  לכל תמונה במשתנים: המרכז שלה (--x, --y) והרוחב (--w) באחוזים מהקולאז',
+  הפרופורציות (--a) והסיבוב (--r). התמונה האחרונה ב-HTML היא העליונה.
+*/
+.work-collage {
+  position: relative;
+  aspect-ratio: var(--ratio);
+}
+
+.work-collage img {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  aspect-ratio: var(--a, 1);
+  object-fit: cover;
+  transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+}
+
+/* הקולאז'ים בעמוד HED ARTZI */
+.work-collage--sleeves { --ratio: 670 / 1185.49; }
+.work-collage--stickers { --ratio: 424 / 822.98; }
+
+.work-collage__sticker {
+  box-shadow: -0.375px 0.375px 0 0 rgba(0, 0, 0, 0.37); /* הצל הקטן מהפיגמה */
+}
+
+.work-collage__sheet {
+  border-radius: 43.25% / 44.48%; /* הפינות העגולות של דף המדבקות */
+}
+
+.work-collage__sheet--flat {
+  border-radius: 39.77% / 40.92%;
+}
+
+/*
+  שני חומרים זה לצד זה: הרוחב של כל אחד לפי הפרופורציות שלו (--ratio-1, --ratio-2),
+  כך ששניהם יוצאים באותו גובה וממלאים יחד את רוחב העמודה.
+  הם מיושרים למטה, כך שהכיתוב מעל הראשון לא מזיז אותו.
+*/
+.work-pair {
+  container-type: inline-size; /* כדי שהכיתוב יוכל להיות ברוחב של כל הזוג (cqw) */
+  display: flex;
+  align-items: flex-end;
+  gap: calc(12 * var(--u));
+}
+
+/* הכיתוב מעל החומר הראשון נמתח על כל הזוג */
+.work-pair .work-caption {
+  width: 100cqw;
+}
+
+.work-pair > .work-item {
+  min-width: 0;
+}
+
+.work-pair > .work-item:nth-child(1) { flex: calc(var(--ratio-1)) 1 0; }
+.work-pair > .work-item:nth-child(2) { flex: calc(var(--ratio-2)) 1 0; }
+
+/* בתוך זוג, כל חומר ממלא את הרוחב של העמודה שלו */
+.work-pair :is(.work-video, .work-crop, .work-image) {
+  width: 100%;
+}
+
+/* ב-OVERVIEW: שני חומרים רגילים בשורה */
+.is-overview .work-pair {
+  display: contents;
+}
+
+/* כשהחומר צר מהעמודה: באמצע העמודה, כמו בפיגמה */
+.work-item--center :is(.work-image, .work-collage, .work-video) {
+  align-self: center;
+}
+
+/*
+  תמונה חתוכה, כמו בפיגמה: המסגרת בפרופורציות --ratio,
+  והתמונה בתוכה במיקום ובגודל של החיתוך (--crop-top, --crop-left, --crop-width, --crop-height).
+*/
+.work-crop {
+  position: relative;
+  aspect-ratio: var(--ratio);
+  overflow: hidden;
+}
+
+.work-crop img {
+  position: absolute;
+  top: var(--crop-top, 0);
+  left: var(--crop-left, 0);
+  width: var(--crop-width, 100%);
+  height: var(--crop-height, 100%);
+  max-width: none;
+}
 
 /* הפוסטר של האירוע: 657×937, עם החיתוך מהפיגמה */
 .work-poster {
@@ -1051,7 +1269,7 @@ em.project-text__highlight {
   display: block;
   align-self: flex-start; /* שהעמודה לא תמתח אותה לכל הרוחב */
   width: auto;   /* הרוחב לפי הפרופורציות של התמונה */
-  max-width: 100%;
+  max-width: min(100%, var(--max-width, 100%)); /* אפשר להגביל ב---max-width, לפי הגודל בפיגמה */
   max-height: var(--media-height); /* לא גבוהה מהמסך */
 }
 
@@ -1170,8 +1388,95 @@ em.project-text__highlight {
   min-height: 2.2em; /* שתי שורות, כדי שכל התמונות יתחילו באותו גובה */
 }
 
+/* חומר בלי כיתוב: מתחיל באותו גובה כמו כל השאר */
+.is-overview .work-item:not(:has(.work-caption)) {
+  padding-top: calc(18 * 2.2 * var(--u) + 12 * var(--u));
+}
+
+/*
+  הלוגו של הד ארצי שמגיב לקול (hed-voice.js).
+  ברוחב העמודה, בפרופורציות של הפריים בפיגמה (664×228).
+  הכפתור שמבקש את המיקרופון נעלם אחרי שהמיקרופון פועל.
+*/
+.hed-voice {
+  --voice-color: var(--color-hed-artzi);
+  --voice-background: var(--color-background);
+  position: relative;
+  width: 100%;
+  aspect-ratio: 664 / 228;
+  overflow: hidden;
+  background-color: var(--voice-background);
+}
+
+.hed-voice canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+}
+
+/*
+  בפינה: טקסט קטן (ALLOW MICROPHONE, ואחרי ההפעלה SPEAK) ואייקון של מיקרופון.
+  שניהם כפתור אחד. לבן, ובזמן שהמיקרופון פועל (או ב-hover) בצבע של הפרויקט.
+*/
+.hed-voice__mic {
+  position: absolute;
+  right: calc(12 * var(--u));
+  bottom: calc(12 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font-family: var(--font-caption);
+  font-size: calc(18 * var(--u));
+  line-height: 1;
+  transition: color 0.3s var(--ease-next), opacity 0.3s var(--ease-next);
+}
+
+/* האייקון מצויר כ"מסכה", כדי שיקבל את צבע הטקסט */
+.hed-voice__icon {
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: url("images/mic.svg") center / contain no-repeat;
+  mask: url("images/mic.svg") center / contain no-repeat;
+}
+
+.hed-voice__mic:hover,
+.hed-voice__mic.is-on {
+  color: var(--voice-color);
+}
+
+/* אין רשות למיקרופון: הכפתור מתעמעם */
+.hed-voice__mic.is-blocked {
+  opacity: 0.3;
+}
+
+/* ב-OVERVIEW: חומר עם הלוגו ועם תמונה: שניהם זה לצד זה, והכיתוב מעל שניהם */
+.is-overview .work-item:has(.hed-voice) {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: start;
+  column-gap: calc(20.77 * var(--u));
+}
+
+.is-overview .work-item:has(.hed-voice) .work-caption {
+  grid-column: 1 / -1;
+}
+
+/* ב-OVERVIEW: בגובה של השורה כמו כל החומר, ובאותן פרופורציות כמו התמונה שלידו (הלוגו תמיד באמצע) */
+.is-overview .hed-voice {
+  width: auto;
+  height: var(--overview-media-height);
+  aspect-ratio: 664 / 919;
+  align-self: flex-start;
+}
+
 /* כל חומר בגובה של השורה, והרוחב לפי הפרופורציות שלו */
-.is-overview :is(.work-video, .work-image, .work-poster) {
+.is-overview :is(.work-video, .work-image, .work-poster, .work-collage, .work-crop) {
   align-self: flex-start;
   width: auto;
   height: var(--overview-media-height);
@@ -1240,6 +1545,322 @@ em.project-text__highlight {
   .full-view,
   .overview-button {
     transition: none;
+  }
+}
+
+/* =========================================
+   המעבר מעמוד הבית לעמוד פרויקט (חלק 2, בעמוד הפרויקט)
+   הגלילה ממשיכה: הקו כבר לכל הגובה, והעמוד עולה מלמטה ונעצר בעדינות.
+   is-entering: ההתחלה. הקו איפה שהקו של עמוד הבית נגמר, והעמודות עוד למטה, מחוץ למסך.
+   is-arriving: הקו נכנס למקום שלו, והעמודות עולות למקום שלהן.
+   ========================================= */
+.is-entering .project-divider {
+  top: 0;
+  height: 100%;
+  left: var(--enter-line-left);
+  width: var(--enter-line-width);
+  transition: none;
+}
+
+.is-entering :is(.project-info, .project-work) {
+  transform: translateY(var(--distance-page));
+  transition: none;
+}
+
+.is-arriving .project-divider {
+  transition:
+    top var(--duration-page-in) var(--ease-page-out),
+    height var(--duration-page-in) var(--ease-page-out),
+    left var(--duration-page-in) var(--ease-page-out),
+    width var(--duration-page-in) var(--ease-page-out);
+}
+
+.is-arriving :is(.project-info, .project-work) {
+  transition: transform var(--duration-page-in) var(--ease-page-out);
+}
+
+/*
+  החזרה לעמוד הבית: אותה גלילה, הפוך.
+  is-leaving-page: העמודות יורדות ויוצאות מהמסך, והקו נמתח לכל הגובה, במקום של הקו של עמוד הבית.
+  (project-page.js מחשב איפה הקו של עמוד הבית: --exit-line-left, --exit-line-width)
+*/
+.is-leaving-page .project-divider {
+  top: 0;
+  height: 100%;
+  left: var(--exit-line-left);
+  width: var(--exit-line-width);
+  transition:
+    top var(--duration-page-out) var(--ease-page-in),
+    height var(--duration-page-out) var(--ease-page-in),
+    left var(--duration-page-out) var(--ease-page-in),
+    width var(--duration-page-out) var(--ease-page-in);
+}
+
+.is-leaving-page :is(.project-info, .project-work) {
+  transform: translateY(100svh);
+  pointer-events: none;
+  transition: transform var(--duration-page-out) var(--ease-page-in);
+}
+
+/*
+  נכנסים מהשער של הד ארצי: הקו "דוחף" לתוך העמוד, כמו בחזרה מ-OVERVIEW.
+  is-pushed-in: ההתחלה. הקו במקום שבו היה בשער, והעמודה השמאלית מוסתרת משמאל לו.
+  is-pushing: הקו זז למקום שלו ודוחף את העמודה השמאלית, והעמודה הימנית מופיעה.
+  (הסקריפט הקטן בראש העמוד שם את המקום של הקו ב- --push-line-*)
+*/
+.is-pushed-in .project-divider {
+  left: var(--push-line-left);
+  top: var(--push-line-top);
+  width: var(--push-line-width);
+  height: var(--push-line-height);
+  transition: none;
+}
+
+.is-pushed-in .project-info {
+  /* הקצה הימני של העמודה צמוד לקו (בין העמודה לקו יש 23) */
+  transform: translateX(calc(var(--push-line-left) - 56 * var(--u) - var(--left-width)));
+  opacity: 0;
+  transition: none;
+}
+
+.is-pushed-in .project-work {
+  opacity: 0;
+  transform: translateY(var(--distance-reveal));
+  transition: none;
+}
+
+.is-pushing .project-divider {
+  transition:
+    left var(--duration-overview) var(--ease-next),
+    top var(--duration-overview) var(--ease-next),
+    width var(--duration-overview) var(--ease-next),
+    height var(--duration-overview) var(--ease-next);
+}
+
+.is-pushing .project-info {
+  transition:
+    transform var(--duration-overview) var(--ease-next),
+    opacity var(--duration-overview) var(--ease-next);
+}
+
+.is-pushing .project-work {
+  transition:
+    opacity var(--duration-reveal) var(--ease-reveal) 0.4s,
+    transform var(--duration-reveal) var(--ease-reveal) 0.4s;
+}
+
+/* =========================================
+   השער של הד ארצי (hed-artzi-gate.html)
+   הלוגו שמגיב לקול באמצע, ומתחתיו "אמרו את הסיסמה".
+   המידות מהפיגמה (1440×1024): לרוחב לפי רוחב המסך, לגובה לפי גובה המסך.
+   ========================================= */
+.gate {
+  --uw: calc(100vw / 1440);  /* פיקסל בפיגמה, לרוחב */
+  --uh: calc(100svh / 1024); /* פיקסל בפיגמה, לגובה */
+  --u: min(var(--uw), var(--uh)); /* לגדלים (טקסט, כפתורים) */
+  --bar-u: min(1px, 100vw / 1378);
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* למעלה משמאל: חזרה לעמוד הבית (כמו בעמוד פרויקט) */
+.gate-header {
+  position: absolute;
+  top: calc(21 * var(--uh));
+  left: calc(33 * var(--uw));
+}
+
+/* למעלה מימין: חץ שנכנס לפרויקט בלי סיסמה */
+.gate-skip {
+  position: absolute;
+  top: calc(21 * var(--uh));
+  right: calc(26 * var(--uw));
+  display: flex;
+  align-items: center;
+  height: calc(40 * var(--bar-u));
+}
+
+.gate-skip:hover .project-next__icon {
+  background-color: var(--color-project-accent);
+}
+
+/* הקו: בצד שמאל, לכל הגובה (חוץ מהבר) */
+.gate-line {
+  position: absolute;
+  top: calc(76 * var(--uh));
+  height: calc(926 * var(--uh)); /* (תמונה לא נמתחת בין top ל-bottom, לכן גובה מפורש) */
+  left: calc(69 * var(--uw));
+  width: max(2px, calc(6 * var(--u)));
+  z-index: 1; /* מעל האזור של הלוגו, שנוגע בקו */
+}
+
+/* הלוגו: מימין לקו, באמצע הגובה */
+.gate-voice {
+  position: absolute;
+  top: calc(287 * var(--uh));
+  left: calc(72 * var(--uw));
+  width: calc(1312 * var(--uw));
+  height: calc(449 * var(--uh));
+  aspect-ratio: auto;
+}
+
+/* מתחת ללוגו: המיקרופון, "אמרו את הסיסמה" והרמז, באמצע המסך */
+.gate-text {
+  position: absolute;
+  top: calc(803 * var(--uh));
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(35 * var(--u));
+  color: var(--color-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.gate-mic {
+  --voice-color: var(--color-hed-artzi);
+  --voice-background: var(--color-background);
+  display: flex;
+  align-items: center;
+  height: calc(35 * var(--uh));
+  margin-bottom: calc(36 * var(--uh));
+}
+
+.gate-mic .hed-voice__mic {
+  position: static;
+}
+
+/* הרווח בין "SAY THE PASSWORD" לסיסמה, כמו בפיגמה */
+.gate-text p + p {
+  margin-top: calc(8 * var(--uh));
+}
+
+/* הסיסמה (INDUSTRIAL PEACE): לבנה, וכשהיא נאמרה בצבע של הפרויקט */
+.gate-text__word {
+  color: var(--color-text);
+  transition: color 0.3s var(--ease-next);
+}
+
+/* המרקם מהפיגמה: קצוות מחוספסים (הפילטר נמצא ב-hed-artzi-gate.html) */
+.gate-text__word {
+  filter: url(#gate-texture);
+}
+
+/* הסיסמה נאמרה: מהבהבת כמה פעמים בכתום ולבן, ונשארת כתומה עד שנכנסים */
+.is-passed .gate-text__word {
+  color: var(--color-project-accent);
+  animation: gate-flash var(--duration-gate-flash) steps(1) 6;
+}
+
+@keyframes gate-flash {
+  0%   { color: var(--color-project-accent); }
+  50%  { color: var(--color-text); }
+}
+
+.gate-filters {
+  position: absolute; /* לא תופס מקום בעמוד */
+}
+
+/* ---------- המעברים של השער ---------- */
+.gate-header,
+.gate-skip,
+.gate-voice,
+.gate-text {
+  transition: opacity var(--duration-shutter) var(--ease-next);
+}
+
+/* הגעה מעמוד הבית: הקו מתחיל איפה שהקו של עמוד הבית נגמר, והתוכן עוד למטה */
+.is-entering .gate-line {
+  top: 0;
+  height: 100%;
+  left: var(--enter-line-left);
+  width: var(--enter-line-width);
+}
+
+.is-entering :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
+  transform: translateY(var(--distance-page));
+}
+
+.is-arriving .gate-line {
+  transition:
+    top var(--duration-page-in) var(--ease-page-out),
+    height var(--duration-page-in) var(--ease-page-out),
+    left var(--duration-page-in) var(--ease-page-out),
+    width var(--duration-page-in) var(--ease-page-out);
+}
+
+.is-arriving :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
+  transition: transform var(--duration-page-in) var(--ease-page-out);
+}
+
+/* הסיסמה התקבלה: הכל נעלם חוץ מהקו (שימשיך לדחוף בעמוד הפרויקט) */
+.is-leaving-gate :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* חזרה לעמוד הבית: התוכן יורד, והקו עובר לאמצע ונמתח לכל הגובה */
+.is-leaving-home .gate-line {
+  top: 0;
+  height: 100%;
+  left: var(--exit-line-left);
+  width: var(--exit-line-width);
+  transition:
+    top var(--duration-page-out) var(--ease-page-in),
+    height var(--duration-page-out) var(--ease-page-in),
+    left var(--duration-page-out) var(--ease-page-in),
+    width var(--duration-page-out) var(--ease-page-in);
+}
+
+.is-leaving-home :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
+  transform: translateY(100svh);
+  pointer-events: none;
+  transition: transform var(--duration-page-out) var(--ease-page-in);
+}
+
+/* טלפון וטאבלט לאורך: אחד מתחת לשני, בלי הקו */
+@media (max-width: 900px), (orientation: portrait) {
+  .gate {
+    --u: calc(100vw / 1440 * 2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    padding: 21px 16px;
+  }
+
+  .gate-header {
+    top: 21px;
+    left: 16px;
+  }
+
+  .gate-skip {
+    top: 21px;
+    right: 16px;
+  }
+
+  .gate-line {
+    display: none;
+  }
+
+  .gate-voice,
+  .gate-text {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  .gate-voice {
+    aspect-ratio: 1312 / 449;
+  }
+
+  .gate-text {
+    font-size: 20px;
+    white-space: normal;
   }
 }
 
@@ -1325,6 +1946,12 @@ em.project-text__highlight {
   --cursor-size: 36px;
   --cursor-green: var(--color-project-accent); /* בעמודי הפרויקטים */
   --duration-cursor: 0.3s;
+}
+
+/* עמוד HED ARTZI: אדום במקום הירוק, גם בעכבר */
+.theme-hed-artzi {
+  --color-project-accent: var(--color-hed-artzi);
+  --cursor-green: var(--color-hed-artzi);
 }
 
 /* בעמוד הבית הירוק של ה-hover אחר, אז גם העכבר מקבל אותו */

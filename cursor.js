@@ -13,7 +13,7 @@ if (hasMouse) {
   document.documentElement.classList.add("has-custom-cursor");
 
   // מה נחשב לחיץ
-  const clickableSelector = "a[href], button, .project-next__arrow, .project-next-label";
+  const clickableSelector = "a[href], button, .project-next__arrow, .project-next-label, .hed-voice canvas";
 
   // העיגול זז עם העכבר
   window.addEventListener("mousemove", (event) => {

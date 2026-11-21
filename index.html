@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=26">
+  <link rel="stylesheet" href="styles.css?v=49">
+  <!-- חוזרים מעמוד פרויקט? העמוד מתחיל באמצע הגלילה (הסקריפט בסוף העמוד ממשיך את המעבר) -->
+  <script>
+    if (sessionStorage.getItem("return-home")) {
+      document.documentElement.classList.add("is-returning");
+    }
+  </script>
 </head>
 <body>
 
@@ -51,9 +57,11 @@
         <span class="project__name">CHICK-CHECK</span>
         <span class="project__tag"><span class="project__tag-text">UX/UI</span></span>
       </li>
-      <li class="project" data-project="hed-artzi" tabindex="0">
-        <span class="project__name">HED ARTZI REBRANDING</span>
-        <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+      <li class="project" data-project="hed-artzi">
+        <a class="project__link" href="hed-artzi-gate.html">
+          <span class="project__name">HED ARTZI REBRANDING</span>
+          <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+        </a>
       </li>
       <li class="project" data-project="wikipedia-football">
         <a class="project__link" href="wikipedia-football.html">
@@ -104,10 +112,110 @@
       trigger.addEventListener("focusin", updatePreview);
       trigger.addEventListener("focusout", () => setTimeout(updatePreview)); // אחרי שהפוקוס עבר
     });
+
+    /*
+      המעבר לעמוד פרויקט (רק במחשב, ורק אם לא ביקשו פחות תנועה), כאילו גוללים למטה לאורך הקו:
+      1. התריס נסגר חזרה לקו, והרשימה נעלמת.
+      2. המסך "יורד": הכותרת והקו עולים, והקו נמשך עד למטה.
+      3. עוברים לעמוד הפרויקט, ושם הקו ממשיך והופך לקו המפריד.
+    */
+    const home = document.querySelector(".home");
+    const homeLine = document.querySelector(".home-line__line");
+    const shutterDuration = 600; // כמו --duration-shutter ב-CSS
+    const scrollDuration = 600;  // כמו --duration-page-out ב-CSS
+    const desktopLayout = window.matchMedia("(min-width: 901px) and (orientation: landscape)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    document.querySelectorAll(".project__link").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (!desktopLayout.matches || reducedMotion.matches) return; // מעבר רגיל
+        event.preventDefault();
+        leaveTo(link.href);
+      });
+    });
+
+    function leaveTo(address) {
+      // 1. התריס נסגר והרשימה נעלמת
+      home.classList.add("is-leaving");
+      hoveredTrigger = null;
+      previewWindow.classList.remove("is-open");
+      document.activeElement.blur();
+
+      setTimeout(() => {
+        // קו חדש בדיוק במקום של הקו של העמוד, שאותו אפשר להזיז ולמתוח
+        const lineBox = homeLine.getBoundingClientRect();
+        const screenHeight = document.documentElement.clientHeight; // הגובה של החלון
+        const pageLine = document.createElement("div");
+        pageLine.className = "page-line";
+        pageLine.style.left = lineBox.left + "px";
+        pageLine.style.width = lineBox.width + "px";
+        pageLine.style.top = lineBox.top + "px";
+        pageLine.style.height = lineBox.height + "px";
+        document.body.append(pageLine);
+        homeLine.style.visibility = "hidden";
+        pageLine.offsetHeight; // (הדפדפן מצייר את הקו לפני שהוא זז)
+
+        // 2. גוללים מסך שלם למטה: הכותרת והקצה העליון של הקו עולים ויוצאים, והקו נמשך עד למטה
+        home.style.setProperty("--scroll-distance", screenHeight + "px");
+        home.classList.add("is-scrolling");
+        pageLine.style.top = lineBox.top - screenHeight + "px";
+        pageLine.style.height = 2 * screenHeight - lineBox.top + "px"; // הקצה התחתון: בתחתית המסך
+
+        // 3. עמוד הפרויקט ימשיך מאותו קו (שומרים איפה הוא)
+        setTimeout(() => {
+          sessionStorage.setItem("enter-line", JSON.stringify({ left: lineBox.left, width: lineBox.width }));
+          window.location.href = address;
+        }, scrollDuration);
+      }, shutterDuration);
+    }
+
+    /*
+      חוזרים מעמוד פרויקט: אותה גלילה, הפוך.
+      הקו מתחיל לכל הגובה, והכותרת למעלה מחוץ למסך. שניהם יורדים למקום שלהם,
+      ואז הרשימה מופיעה.
+    */
+    const homeRoot = document.documentElement;
+    const comeBackDuration = 1000; // כמו --duration-page-in ב-CSS
+
+    if (homeRoot.classList.contains("is-returning")) {
+      sessionStorage.removeItem("return-home"); // ברענון של העמוד המעבר לא חוזר
+      const lineBox = homeLine.getBoundingClientRect();
+      const screenHeight = homeRoot.clientHeight;
+
+      // הקו של המעבר: מתחיל במקום שבו נגמרה הגלילה בעמוד הפרויקט (לכל הגובה)
+      const pageLine = document.createElement("div");
+      pageLine.className = "page-line";
+      pageLine.style.left = lineBox.left + "px";
+      pageLine.style.width = lineBox.width + "px";
+      pageLine.style.top = lineBox.top - screenHeight + "px";
+      pageLine.style.height = 2 * screenHeight - lineBox.top + "px";
+      document.body.append(pageLine);
+
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        homeRoot.classList.add("is-coming-back");
+        homeRoot.classList.remove("is-returning");
+        pageLine.style.top = lineBox.top + "px";
+        pageLine.style.height = lineBox.height + "px";
+      }));
+
+      // בסוף: הקו של העמוד חוזר למקום של הקו של המעבר, והרשימה מופיעה
+      setTimeout(() => {
+        homeRoot.classList.remove("is-coming-back");
+        pageLine.remove();
+      }, comeBackDuration);
+    }
+
+    // חזרה לעמוד הבית בכפתור "אחורה" של הדפדפן: העמוד חוזר למצב הרגיל
+    window.addEventListener("pageshow", (event) => {
+      if (!event.persisted) return;
+      home.classList.remove("is-leaving", "is-scrolling");
+      homeLine.style.visibility = "";
+      document.querySelectorAll(".page-line").forEach((line) => line.remove());
+    });
   </script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה ירוק על דברים לחיצים -->
-  <script src="cursor.js"></script>
+  <script src="cursor.js?v=3"></script>
 
 </body>
 </html>
