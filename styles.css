@@ -1739,9 +1739,9 @@ em.project-text__highlight {
   margin-top: calc(8 * var(--uh));
 }
 
-/* הסיסמה (INDUSTRIAL PEACE): לבנה, וכשהיא נאמרה בצבע של הפרויקט */
+/* הסיסמה (INDUSTRIAL PEACE): אפורה כמו הטקסט שמעליה, וכשהיא נאמרה מהבהבת בצבע של הפרויקט */
 .gate-text__word {
-  color: var(--color-text);
+  color: var(--color-muted);
   transition: color 0.3s var(--ease-next);
 }
 
