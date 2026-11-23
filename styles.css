@@ -15,6 +15,7 @@
   /* צבעים: עמודי הפרויקטים */
   --color-project-accent: #0ae60d; /* ירוק: הלשונית הפעילה ומילים מודגשות */
   --color-hed-artzi: #fe3200;      /* אדום: הצבע של עמוד HED ARTZI (במקום הירוק) */
+  --color-hed-artzi-background: #131313; /* אפור כהה מאוד: הרקע בעמוד החדש של HED ARTZI */
 
   /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
   --u: min(100vw / 1440, 100vh / 1024);
@@ -25,6 +26,7 @@
   --font-symbol: "Arial Unicode MS", "Apple Symbols", sans-serif; /* הסימן ∅ (חסר בפונט ArbelHagilda) */
   --font-process: "EditorSans Normal", sans-serif; /* הפונט של עמוד התהליך */
   --font-project-headline: "Inter", sans-serif;        /* הכותרת הגדולה בעמוד פרויקט */
+  --font-tab: "Inter", sans-serif;                     /* הלשוניות ו-OVERVIEW בעמודי הפרויקטים (SemiBold) */
   --font-project-text: "Poly", serif;                   /* הטקסט על הפרויקט */
   --font-caption: "TheBasics Regular", sans-serif;      /* הכיתובים מעל התמונות */
   --font-caption-number: "TheBasics Black", sans-serif; /* המספר בכיתוב (1 >) */
@@ -54,7 +56,6 @@
   --ease-page-in: cubic-bezier(0.55, 0, 1, 0.45); /* מתחיל לאט ומאיץ */
   --ease-page-out: cubic-bezier(0.22, 1, 0.36, 1); /* יוצא מהר ונעצר לאט */
   --distance-page: 60svh;    /* מאיפה עמוד הפרויקט עולה (מתחת למסך) */
-  --duration-gate-flash: 0.16s; /* הבהוב אחד של הסיסמה בשער של הד ארצי (כתום ↔ לבן) */
   --distance-reveal: 24px;  /* מאיזה מרחק מלמטה התוכן עולה */
   --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1); /* יוצא מהר ונעצר לאט ובעדינות */
   --ease-shutter: cubic-bezier(0.65, 0, 0.35, 1); /* מתחיל לאט, מאיץ, ונעצר בעדינות */
@@ -87,6 +88,12 @@
   font-family: "Inter";
   font-weight: bold;
   src: url("fonts/inter-bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 600; /* SemiBold: הטקסט בלשוניות */
+  src: url("fonts/inter-semibold.woff2") format("woff2");
 }
 
 @font-face {
@@ -776,6 +783,11 @@ body {
 .overview-button {
   margin-left: auto;
   margin-right: calc(7 * var(--u));
+  padding-top: 0; /* ב-Inter הטקסט כבר באמצע */
+  font-family: var(--font-tab); /* כמו בלשוניות: Inter SemiBold, 22, ריווח -1% */
+  font-size: calc(22 * var(--bar-u));
+  font-weight: 600; /* SemiBold */
+  letter-spacing: -0.01em;
   transition: border-radius 0.3s var(--ease-next);
 }
 
@@ -787,7 +799,6 @@ body {
 .overview-button img {
   width: calc(24 * var(--bar-u));
   height: calc(24 * var(--bar-u));
-  margin-top: -0.12em; /* העין נשארת באמצע, רק הטקסט יורד */
 }
 
 /* התמונה, הכותרת והטקסט: נגללים בתוך העמודה */
@@ -831,20 +842,6 @@ body {
 .project-cover--wikipedia img {
   object-position: 50% 10.5%;
   mix-blend-mode: screen;
-}
-
-/* הד ארצי: סרטון מההופעה בתחתית העמודה, חתוך לרוחב כמו בפיגמה (661×451) */
-.project-cover--hed-artzi {
-  --ratio: 661 / 451;
-  aspect-ratio: 661 / 451;
-}
-
-.project-cover--hed-artzi video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 24%; /* רואים את הבמה, כמו בפיגמה */
 }
 
 .project-headline {
@@ -916,14 +913,17 @@ em.project-text__highlight {
     transform var(--duration-next) var(--ease-next);
 }
 
-/* לשונית רגילה: קו דק יותר (3) וריווח אותיות צפוף, כמו בקומפוננטה בפיגמה */
+/* לשונית רגילה: קו דק יותר (3), והטקסט ב-Inter SemiBold, 22, ריווח -1% (כמו בפיגמה) */
 .project-tab {
   height: calc(40 * var(--bar-u));
   padding-inline: calc(9 * var(--bar-u)); /* 12 פחות 3 של הקו */
+  padding-top: 0; /* ב-Inter הטקסט כבר באמצע (התיקון של ArbelHagilda לא צריך כאן) */
   border-width: calc(3 * var(--bar-u));
   border-radius: calc(20 * var(--bar-u));
-  font-size: calc(25 * var(--bar-u));
-  letter-spacing: -0.04em; /* -1px */
+  font-family: var(--font-tab);
+  font-size: calc(22 * var(--bar-u));
+  font-weight: 600; /* SemiBold */
+  letter-spacing: -0.01em; /* -1% */
   cursor: pointer;
   transition: border-radius 0.3s var(--ease-next); /* הפינות משתנות באנימציה, כמו ב-OVERVIEW */
 }
@@ -938,7 +938,6 @@ em.project-text__highlight {
   border-color: var(--color-project-accent);
   border-radius: calc(1 * var(--bar-u));
   color: var(--color-project-accent);
-  letter-spacing: -0.03em; /* -0.75px */
   cursor: default;
 }
 
@@ -963,6 +962,11 @@ em.project-text__highlight {
   color: var(--color-text);
   letter-spacing: -0.04em; /* -1px */
   transition: none;
+}
+
+/* בלשוניות וב-OVERVIEW הריווח נשאר -1% גם בלחיצה */
+:is(.overview-button, .project-tab):is(:active, .is-pressed) {
+  letter-spacing: -0.01em;
 }
 
 /*
@@ -1138,6 +1142,11 @@ em.project-text__highlight {
   color: var(--color-muted);
 }
 
+/* הכיתובים מעל התמונות: תמיד 18 פיקסלים, בכל גודל מסך ובכל האתר */
+.work-caption {
+  font-size: 18px;
+}
+
 .work-caption b {
   font-family: var(--font-caption-number);
   font-weight: normal;
@@ -1151,7 +1160,6 @@ em.project-text__highlight {
 
 .work-video--magazine { --ratio: 2074 / 1536; }
 .work-video--website  { --ratio: 674 / 445; }
-.work-video--hed-poster { --ratio: 1080 / 1920; } /* פוסטר אנכי */
 
 /*
   קולאז': כמה תמונות מסובבות שמונחות אחת על השנייה, כמו בפיגמה.
@@ -1174,7 +1182,10 @@ em.project-text__highlight {
 }
 
 /* הקולאז'ים בעמוד HED ARTZI */
-.work-collage--sleeves { --ratio: 670 / 1185.49; }
+.work-collage--sleeves {
+  --ratio: 670 / 1185.49;
+  width: 100%; /* התקליטים תמיד גדולים, ברוחב כל העמודה (כמו בפיגמה), גם אם הם גבוהים מהמסך */
+}
 .work-collage--stickers { --ratio: 424 / 822.98; }
 
 .work-collage__sticker {
@@ -1603,268 +1614,6 @@ em.project-text__highlight {
 }
 
 /*
-  נכנסים מהשער של הד ארצי: הקו "דוחף" לתוך העמוד, כמו בחזרה מ-OVERVIEW.
-  is-pushed-in: ההתחלה. הקו במקום שבו היה בשער, והעמודה השמאלית מוסתרת משמאל לו.
-  is-pushing: הקו זז למקום שלו ודוחף את העמודה השמאלית, והעמודה הימנית מופיעה.
-  (הסקריפט הקטן בראש העמוד שם את המקום של הקו ב- --push-line-*)
-*/
-.is-pushed-in .project-divider {
-  left: var(--push-line-left);
-  top: var(--push-line-top);
-  width: var(--push-line-width);
-  height: var(--push-line-height);
-  transition: none;
-}
-
-.is-pushed-in .project-info {
-  /* הקצה הימני של העמודה צמוד לקו (בין העמודה לקו יש 23) */
-  transform: translateX(calc(var(--push-line-left) - 56 * var(--u) - var(--left-width)));
-  opacity: 0;
-  transition: none;
-}
-
-.is-pushed-in .project-work {
-  opacity: 0;
-  transform: translateY(var(--distance-reveal));
-  transition: none;
-}
-
-.is-pushing .project-divider {
-  transition:
-    left var(--duration-overview) var(--ease-next),
-    top var(--duration-overview) var(--ease-next),
-    width var(--duration-overview) var(--ease-next),
-    height var(--duration-overview) var(--ease-next);
-}
-
-.is-pushing .project-info {
-  transition:
-    transform var(--duration-overview) var(--ease-next),
-    opacity var(--duration-overview) var(--ease-next);
-}
-
-.is-pushing .project-work {
-  transition:
-    opacity var(--duration-reveal) var(--ease-reveal) 0.4s,
-    transform var(--duration-reveal) var(--ease-reveal) 0.4s;
-}
-
-/* =========================================
-   השער של הד ארצי (hed-artzi-gate.html)
-   הלוגו שמגיב לקול באמצע, ומתחתיו "אמרו את הסיסמה".
-   המידות מהפיגמה (1440×1024): לרוחב לפי רוחב המסך, לגובה לפי גובה המסך.
-   ========================================= */
-.gate {
-  --uw: calc(100vw / 1440);  /* פיקסל בפיגמה, לרוחב */
-  --uh: calc(100svh / 1024); /* פיקסל בפיגמה, לגובה */
-  --u: min(var(--uw), var(--uh)); /* לגדלים (טקסט, כפתורים) */
-  --bar-u: min(1px, 100vw / 1378);
-  position: relative;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-}
-
-/* למעלה משמאל: חזרה לעמוד הבית (כמו בעמוד פרויקט) */
-.gate-header {
-  position: absolute;
-  top: calc(21 * var(--uh));
-  left: calc(33 * var(--uw));
-}
-
-/* למעלה מימין: חץ שנכנס לפרויקט בלי סיסמה */
-.gate-skip {
-  position: absolute;
-  top: calc(21 * var(--uh));
-  right: calc(26 * var(--uw));
-  display: flex;
-  align-items: center;
-  height: calc(40 * var(--bar-u));
-}
-
-.gate-skip:hover .project-next__icon {
-  background-color: var(--color-project-accent);
-}
-
-/* הקו: בצד שמאל, לכל הגובה (חוץ מהבר) */
-.gate-line {
-  position: absolute;
-  top: calc(76 * var(--uh));
-  height: calc(926 * var(--uh)); /* (תמונה לא נמתחת בין top ל-bottom, לכן גובה מפורש) */
-  left: calc(69 * var(--uw));
-  width: max(2px, calc(6 * var(--u)));
-  z-index: 1; /* מעל האזור של הלוגו, שנוגע בקו */
-}
-
-/* הלוגו: מימין לקו, באמצע הגובה */
-.gate-voice {
-  position: absolute;
-  top: calc(287 * var(--uh));
-  left: calc(72 * var(--uw));
-  width: calc(1312 * var(--uw));
-  height: calc(449 * var(--uh));
-  aspect-ratio: auto;
-}
-
-/* מתחת ללוגו: המיקרופון, "אמרו את הסיסמה" והרמז, באמצע המסך */
-.gate-text {
-  position: absolute;
-  top: calc(803 * var(--uh));
-  left: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: calc(35 * var(--u));
-  color: var(--color-muted);
-  text-align: center;
-  white-space: nowrap;
-}
-
-.gate-mic {
-  --voice-color: var(--color-hed-artzi);
-  --voice-background: var(--color-background);
-  display: flex;
-  align-items: center;
-  height: calc(35 * var(--uh));
-  margin-bottom: calc(36 * var(--uh));
-}
-
-.gate-mic .hed-voice__mic {
-  position: static;
-}
-
-/* הרווח בין "SAY THE PASSWORD" לסיסמה, כמו בפיגמה */
-.gate-text p + p {
-  margin-top: calc(8 * var(--uh));
-}
-
-/* הסיסמה (INDUSTRIAL PEACE): אפורה כמו הטקסט שמעליה, וכשהיא נאמרה מהבהבת בצבע של הפרויקט */
-.gate-text__word {
-  color: var(--color-muted);
-  transition: color 0.3s var(--ease-next);
-}
-
-/* המרקם מהפיגמה: קצוות מחוספסים (הפילטר נמצא ב-hed-artzi-gate.html) */
-.gate-text__word {
-  filter: url(#gate-texture);
-}
-
-/* הסיסמה נאמרה: מהבהבת כמה פעמים בכתום ולבן, ונשארת כתומה עד שנכנסים */
-.is-passed .gate-text__word {
-  color: var(--color-project-accent);
-  animation: gate-flash var(--duration-gate-flash) steps(1) 6;
-}
-
-@keyframes gate-flash {
-  0%   { color: var(--color-project-accent); }
-  50%  { color: var(--color-text); }
-}
-
-.gate-filters {
-  position: absolute; /* לא תופס מקום בעמוד */
-}
-
-/* ---------- המעברים של השער ---------- */
-.gate-header,
-.gate-skip,
-.gate-voice,
-.gate-text {
-  transition: opacity var(--duration-shutter) var(--ease-next);
-}
-
-/* הגעה מעמוד הבית: הקו מתחיל איפה שהקו של עמוד הבית נגמר, והתוכן עוד למטה */
-.is-entering .gate-line {
-  top: 0;
-  height: 100%;
-  left: var(--enter-line-left);
-  width: var(--enter-line-width);
-}
-
-.is-entering :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
-  transform: translateY(var(--distance-page));
-}
-
-.is-arriving .gate-line {
-  transition:
-    top var(--duration-page-in) var(--ease-page-out),
-    height var(--duration-page-in) var(--ease-page-out),
-    left var(--duration-page-in) var(--ease-page-out),
-    width var(--duration-page-in) var(--ease-page-out);
-}
-
-.is-arriving :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
-  transition: transform var(--duration-page-in) var(--ease-page-out);
-}
-
-/* הסיסמה התקבלה: הכל נעלם חוץ מהקו (שימשיך לדחוף בעמוד הפרויקט) */
-.is-leaving-gate :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* חזרה לעמוד הבית: התוכן יורד, והקו עובר לאמצע ונמתח לכל הגובה */
-.is-leaving-home .gate-line {
-  top: 0;
-  height: 100%;
-  left: var(--exit-line-left);
-  width: var(--exit-line-width);
-  transition:
-    top var(--duration-page-out) var(--ease-page-in),
-    height var(--duration-page-out) var(--ease-page-in),
-    left var(--duration-page-out) var(--ease-page-in),
-    width var(--duration-page-out) var(--ease-page-in);
-}
-
-.is-leaving-home :is(.gate-header, .gate-skip, .gate-voice, .gate-text) {
-  transform: translateY(100svh);
-  pointer-events: none;
-  transition: transform var(--duration-page-out) var(--ease-page-in);
-}
-
-/* טלפון וטאבלט לאורך: אחד מתחת לשני, בלי הקו */
-@media (max-width: 900px), (orientation: portrait) {
-  .gate {
-    --u: calc(100vw / 1440 * 2);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 24px;
-    padding: 21px 16px;
-  }
-
-  .gate-header {
-    top: 21px;
-    left: 16px;
-  }
-
-  .gate-skip {
-    top: 21px;
-    right: 16px;
-  }
-
-  .gate-line {
-    display: none;
-  }
-
-  .gate-voice,
-  .gate-text {
-    position: static;
-    width: 100%;
-    height: auto;
-  }
-
-  .gate-voice {
-    aspect-ratio: 1312 / 449;
-  }
-
-  .gate-text {
-    font-size: 20px;
-    white-space: normal;
-  }
-}
-
-/*
   טלפון וטאבלט לאורך: העמודות אחת מתחת לשנייה, והעמוד כולו נגלל.
   u כאן נקבע לפי רוחב המסך, כדי שהעמודה (674) תמלא אותו.
 */
@@ -1989,4 +1738,254 @@ em.project-text__highlight {
 /* על משהו לחיץ: העיגול נצבע בירוק */
 .cursor.is-on-clickable {
   background-color: var(--cursor-green);
+}
+
+
+/* =========================================
+   סקיצה: העמוד החדש של הד ארצי, הלשונית THE EVENT (hed-artzi.html)
+   מהפריים Desktop - 75 בפיגמה (1440×1024). כל המידות ב-u (פיקסל בפיגמה, לפי רוחב המסך).
+   למעלה שורה אחת, מתחתיה שתי עמודות של חומרים, והקו בצד ימין.
+   ========================================= */
+.event-page {
+  --u: calc(100vw / 1440);
+  --bar-u: min(1px, 100vw / 1378); /* הבר העליון בגודל של הפיגמה, כמו בעמוד פרויקט */
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--color-hed-artzi-background);
+}
+
+/* השורה העליונה: חזרה, OVERVIEW, הלשוניות והחץ לפרויקט הבא (החץ נגמר מעל הקו) */
+.event-header {
+  position: absolute;
+  top: calc(20 * var(--u));
+  left: calc(33 * var(--u));
+  right: calc(34 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(22 * var(--bar-u));
+  height: calc(40 * var(--bar-u));
+}
+
+.event-header .overview-button {
+  margin: 0;
+}
+
+.event-top {
+  flex: 1;
+}
+
+.event-tabs {
+  margin-left: calc(10 * var(--bar-u));
+}
+
+/* hover על החץ לפרויקט הבא: התוכן מתעמעם ל-40% (כמו בעמוד פרויקט) */
+.event-columns {
+  transition: opacity var(--duration-next) var(--ease-next);
+}
+
+.event-page:has(.project-next:hover) .event-columns {
+  opacity: 0.4;
+}
+
+/*
+  התוכן של כל לשונית: שתי עמודות (ברוחב 670, כמו בפיגמה), שכל אחת נגללת לבד.
+  רואים רק את הלשונית הפתוחה (is-active).
+*/
+.event-columns {
+  position: absolute;
+  top: calc(96 * var(--u));
+  bottom: calc(10 * var(--u));
+  left: calc(33 * var(--u));
+  display: none;
+  gap: calc(3 * var(--u));
+  counter-reset: work-number; /* המספור (1 >, 2 >, 3 >) רץ על שתי העמודות */
+}
+
+.event-columns.is-active {
+  display: flex;
+}
+
+.event-column {
+  width: calc(674 * var(--u)); /* 670 ועוד 2 מכל צד */
+  overflow-x: clip;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(15 * var(--u));
+  padding-inline: calc(2 * var(--u));
+}
+
+.event-page .work-item {
+  gap: calc(15 * var(--u));
+}
+
+
+/*
+  THE EVENT: הלוגו שמגיב לקול למעלה, לכל הרוחב (1369×468, כמו בפיגמה), עם הרקע של העמוד.
+  מתחתיו שתי העמודות, והכל נגלל יחד (העמודות עצמן לא נגללות לבד).
+*/
+.event-columns--stacked {
+  flex-wrap: wrap;
+  align-content: flex-start;
+  row-gap: calc(36 * var(--u));
+  padding-top: calc(10 * var(--u));
+  overflow-x: clip;
+  overflow-y: auto;
+}
+
+.event-columns--stacked .event-column {
+  overflow: visible;
+}
+
+.event-page .hed-voice {
+  --voice-background: var(--color-hed-artzi-background);
+  width: calc(1369 * var(--u));
+  aspect-ratio: 1369 / 468;
+}
+
+/* הכפתור של המיקרופון: באמצע, מתחת ללוגו */
+.event-page .hed-voice__mic {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* תמונות חתוכות וקולאז': ברוחב העמודה (670) */
+.event-page :is(.work-crop, .work-collage) {
+  width: 100%;
+}
+
+/* BACKGROUND: הכותרת והטקסט על הפרויקט (לבן, עם מילים מודגשות באדום ונטויות) */
+.event-about {
+  gap: calc(14 * var(--u));
+}
+
+.event-about__text {
+  font-family: var(--font-project-text);
+  font-size: calc(28 * var(--u));
+  line-height: 1.1;
+  text-wrap: pretty;
+}
+
+.event-about__text p + p {
+  margin-top: 1.1em; /* שורה ריקה בין הפסקאות */
+}
+
+.event-about__highlight {
+  color: var(--color-project-accent);
+}
+
+/* "In collaboration with": קטן ואפור, כמו בפיגמה (16) */
+.event-about__credit {
+  font-family: var(--font-caption);
+  font-size: calc(16 * var(--u));
+  color: var(--color-muted);
+}
+
+.event-about__text p + .event-about__credit {
+  margin-top: calc(31 * var(--u)); /* שורה ריקה (28) לפני השורה הזאת, כמו בפיגמה */
+}
+
+/* החומרים: הגודל והחיתוך מהפיגמה */
+.event-media {
+  display: block;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.event-media--poster {
+  width: calc(495 * var(--u));
+  aspect-ratio: 495 / 880;
+}
+
+.event-media--screen {
+  width: calc(661 * var(--u));
+  aspect-ratio: 661 / 365;
+  object-position: 50% 0%; /* החיתוך מלמטה: בתחתית הסרטון יש פס לבן מהקלטת המסך, והוא נחתך */
+}
+
+.event-media--concert {
+  width: calc(661 * var(--u));
+  aspect-ratio: 661 / 451;
+  object-position: 50% 24%; /* רואים את הבמה */
+}
+
+/* הקו: בצד ימין, כמעט לכל הגובה */
+.event-line {
+  position: absolute;
+  top: calc(101 * var(--u));
+  height: calc(905 * var(--u));
+  left: calc(1399 * var(--u));
+  width: calc(6 * var(--u));
+}
+
+/* טלפון וטאבלט לאורך: הכל אחד מתחת לשני, והעמוד נגלל כרגיל */
+@media (max-width: 900px), (orientation: portrait) {
+  .event-page {
+    --u: calc(100vw / 700);
+    --bar-u: min(var(--u), 1px);
+    height: auto;
+    overflow: visible;
+    padding: 20px 16px 48px;
+  }
+
+  .event-header {
+    position: static;
+    flex-wrap: wrap;
+    height: auto;
+    row-gap: 12px;
+  }
+
+  .event-tabs {
+    margin-left: 0;
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+
+  .event-header {
+    right: auto;
+  }
+
+  .event-top {
+    flex: none;
+    width: 100%;
+  }
+
+  .event-line {
+    display: none;
+  }
+
+  .event-columns {
+    position: static;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .event-column {
+    width: 100%;
+    overflow: visible;
+    gap: 24px;
+    padding: 0;
+  }
+
+  .event-page .project-headline {
+    font-size: 26px;
+  }
+
+  .event-about__text {
+    font-size: 19px;
+  }
+
+  .event-media--poster {
+    width: min(100%, 495px);
+  }
+
+  .event-media--screen,
+  .event-media--concert,
+  .event-page .hed-voice {
+    width: 100%;
+  }
 }

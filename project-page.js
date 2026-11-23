@@ -69,14 +69,6 @@ if (root.classList.contains("is-entering")) {
   }));
   setTimeout(startReveal, enterDuration / 4);
   setTimeout(() => root.classList.remove("is-arriving"), enterDuration);
-} else if (root.classList.contains("is-pushed-in")) {
-  // מגיעים מהשער של הד ארצי: הקו דוחף את העמודה השמאלית למקום שלה (כמו בחזרה מ-OVERVIEW)
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    root.classList.add("is-pushing");
-    root.classList.remove("is-pushed-in");
-  }));
-  setTimeout(startReveal, 300);
-  setTimeout(() => root.classList.remove("is-pushing"), 1800); // התנועה (0.9) והעמודה הימנית (0.4 + 0.9)
 } else {
   startReveal();
 }

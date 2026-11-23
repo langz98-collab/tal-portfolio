@@ -4,113 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HED ARTZI – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=50">
-  <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (project-page.js ממשיך את המעבר) -->
-  <script>
-    {
-      const enterLine = JSON.parse(sessionStorage.getItem("enter-line") || "null");
-      const desktopLayout = window.matchMedia("(min-width: 901px) and (orientation: landscape)").matches;
-      if (enterLine && desktopLayout) {
-        const root = document.documentElement;
-        root.classList.add("is-entering");
-        root.style.setProperty("--enter-line-left", enterLine.left + "px");
-        root.style.setProperty("--enter-line-width", enterLine.width + "px");
-      }
-
-      // מגיעים מהשער (אחרי הסיסמה)? הקו מתחיל איפה שהיה בשער, ודוחף לתוך העמוד
-      const pushLine = JSON.parse(sessionStorage.getItem("push-line") || "null");
-      if (pushLine && desktopLayout) {
-        const root = document.documentElement;
-        root.classList.add("is-pushed-in");
-        root.style.setProperty("--push-line-left", pushLine.left + "px");
-        root.style.setProperty("--push-line-top", pushLine.top + "px");
-        root.style.setProperty("--push-line-width", pushLine.width + "px");
-        root.style.setProperty("--push-line-height", pushLine.height + "px");
-      }
-      sessionStorage.removeItem("push-line");
-    }
-  </script>
+  <link rel="stylesheet" href="styles.css?v=64">
 </head>
 <body class="theme-hed-artzi">
 
   <!--
-    עמוד פרויקט: שתי עמודות עם קו באמצע.
-    משמאל: כותרת, טקסט על הפרויקט וסרטון מההופעה.
-    מימין: לשוניות (MUSIC, EVENT POSTER, PRESENTATION) ומתחתן התוכן של הלשונית.
-    במחשב כל עמודה נגללת לבד. בטלפון הן אחת מתחת לשנייה.
+    סקיצה: העמוד החדש של הד ארצי (הפריימים Desktop - 75, 76, 77 בפיגמה).
+    בעמוד הזה אין עמודה קבועה של טקסט: למעלה שורה אחת (חזרה, OVERVIEW והלשוניות),
+    מתחתיה שתי עמודות של חומרים, והקו נמצא בצד ימין.
+    שלוש לשוניות: INDUSTRIAL PEACE (האירוע), BACKGROUND ו-MUSIC & MERCH (הטקסט על הפרויקט).
   -->
-  <main class="project-page">
+  <main class="event-page">
 
-    <!-- העמודה השמאלית -->
-    <section class="project-info">
+    <!-- השורה העליונה -->
+    <header class="event-header">
+      <!-- חזרה לעמוד הבית: במצב hover השם מתחלף ל-HOME (כמו בעמוד פרויקט) -->
+      <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
+        <span class="project-header__back"><span class="project-header__back-icon"></span></span>
+        <h1 class="project-header__title">
+          <span class="project-header__name">HED ARTZI</span>
+          <span class="project-header__home" aria-hidden="true">HOME</span>
+        </h1>
+      </a>
 
-      <header class="project-header">
-        <!--
-          חזרה לעמוד הבית: החץ ושם הפרויקט הם קישור אחד.
-          במצב hover על החץ, שם הפרויקט מתחלף ל-HOME (כמו ה-NEXT בצד השני).
-        -->
-        <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
-          <span class="project-header__back"><span class="project-header__back-icon"></span></span>
-          <h1 class="project-header__title">
-            <span class="project-header__name">HED ARTZI</span>
-            <span class="project-header__home" aria-hidden="true">HOME</span>
-          </h1>
-        </a>
-        <!-- הכפתור OVERVIEW: מראה את כל החומרים בשורה אחת, רק עם הכיתובים -->
-        <button class="overview-button" type="button">OVERVIEW <img src="images/eye.svg" alt=""></button>
-      </header>
+      <button class="overview-button" type="button">OVERVIEW <img src="images/eye.svg" alt=""></button>
 
-      <div class="project-info__scroll">
-        <h2 class="project-headline">an iconic national music label<br>transforming into a resistance cultural movement</h2>
-
-        <div class="project-text">
-          <p>
-            A speculative rebranding of Hed Artzi, an iconic Israeli music label, set in an imagined future where Israel has become a dictatorship and <span class="project-text__highlight">independent artistic expression is forbidden</span>.<br>
-            <br>
-            In this reality, Hed Artzi goes underground, transforming into a secret cultural movement dedicated to preserving and spreading free Israeli culture. With citizens under constant surveillance, music is distributed through underground events and analog formats, beyond the reach of digital monitoring.
-          </p>
-          <p>
-            <span class="project-text__highlight">The project explores</span> <span class="project-text__highlight">the role of creativity in a broken reality</span><em>,</em> and how a brand's identity can shift in response to political change.
-          </p>
-          <p class="project-text__credit">
-            <br>
-            In collaboration with Sahar Barel.
-          </p>
-        </div>
-
-        <!-- סרטון מההופעה (חתוך לרוחב, כמו בפיגמה) -->
-        <div class="project-cover project-cover--hed-artzi">
-          <video src="images/hed-artzi-concert-video.mp4" autoplay muted loop playsinline></video>
-        </div>
-      </div>
-    </section>
-
-    <!-- הקו שבאמצע (במצב OVERVIEW הוא גולש שמאלה) -->
-    <img class="project-divider" src="images/home-line.svg" alt="">
-
-    <!-- במצב OVERVIEW, משמאל לקו: FULL VIEW (באותיות אחת מתחת לשנייה), חזרה לתצוגה הרגילה של הפרויקט -->
-    <button class="full-view" type="button" aria-label="FULL VIEW: חזרה לתצוגה הרגילה">
-      <span>&lt;</span><span>F</span><span>U</span><span>L</span><span>L</span><span>&nbsp;</span><span>V</span><span>I</span><span>E</span><span>W</span><span>&lt;</span>
-    </button>
-
-    <!-- העמודה הימנית -->
-    <section class="project-work">
-
-      <div class="project-top">
-        <!--
-          הלשוניות. הלשונית הפתוחה ירוקה, ומופיע לידה כמה פריטים יש בה.
-          data-tab מחבר בין לשונית לתוכן שלה למטה.
-        -->
-        <nav class="project-tabs">
-          <button class="project-tab" type="button" data-tab="music">MUSIC<span class="project-tab__count"> (3)</span></button>
-          <button class="project-tab is-active" type="button" data-tab="event-poster">EVENT POSTER<span class="project-tab__count"> (2)</span></button>
-          <button class="project-tab" type="button" data-tab="presentation">PRESENTATION</button>
+      <!-- הלשוניות והחץ לפרויקט הבא (כמו בעמוד פרויקט) -->
+      <div class="project-top event-top">
+        <!-- הלשוניות: הלשונית הפתוחה אדומה, עם מספר החומרים. data-tab מחבר לשונית לתוכן שלה -->
+        <nav class="project-tabs event-tabs">
+          <button class="project-tab is-active" type="button" data-tab="event">INDUSTRIAL PEACE<span class="project-tab__count"> (3)</span></button>
+          <button class="project-tab" type="button" data-tab="background">BACKGROUND</button>
+          <button class="project-tab" type="button" data-tab="music">MUSIC &amp; MERCH<span class="project-tab__count"> (4)</span></button>
         </nav>
 
         <!--
-          החץ לפרויקט הבא. במצב hover: החץ נהיה ירוק, הלשוניות גולשות הצידה ונעלמות,
+          החץ לפרויקט הבא. במצב hover: החץ נהיה אדום ומתארך, הלשוניות גולשות הצידה ונעלמות,
           ובמקומן מופיע השם של הפרויקט הבא. שאר המסך מתעמעם.
-          כל האזור (השם והחץ) הוא קישור לעמוד של הפרויקט הבא.
         -->
         <a class="project-next" href="wikipedia-football.html">
           <p class="project-next-label">NEXT: WIKIPEDIA&gt;F00TBALL</p>
@@ -119,69 +49,107 @@
           </span>
         </a>
       </div>
+    </header>
 
-      <!--
-        התוכן של הלשוניות. כל חומר (כיתוב + תמונה או סרטון) עטוף ב-work-item.
-        המספר שבתחילת כל כיתוב (1 >) נכתב לבד ב-CSS: בתצוגה הרגילה לפי הלשונית, וב-OVERVIEW לפי הסדר של כולם.
-        בתצוגה הרגילה רואים רק את הלשונית הפתוחה, אחד מתחת לשני.
-        במצב OVERVIEW רואים את כולם בשורה אחת שנגללת הצידה.
-      -->
-      <div class="project-panels">
-        <div class="project-panel" data-tab="music">
-          <div class="work-item">
-            <p class="work-caption"><b></b> A Bag Containing a Vinyl Record, with a Sticker and Receipt.</p>
-            <img class="work-image" src="images/hed-artzi-bag.png" alt="שקית נייר עם תקליט, מדבקה וקבלה" style="--max-width: calc(596 * var(--u));">
-          </div>
-          <div class="work-item">
-            <p class="work-caption"><b></b> The record sleeve designs reinterpret the original covers through cutting, and visual distortion.<br>Recognizing the iconic status of album covers, we aimed to disrupt their familiar imagery while preserving their visual value.</p>
-            <div class="work-collage work-collage--sleeves">
-              <img src="images/hed-artzi-sleeve-transparent.png" alt="עטיפת תקליט שקופה" style="--x: 38.73%; --y: 51.61%; --w: 61.58%; --a: 1.0000; --r: 6.67deg;">
-              <img src="images/hed-artzi-sleeve-3.png" alt="עטיפת תקליט עם עיצוב מחדש של הכריכה" style="--x: 46.04%; --y: 20.28%; --w: 63.08%; --a: 1.0000; --r: -8.54deg;">
-              <img class="work-collage__sticker" src="images/hed-artzi-sticker.png" alt="מדבקה אדומה" style="--x: 28.12%; --y: 27.82%; --w: 23.09%; --a: 1.0291; --r: -8.54deg;">
-              <img src="images/hed-artzi-lp.png" alt="תקליט שחור עם תווית אדומה" style="--x: 63.82%; --y: 76.60%; --w: 52.46%; --a: 1.0000; --r: 19.1deg;">
-              <img src="images/hed-artzi-sleeve-1.png" alt="עטיפת תקליט נוספת" style="--x: 33.49%; --y: 80.27%; --w: 56.89%; --a: 1.0000; --r: -11.36deg;">
-            </div>
-          </div>
-          <div class="work-item">
-            <div class="work-collage work-collage--stickers">
-              <img class="work-collage__sheet" src="images/hed-artzi-sticker-sheet-7.png" alt="דף מדבקות" style="--x: 50.00%; --y: 73.63%; --w: 94.27%; --a: 1.0284; --r: -84.69deg;">
-              <img class="work-collage__sheet" src="images/hed-artzi-sticker-sheet-6.png" alt="דף מדבקות" style="--x: 49.15%; --y: 49.79%; --w: 94.27%; --a: 1.0284; --r: -90deg;">
-              <img class="work-collage__sheet work-collage__sheet--flat" src="images/hed-artzi-sticker-sheet-5.png" alt="דף מדבקות" style="--x: 49.16%; --y: 23.60%; --w: 94.30%; --a: 1.0291; --r: 0deg;">
-            </div>
-          </div>
+    <!-- ===== INDUSTRIAL PEACE (האירוע) ===== -->
+    <!-- כאן הכל נגלל יחד: למעלה הלוגו שמגיב לקול לכל הרוחב, ומתחתיו שתי העמודות -->
+    <div class="event-columns event-columns--stacked is-active" data-tab="event">
+      <!-- הלוגו שמגיב לקול (hed-voice.js מצייר אותו בתוך האזור הזה) -->
+      <div class="hed-voice"></div>
+
+      <!-- עמודה 1: הכרזה -->
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> A Bag Containing a Vinyl Record, with a Sticker and Receipt.</p>
+          <video class="event-media event-media--poster" src="images/hed-artzi-poster.mp4" autoplay muted loop playsinline></video>
         </div>
-
-        <div class="project-panel is-active" data-tab="event-poster">
-          <!-- הלוגו שמגיב לקול (hed-voice.js מצייר אותו בתוך האזור הזה), ומתחתיו הפוסטר בהופעה -->
-          <div class="work-item">
-            <p class="work-caption"><b></b> a Motion Poster for an Underground Concert</p>
-            <div class="hed-voice"></div>
-            <div class="work-crop" style="--ratio: 664 / 919; --crop-top: -8.4%; --crop-left: -0.02%; --crop-width: 100.05%; --crop-height: 108.4%;">
-              <img src="images/hed-artzi-concert.jpg" alt="הפוסטר בתנועה על מסך אנכי בהופעה">
-            </div>
-          </div>
-
-          <div class="work-item">
-            <p class="work-caption"><b></b> a Motion Poster for an Underground Concert</p>
-            <video class="work-video work-video--hed-poster" src="images/hed-artzi-poster.mp4" autoplay muted loop playsinline></video>
-          </div>
-        </div>
-
-        <!-- PRESENTATION: החומרים יגיעו בהמשך -->
-        <div class="project-panel" data-tab="presentation"></div>
       </div>
-    </section>
+      <!-- עמודה 2: הטקסט על המסך, והסרטון מההופעה -->
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> A Bag Containing a Vinyl Record, with a Sticker and Receipt.</p>
+          <video class="event-media event-media--screen" src="images/hed-artzi-event-text.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <div class="work-item">
+          <p class="work-caption"><b></b> The record sleeve designs reinterpret the original covers through cutting, and visual distortion.</p>
+          <video class="event-media event-media--concert" src="images/hed-artzi-concert-video.mp4" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MUSIC & MERCH ===== -->
+    <div class="event-columns" data-tab="music">
+      <!-- עמודה 1: השקית עם התקליט -->
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> A Bag Containing a Vinyl Record, with a Sticker and Receipt.</p>
+          <div class="work-crop" style="--ratio: 670 / 785; --crop-left: -6.96%; --crop-width: 110.77%;">
+            <img src="images/hed-artzi-bag.png" alt="שקית נייר עם תקליט, מדבקה וקבלה">
+          </div>
+        </div>
+      </div>
+      <!-- עמודה 2: המדבקות, ומתחתן עטיפות התקליטים -->
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> A Bag Containing a Vinyl Record, with a Sticker and Receipt.</p>
+          <div class="work-crop" style="--ratio: 670 / 426; --crop-top: -8.14%; --crop-left: -3.13%; --crop-width: 106.26%; --crop-height: 118.25%;">
+            <img src="images/hed-artzi-stickers.png" alt="מדבקות אדומות של הד ארצי">
+          </div>
+        </div>
+        <div class="work-item">
+          <p class="work-caption"><b></b> The record sleeve designs reinterpret the original covers through cutting, and visual distortion.<br>Recognizing the iconic status of album covers, we aimed to disrupt their familiar imagery while preserving their visual value.</p>
+          <div class="work-collage work-collage--sleeves">
+            <img src="images/hed-artzi-sleeve-transparent.png" alt="עטיפת תקליט שקופה" style="--x: 38.73%; --y: 51.61%; --w: 61.58%; --a: 1.0000; --r: 6.67deg;">
+            <img src="images/hed-artzi-sleeve-3.png" alt="עטיפת תקליט עם עיצוב מחדש של הכריכה" style="--x: 46.04%; --y: 20.28%; --w: 63.08%; --a: 1.0000; --r: -8.54deg;">
+            <img class="work-collage__sticker" src="images/hed-artzi-sticker.png" alt="מדבקה אדומה" style="--x: 28.12%; --y: 27.82%; --w: 23.09%; --a: 1.0291; --r: -8.54deg;">
+            <img src="images/hed-artzi-lp.png" alt="תקליט שחור עם תווית אדומה" style="--x: 63.82%; --y: 76.60%; --w: 52.46%; --a: 1.0000; --r: 19.1deg;">
+            <img src="images/hed-artzi-sleeve-1.png" alt="עטיפת תקליט נוספת" style="--x: 33.49%; --y: 80.27%; --w: 56.89%; --a: 1.0000; --r: -11.36deg;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BACKGROUND: הטקסט על הפרויקט, ולידו הכרזה בהופעה ===== -->
+    <div class="event-columns" data-tab="background">
+      <div class="event-column event-about">
+        <h2 class="project-headline">an iconic national music label<br>transforming into a resistance movement</h2>
+        <div class="event-about__text">
+          <p>
+            A speculative rebranding of Hed Artzi, an iconic Israeli music label, set in an imagined future where Israel has become a dictatorship and <em class="event-about__highlight">independent artistic expression is forbidden</em>.
+          </p>
+          <p>
+            In this reality, Hed Artzi goes underground, transforming into a secret cultural movement dedicated to preserving and spreading free Israeli culture. With citizens under constant surveillance, music is distributed through underground events and analog formats, beyond the reach of digital monitoring.<br>
+            <em class="event-about__highlight">The project explores the role of creativity in a broken reality</em><em>,</em> and how a brand's identity can shift in response to political change.
+          </p>
+          <p>
+            <span class="event-about__highlight">“Industrial Peace 2026”</span> features banned Israeli artists, celebrating the brand’s spirit and the fight for creative freedom.
+          </p>
+          <p class="event-about__credit">In collaboration with Sahar Barel.</p>
+        </div>
+      </div>
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> The poster for the event “industrial peace”.</p>
+          <div class="work-crop" style="width: calc(628 * var(--u)); --ratio: 628 / 870; --crop-top: -8.4%; --crop-left: -0.02%; --crop-width: 100.05%; --crop-height: 108.4%;">
+            <img src="images/hed-artzi-concert.jpg" alt="הכרזה בתנועה על מסך אנכי בהופעה">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- הקו, בצד ימין -->
+    <img class="event-line" src="images/home-line.svg" alt="">
 
   </main>
 
-  <!-- ההתנהגות של עמוד פרויקט: לשוניות, הופעת התוכן, OVERVIEW והחץ לפרויקט הבא -->
-  <script src="project-page.js?v=7"></script>
-
-  <!-- העכבר של האתר: עיגול לבן שנהיה ירוק על דברים לחיצים -->
-  <script src="cursor.js?v=3"></script>
-
-  <!-- הלוגו שמגיב לקול, בלשונית EVENT POSTER -->
+  <!-- הלוגו שמגיב לקול, בלשונית INDUSTRIAL PEACE -->
   <script src="hed-voice.js?v=6"></script>
+
+  <!-- הלשוניות: לחיצה על לשונית מראה את התוכן שלה -->
+  <script src="event-tabs.js?v=3"></script>
+
+  <!-- העכבר של האתר: עיגול לבן שנהיה אדום על דברים לחיצים -->
+  <script src="cursor.js?v=3"></script>
 
 </body>
 </html>
