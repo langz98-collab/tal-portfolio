@@ -1749,6 +1749,8 @@ em.project-text__highlight {
 .event-page {
   --u: calc(100vw / 1440);
   --bar-u: min(1px, 100vw / 1378); /* הבר העליון בגודל של הפיגמה, כמו בעמוד פרויקט */
+  --overview-media-height: calc(100svh - 177 * var(--u)); /* הגובה של כל חומר בשורה של OVERVIEW (כמו בעמוד פרויקט) */
+  --full-view-hint: calc(24 * var(--u)); /* כמה הקו זז ימינה ב-hover על FULL VIEW */
   position: relative;
   height: 100vh;
   height: 100svh;
@@ -1772,8 +1774,17 @@ em.project-text__highlight {
   margin: 0;
 }
 
+/*
+  הלשוניות והחץ לפרויקט הבא. האזור של החץ (project-next) נמדד מהשורה העליונה כולה,
+  כך שהשם של הפרויקט הבא מופיע באמצע הגריד (העמודה השנייה, 712), והחץ לא ארוך מדי.
+*/
 .event-top {
   flex: 1;
+  position: static;
+}
+
+.event-page .project-next-label {
+  margin-left: calc(679 * var(--u)); /* 33 + 679 = 712: איפה שמתחילה העמודה השנייה */
 }
 
 .event-tabs {
@@ -1912,13 +1923,171 @@ em.project-text__highlight {
   object-position: 50% 24%; /* רואים את הבמה */
 }
 
-/* הקו: בצד ימין, כמעט לכל הגובה */
+/* הקו: בצד ימין, כמעט לכל הגובה. במעבר בין לשוניות event-tabs.js מזיז אותו (מנגב את המסך) */
 .event-line {
   position: absolute;
   top: calc(101 * var(--u));
   height: calc(905 * var(--u));
   left: calc(1399 * var(--u));
   width: calc(6 * var(--u));
+}
+
+/* הכרזה ב-BACKGROUND: נכנסת כולה במסך (מתחת לכיתוב), ולכל היותר 628 כמו בפיגמה */
+.event-page .event-crop--poster {
+  width: min(628 * var(--u), (100svh - 121 * var(--u) - 20px) * 628 / 870);
+}
+
+/*
+  ---------- המעבר מעמוד הבית (חלק 2, בעמוד הזה) ----------
+  is-entering: הקו ממשיך מהאמצע, לכל הגובה, והתוכן עוד למטה.
+  is-arriving: הקו "יורד" לגובה שלו, ואז זז ימינה למקום שלו, והתוכן עולה מלמטה (כמו בעמוד פרויקט).
+*/
+.is-entering .event-line {
+  top: 0;
+  height: 100%;
+  left: var(--enter-line-left);
+  width: var(--enter-line-width);
+  transition: none;
+}
+
+.is-entering :is(.event-header, .event-panels) {
+  transform: translateY(var(--distance-page));
+  transition: none;
+}
+
+.is-arriving .event-line {
+  transition:
+    top var(--duration-page-in) var(--ease-page-out),
+    height var(--duration-page-in) var(--ease-page-out),
+    left var(--duration-overview) var(--ease-next) 0.5s,
+    width var(--duration-overview) var(--ease-next) 0.5s;
+}
+
+.is-arriving :is(.event-header, .event-panels) {
+  transition: transform var(--duration-page-in) var(--ease-page-out);
+}
+
+/*
+  ---------- OVERVIEW: בדיוק כמו בעמוד פרויקט (wikipedia-football.html) ----------
+  השם ו-OVERVIEW גולשים שמאלה ונעלמים, הקו גולש שמאלה ונמתח לכל הגובה,
+  הלשוניות עוברות לימין הקו, וכל החומרים בשורה אחת שנגללת הצידה.
+*/
+.event-page .project-home,
+.event-header .overview-button {
+  transition:
+    opacity var(--duration-overview) var(--ease-next),
+    transform var(--duration-overview) var(--ease-next),
+    border-radius 0.3s var(--ease-next);
+}
+
+.is-overview .project-home,
+.event-page.is-overview .overview-button {
+  opacity: 0;
+  transform: translateX(calc(24 * var(--u) - 661 * var(--u))); /* כמו העמודה השמאלית בעמוד פרויקט */
+  pointer-events: none;
+}
+
+/* הלשוניות עוברות לימין הקו (122, כמו בעמוד פרויקט). המרחק נמדד ב-event-tabs.js */
+.event-tabs {
+  transition:
+    opacity var(--duration-next) var(--ease-next),
+    transform var(--duration-overview) var(--ease-next);
+}
+
+.is-overview .event-tabs {
+  transform: translateX(var(--overview-tabs-shift, 0px));
+}
+
+.is-overview .project-top:has(.project-next:hover) .event-tabs {
+  transform: translateX(calc(var(--overview-tabs-shift, 0px) - 40 * var(--bar-u)));
+}
+
+.event-line {
+  transition:
+    left var(--duration-overview) var(--ease-next),
+    top var(--duration-overview) var(--ease-next),
+    height var(--duration-overview) var(--ease-next);
+}
+
+.is-overview .event-line {
+  left: calc(80 * var(--u));
+  top: calc(17.5 * var(--u));
+  height: calc(100% - 35 * var(--u)); /* כל הגובה, כמו הקו בעמוד פרויקט */
+}
+
+.is-overview .event-panels {
+  position: absolute;
+  top: calc(86 * var(--u)); /* מתחת ללשוניות: 21 + 40 + 25, כמו בעמוד פרויקט */
+  bottom: 0;
+  left: calc(86 * var(--u)); /* מתחילה בקו (80 + 6), כך שהחומרים נחתכים בו כשגוללים */
+  right: 0;
+  display: flex;
+  gap: calc(20.77 * var(--u));
+  padding: 0 calc(26 * var(--u)) 0 calc(37 * var(--u)); /* החומר הראשון מתחיל ב-123, כמו בעמוד פרויקט */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  counter-reset: work-number; /* מספור אחד לכל החומרים */
+  transition: transform var(--duration-overview) var(--ease-next);
+}
+
+.is-overview .event-panels::-webkit-scrollbar {
+  display: none;
+}
+
+/* כל הלשוניות מוצגות, אחת אחרי השנייה */
+.is-overview .event-columns {
+  position: static;
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  gap: calc(20.77 * var(--u));
+  padding: 0;
+  overflow: visible;
+  counter-reset: none;
+}
+
+/* העמודות "נעלמות", והחומרים עצמם עומדים בשורה */
+.is-overview .event-column {
+  display: contents;
+}
+
+/* בלי הטקסט על הפרויקט ובלי הלוגו: רק החומרים והכיתובים */
+.is-overview :is(.event-about, .event-panels .hed-voice) {
+  display: none;
+}
+
+.is-overview .event-panels .work-item {
+  flex: none;
+  gap: calc(12 * var(--u)); /* כמו בעמוד פרויקט */
+}
+
+/* כל חומר בגובה של השורה, והרוחב לפי הפרופורציות שלו */
+.event-page.is-overview :is(.event-media, .work-crop, .work-collage) {
+  align-self: flex-start;
+  width: auto;
+  height: var(--overview-media-height);
+}
+
+/* ...והקו עם כל התוכן זזים טיפה ימינה ב-hover על FULL VIEW, כרמז לכך שהתצוגה הרגילה תיפתח */
+.is-overview:has(.full-view:hover) .event-line {
+  left: calc(80 * var(--u) + var(--full-view-hint));
+}
+
+.is-overview:has(.full-view:hover) .event-panels {
+  transform: translateX(var(--full-view-hint));
+}
+
+/* במעבר בין לשוניות: שתי הלשוניות מוצגות, והקו קובע מה רואים מכל אחת */
+.event-columns.is-leaving {
+  display: flex;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .event-line,
+  .is-overview .event-panels {
+    transition: none;
+  }
 }
 
 /* טלפון וטאבלט לאורך: הכל אחד מתחת לשני, והעמוד נגלל כרגיל */
@@ -1951,6 +2120,16 @@ em.project-text__highlight {
   .event-top {
     flex: none;
     width: 100%;
+    position: relative;
+  }
+
+  .event-page .project-next-label {
+    margin-left: calc(2 * var(--u));
+  }
+
+  .event-page .overview-button,
+  .full-view {
+    display: none; /* בטלפון אין OVERVIEW: הכל כבר אחד מתחת לשני */
   }
 
   .event-line {
