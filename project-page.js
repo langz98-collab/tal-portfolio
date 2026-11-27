@@ -233,6 +233,7 @@ window.addEventListener("pageshow", (event) => {
 
 /* ---------- בטלפון: INFO ו-GALLERY, וסגירה ופתיחה של חלקים בגלריה ---------- */
 const sectionButtons = document.querySelector(".section-buttons");
+const sectionBar = document.querySelector(".project-header");
 const infoButton = document.querySelector(".section-button--info");
 const galleryButton = document.querySelector(".section-button--gallery");
 const gallery = document.getElementById("gallery");
@@ -250,6 +251,7 @@ function updateSectionButtons() {
   const nowInGallery = isInGallery();
   if (sectionButtons.classList.contains("is-in-gallery") === nowInGallery) return;
   sectionButtons.classList.toggle("is-in-gallery", nowInGallery);
+  sectionBar.classList.toggle("is-in-gallery", nowInGallery); // בגלריה השם נעלם
   const current = nowInGallery ? galleryButton : infoButton;
   [infoButton, galleryButton].forEach((button) => button.classList.remove("is-flash"));
   current.classList.add("is-flash");
@@ -259,6 +261,35 @@ function updateSectionButtons() {
 
 window.addEventListener("scroll", updateSectionButtons, { passive: true });
 sectionButtons.classList.toggle("is-in-gallery", isInGallery()); // בטעינה: בלי הבהוב
+sectionBar.classList.toggle("is-in-gallery", isInGallery());
+/*
+  בטלפון: שם הפרויקט בבר (רק למעלה, בטקסט. בגלריה הוא נעלם).
+  השם יושב בין הכפתורים לחץ החזרה, עם אותו רווח (12) מכל צד, כמו בין הכפתורים.
+  אם אין לו מספיק מקום בגודל 20, הוא מוקטן בדיוק כדי להיכנס (--title-size).
+*/
+const barTitle = sectionBar.querySelector(".project-header__title");
+const titleSize = 20; // הגודל הרגיל של השם
+const titleGap = 12;  // הרווח מהכפתורים (כמו הרווח בין הכפתורים)
+
+function measureTitleRoom() {
+  // מודדים את הכפתורים במצב של הטקסט (לרגע, בלי תנועה)
+  const wasInGallery = sectionButtons.classList.contains("is-in-gallery");
+  sectionButtons.classList.remove("is-in-gallery");
+  sectionButtons.classList.add("is-measuring");
+  const buttonsEnd = sectionButtons.getBoundingClientRect().right;
+  sectionButtons.classList.toggle("is-in-gallery", wasInGallery);
+  sectionButtons.classList.remove("is-measuring");
+
+  // השם נגמר במקום קבוע (12 לפני החץ), אז המקום שלו: מסוף הכפתורים (ועוד 12) ועד שם
+  const titleBox = barTitle.getBoundingClientRect();
+  const titleWidth = titleBox.width * titleSize / parseFloat(getComputedStyle(barTitle).fontSize); // הרוחב בגודל 20
+  const room = titleBox.right - (buttonsEnd + titleGap);
+  sectionBar.style.setProperty("--title-size", Math.min(titleSize, titleSize * room / titleWidth) + "px");
+}
+
+document.fonts.ready.then(measureTitleRoom); // אחרי שהפונטים נטענו, כי הם קובעים את הרוחב
+window.addEventListener("resize", measureTitleRoom);
+
 
 // INFO: חוזרים לתחילת העמוד. GALLERY: גוללים אל הגלריה
 infoButton.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));

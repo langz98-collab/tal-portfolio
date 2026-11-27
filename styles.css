@@ -1823,18 +1823,34 @@ em.project-text__highlight {
     left: 0;
     right: 0;
     height: var(--mobile-bar-height);
-    padding: 0 20px;
+    padding: 0 8px; /* על הגריד של העמוד: 8 מהצדדים */
     justify-content: flex-start;
     gap: 0;
     background-color: var(--color-hed-artzi-background);
   }
 
   /*
-    הכפתורים INFO ו-GALLERY בקצה השמאלי, והחץ לחזרה בקצה הימני.
+    הכפתורים INFO ו-GALLERY בקצה השמאלי, ושם הפרויקט והחץ לחזרה בקצה הימני.
+    בין כל החלקים אותו רווח (12). השם מוקטן אם צריך כדי להיכנס (הסקריפט קובע את --title-size),
+    ובגלריה הוא נעלם בהדרגה.
   */
+  .project-header__title {
+    order: 1;
+    margin-left: auto;
+    /* 12 עד החץ שרואים: החץ (11.46) יושב באמצע ריבוע של 27.83, אז יש כבר 8.2 בתוך הריבוע */
+    margin-right: calc(12px - (27.83px - 11.46px) / 2);
+    transition: opacity 0.35s var(--ease-next);
+  }
+
   .project-header__back {
     order: 2;
-    margin-left: auto;
+    /* החץ שרואים (11.46) יושב באמצע ריבוע של 27.83: מזיזים את הריבוע כך שהחץ עצמו יהיה 8 מהצד */
+    margin-right: calc(-1 * (27.83px - 11.46px) / 2);
+  }
+
+  .is-in-gallery .project-header__title {
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* בצד ימין החץ פונה ימינה: ">" */
@@ -1850,8 +1866,8 @@ em.project-text__highlight {
   /* החזרה: חץ ">" דק בתוך ריבוע של 28 */
   .project-header__back {
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 27.83px;
+    height: 27.83px;
   }
 
   .project-header__back-icon {
@@ -1861,9 +1877,11 @@ em.project-text__highlight {
     mask-image: url("images/chevron-back.svg");
   }
 
-  /* בטלפון אין את שם הפרויקט בבר: רק הכפתורים והחץ לחזרה */
+  /* שם הפרויקט: עד 20, במרכז (ב-WIKIPEDIA>FOOTBALL בשתי שורות) */
   .project-header__title {
-    display: none;
+    top: 1px; /* כך האותיות עצמן באמצע הגובה של הבר, כמו הכפתורים והחץ (נמדד) */
+    font-size: var(--title-size, 20px);
+    text-align: center;
   }
 
   .mobile-break {
@@ -1882,7 +1900,7 @@ em.project-text__highlight {
   .section-buttons {
     position: absolute; /* לא תופסים מקום בבר, וכך יכולים לעלות על השם */
     z-index: 1;
-    left: 20px;
+    left: 8px; /* על הגריד: 8 מהצד */
     top: 50%;
     transform: translateY(-50%);
     display: flex;
@@ -1892,8 +1910,8 @@ em.project-text__highlight {
   .section-button {
     display: inline-flex;
     align-items: center;
-    padding: 8px 12px;
-    border: 3px solid var(--color-text);
+    padding: 8px 11px; /* בפיגמה 12 בצדדים: קצת פחות, כדי שיהיה עוד מקום לשם */
+    border: 2.5px solid var(--color-text); /* בפיגמה 3: קצת יותר דק */
     background-color: var(--color-background);
     color: var(--color-text);
     font-family: var(--font-tab); /* Inter SemiBold, ריווח -1% */
@@ -2005,6 +2023,11 @@ em.project-text__highlight {
     max-width: 100px;
     margin-right: 10px;
     opacity: 1;
+  }
+
+  /* בזמן המדידה (בסקריפט): בלי תנועה, כדי למדוד את הרוחב הסופי */
+  .is-measuring :is(.section-button__label, .section-button__arrow) {
+    transition: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -2636,7 +2659,7 @@ em.project-text__highlight {
     left: 0;
     right: 0;
     height: var(--mobile-bar-height);
-    padding: 0 20px;
+    padding: 0 8px; /* על הגריד של העמוד: 8 מהצדדים */
     gap: 0;
     background-color: var(--color-hed-artzi-background);
   }
