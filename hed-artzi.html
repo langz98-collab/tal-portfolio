@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HED ARTZI – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=106">
+  <link rel="stylesheet" href="styles.css?v=127">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
   <script>
     {
@@ -107,7 +107,7 @@
       <div class="event-column">
         <div class="work-item">
           <p class="work-caption"><b></b> The poster for the event “industrial peace”.</p>
-          <div class="work-crop event-crop--poster" style="--ratio: 628 / 870; --crop-top: -8.4%; --crop-left: -0.02%; --crop-width: 100.05%; --crop-height: 108.4%;">
+          <div class="work-crop event-crop--poster" data-be-label="POSTER" style="--ratio: 628 / 870; --crop-top: -8.4%; --crop-left: -0.02%; --crop-width: 100.05%; --crop-height: 108.4%;">
             <img src="images/hed-artzi-concert.jpg" alt="הכרזה בתנועה על מסך אנכי בהופעה">
           </div>
         </div>
@@ -126,7 +126,7 @@
       <div class="event-column">
         <div class="work-item">
           <p class="work-caption"><b></b> Animated Event Poster</p>
-          <video class="event-media event-media--poster" src="images/hed-artzi-poster.mp4" autoplay muted loop playsinline></video>
+          <video class="event-media event-media--poster" data-be-label="POSTER" src="images/hed-artzi-poster.mp4" autoplay muted loop playsinline></video>
         </div>
       </div>
       <!-- עמודה 2: הטקסט על המסך, והסרטון מההופעה -->
@@ -137,7 +137,7 @@
         </div>
         <div class="work-item">
           <p class="work-caption"><b></b> The record sleeve designs reinterpret the original covers through cutting, and visual distortion.</p>
-          <video class="event-media event-media--concert" src="images/hed-artzi-concert-video.mp4" autoplay muted loop playsinline></video>
+          <video class="event-media event-media--concert" data-be-label="" data-be-text="" src="images/hed-artzi-concert-video.mp4" autoplay muted loop playsinline></video>
         </div>
       </div>
     </div>
@@ -198,6 +198,9 @@
 
   <!-- הלשוניות: לחיצה על לשונית מראה את התוכן שלה -->
   <script src="event-tabs.js?v=14"></script>
+
+  <!-- OVERVIEW במבט מעוף הציפור: כל החומרים יחד -->
+  <script src="birdseye.js?v=5"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה אדום על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>

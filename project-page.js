@@ -34,7 +34,7 @@ projectTabs.forEach((tab) => {
   אלמנטים שנכנסים יחד מופיעים אחד אחרי השני.
 */
 const revealItems = document.querySelectorAll(
-  ".project-cover, .project-headline, .project-text p, .work-caption, .work-video, .work-image, .work-poster, .work-collage, .work-crop, .hed-voice"
+  ".project-cover, .project-headline, .project-text p, .work-caption, .work-video, .work-image, .work-poster, .work-collage, .work-crop, .hed-voice, .reel, .mini-gallery"
 );
 const revealStep = 0.12; // כמה שניות בין אלמנט לאלמנט
 

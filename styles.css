@@ -16,6 +16,7 @@
   --color-project-accent: #0ae60d; /* ירוק: הלשונית הפעילה ומילים מודגשות */
   --color-hed-artzi: #fe3200;      /* אדום: הצבע של עמוד HED ARTZI (במקום הירוק) */
   --color-hed-artzi-background: #131313; /* אפור כהה מאוד: הרקע בעמוד החדש של HED ARTZI */
+  --color-darom: #ffd555;          /* צהוב: הצבע של עמוד DAROM FILM FESTIVAL (במקום הירוק) */
 
   /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
   --u: min(100vw / 1440, 100vh / 1024);
@@ -974,7 +975,8 @@ body {
   overflow: hidden; /* כדי שהתמונה לא תמתח את הריבוע לגובה */
 }
 
-.project-cover img {
+.project-cover img,
+.project-cover video {
   display: block;
   width: 100%;
   height: 100%;
@@ -1303,6 +1305,7 @@ em.project-text__highlight {
 
 .work-video--magazine { --ratio: 2074 / 1536; }
 .work-video--website  { --ratio: 674 / 445; }
+.work-video--darom-website { --ratio: 2238 / 1392; } /* האתר של DAROM FILM FESTIVAL */
 
 /*
   קולאז': כמה תמונות מסובבות שמונחות אחת על השנייה, כמו בפיגמה.
@@ -1755,6 +1758,581 @@ em.project-text__highlight {
   pointer-events: none;
   transition: transform var(--duration-page-out) var(--ease-page-in);
 }
+
+/* =========================================
+   OVERVIEW במבט מעוף הציפור (birdseye.js), בכל עמודי הפרויקטים (הפריים Desktop - 78 בפיגמה)
+   מסך כהה בלי כפתורים: משמאל הקו ו-FULL VIEW, ומימין לקו כל החומרים בשתי שורות שנגללות הצידה.
+   מעל כל חומר רק המספר. ב-hover: כל השאר חצי שקופים, ומופיעים השם של הלשונית והתיאור.
+   ========================================= */
+.birdseye {
+  --be-row-gap: calc(25 * var(--u));      /* בין השורות */
+  --be-gap: calc(24 * var(--u));          /* בין החומרים */
+  --be-caption: calc(31 * var(--u));      /* שורת המספר (24) ועוד 7 עד החומר */
+  /* הגובה של כל חומר: חצי מהמסך (פחות 22 למעלה ולמטה, הרווח בין השורות ושורות המספר) */
+  --be-media-height: calc((100svh - 44 * var(--u) - var(--be-row-gap)) / 2 - var(--be-caption));
+  position: absolute;
+  z-index: 5;
+  top: calc(22 * var(--u));
+  bottom: calc(22 * var(--u));
+  left: calc(86 * var(--u)); /* מתחילה בקו (80 + 6), כך שהחומרים נחתכים בו כשגוללים */
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--be-row-gap);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none; /* בלי פס גלילה */
+  /* סגור: מחכה מימין, שקוף. נכנס יחד עם הקו שגולש שמאלה */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(calc(600 * var(--u)));
+  transition:
+    opacity var(--duration-overview) var(--ease-next),
+    transform var(--duration-overview) var(--ease-next),
+    visibility 0s linear var(--duration-overview);
+}
+
+.birdseye::-webkit-scrollbar {
+  display: none;
+}
+
+.is-overview .birdseye {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition:
+    opacity var(--duration-overview) var(--ease-next),
+    transform var(--duration-overview) var(--ease-next),
+    visibility 0s;
+}
+
+/*
+  שורה: החומרים אחד ליד השני (החומר הראשון 36 אחרי הקו, כמו בפיגמה).
+  השורה העליונה צמודה למטה והתחתונה למעלה, כך שחומרים קטנים יותר מתקרבים לאמצע המסך.
+*/
+.birdseye__row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--be-gap);
+  width: max-content;
+  padding-inline: calc(36 * var(--u));
+}
+
+.birdseye__item {
+  display: flex;
+  flex-direction: column;
+  gap: calc(7 * var(--u));
+  margin: 0;
+  transition: opacity 0.35s var(--ease-next);
+}
+
+/* השורה התחתונה: צמודה למעלה */
+.birdseye__row + .birdseye__row {
+  align-items: flex-start;
+}
+
+/* השורות בגובה קבוע (חצי מהמסך), גם אם כל החומרים בהן קטנים */
+.birdseye__row {
+  min-height: calc(var(--be-media-height) + var(--be-caption));
+}
+
+/* hover על חומר: כל השאר חצי שקופים */
+.birdseye:has(.birdseye__item:hover) .birdseye__item:not(:hover) {
+  opacity: 0.5;
+}
+
+/* מעל החומר: המספר, ואחריו (מוסתרת עד ה-hover) הקטגוריה, כלומר השם של הלשונית */
+.birdseye__caption {
+  position: relative;
+  z-index: 1;
+  width: 0;
+  min-width: 100%;
+  height: calc(24 * var(--u));
+  font-family: var(--font-caption);
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.birdseye__number {
+  font-family: var(--font-caption-number);
+}
+
+.birdseye__text {
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-next);
+}
+
+.birdseye__item:hover .birdseye__text {
+  opacity: 1;
+}
+
+/* הקטגוריה: בצבע של הפרויקט */
+.birdseye__title {
+  color: var(--color-project-accent);
+}
+
+/* החומר: בגובה של השורה, והרוחב לפי הפרופורציות שלו
+   (הכללים כאן חזקים יותר מהכללים של ה-OVERVIEW הקודם, שעדיין חלים על החומרים המקוריים) */
+.birdseye__media {
+  display: flex;
+  height: var(--be-media-height);
+}
+
+:is(.project-page, .event-page).is-overview .birdseye .birdseye__media > * {
+  flex: none;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+}
+
+/* חומר רחב: קצת יותר קטן, כדי שלא ישתלט על השורה. חומר קטן (data-be-size="small"): עוד יותר */
+.birdseye__item.is-wide .birdseye__media {
+  height: calc(var(--be-media-height) * 0.72);
+}
+
+.birdseye__item.is-small .birdseye__media {
+  height: calc(var(--be-media-height) * 0.5);
+}
+
+/* חומרים שהפרופורציות שלהם במשתנה (תמונות חתוכות, קולאז'ים) */
+:is(.project-page, .event-page).is-overview .birdseye .birdseye__media > :is(.work-crop, .work-collage, .work-poster) {
+  aspect-ratio: var(--ratio);
+}
+
+:is(.project-page, .event-page).is-overview .birdseye .birdseye__media > .reel {
+  --reel-width: calc(var(--be-media-height) * 439 / 874.49);
+  width: var(--reel-width);
+  height: auto;
+}
+
+/* החומרים לחיצים */
+.birdseye__item {
+  cursor: pointer;
+}
+
+/* החומר שלחצו עליו: מוסתר במקום שלו, כי ההעתק שלו גדל לאמצע */
+.birdseye__item.is-focused .birdseye__media {
+  visibility: hidden;
+}
+
+/*
+  לחיצה על חומר (birdseye.js): הוא גדל לאמצע המסך, כל השאר מוחשכים ב-60%,
+  ומעליו התיאור שלו בלבן. לחיצה בכל מקום מחזירה אותו למקום.
+*/
+.birdseye-focus {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0s linear 0.65s;
+}
+
+.birdseye-focus.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: visibility 0s;
+}
+
+.birdseye-focus__shade {
+  position: absolute;
+  inset: 0;
+  left: calc(86 * var(--u)); /* רק החומרים מוחשכים, לא הקו ו-FULL VIEW */
+  background-color: rgba(19, 19, 19, 0.6);
+  opacity: 0;
+  transition: opacity 0.65s var(--ease-next);
+}
+
+.birdseye-focus.is-open .birdseye-focus__shade {
+  opacity: 1;
+}
+
+.birdseye-focus__frame {
+  position: absolute;
+}
+
+.birdseye-focus__media {
+  width: 100%;
+  height: 100%;
+  transform-origin: top left;
+}
+
+.birdseye-focus__media > * {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none;
+  object-fit: cover;
+}
+
+.birdseye-focus__media > .reel {
+  height: auto !important; /* הרוחב (--reel-width) נקבע בסקריפט, והגובה לפי הפרופורציות */
+}
+
+/* התיאור: מעל החומר, בלבן, מופיע אחרי שהחומר גדל */
+.birdseye-focus__caption {
+  position: absolute;
+  bottom: calc(100% + 12 * var(--u));
+  left: 0;
+  right: 0;
+  font-family: var(--font-caption);
+  font-size: 19px;
+  line-height: 1.1;
+  color: var(--color-text);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-next);
+}
+
+.birdseye-focus.is-open .birdseye-focus__caption {
+  opacity: 1;
+  transition: opacity 0.45s var(--ease-next) 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .birdseye-focus__shade,
+  .birdseye-focus__caption {
+    transition: none;
+  }
+}
+
+/* כל מה שהיה בתצוגה הרגילה (הלשוניות, הבר, החומרים) נעלם, ונשארים רק הקו ו-FULL VIEW */
+.project-work,
+.event-header,
+.event-panels {
+  transition:
+    left var(--duration-overview) var(--ease-next),
+    opacity 0.4s var(--ease-next);
+}
+
+.is-overview :is(.project-work, .event-header, .event-panels) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* הרקע ב-OVERVIEW: כהה (כמו בפיגמה), גם בעמודים שהרקע שלהם שחור */
+.project-page {
+  transition: background-color var(--duration-overview) var(--ease-next);
+}
+
+.project-page.is-overview {
+  background-color: var(--color-hed-artzi-background);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .birdseye,
+  .birdseye__item,
+  .birdseye__text {
+    transition: none;
+  }
+}
+
+/* בטלפון אין OVERVIEW */
+@media (max-width: 900px), (orientation: portrait) {
+  .birdseye {
+    display: none;
+  }
+}
+
+/* =========================================
+   עמוד DAROM FILM FESTIVAL (darom.html): מה שמיוחד לעמוד הזה
+   ========================================= */
+/* החץ לפרויקט הבא: קצר (49, כמו בפיגמה), כי יש כאן ארבע לשוניות והן מגיעות כמעט עד הקצה */
+.theme-darom .project-next__icon {
+  width: calc(49 * var(--bar-u));
+}
+
+/* התמונה הראשית: בפרופורציות של הסרטון (846×570) */
+.project-cover--darom {
+  --ratio: 846 / 570;
+  aspect-ratio: 846 / 570;
+}
+
+/* הטקסט: 25 (ולא 28), וכולו ישר. רק המילים המודגשות נטויות */
+:where(.theme-darom) .project-text {
+  font-size: calc(25 * var(--u));
+  font-style: normal;
+}
+
+/* המילים המודגשות כאן באותיות רגילות (בעמוד הכדורגל "FOOTBALL" באותיות גדולות) */
+:where(.theme-darom) em.project-text__highlight {
+  padding-inline: 0;
+  text-transform: none;
+}
+
+/* מילים מודגשות בצהוב, אבל לא נטויות (כמו בפיגמה, בפסקה על האייקונים) */
+.project-text__highlight--plain {
+  font-style: normal;
+}
+
+/*
+  ה-Reel בתוך מסגרת של אינסטגרם (439×874, קו לבן 3.5 ופינות מעוגלות 28, כמו בפיגמה).
+  הכל נמדד לפי הרוחב של המסגרת (--reel-width), כדי שיישאר באותן פרופורציות בכל גודל.
+*/
+.reel {
+  --reel-width: min(439 * var(--u), var(--media-height) * 439 / 874.49);
+  --reel-border: calc(var(--reel-width) * 3.517 / 439);
+  --reel-radius: calc(var(--reel-width) * 28.096 / 439);
+  position: relative;
+  flex-shrink: 0;
+  width: var(--reel-width);
+  aspect-ratio: 439 / 874.49;
+  border: var(--reel-border) solid var(--color-text);
+  border-radius: var(--reel-radius);
+  overflow: hidden;
+  /* מסכה בצורת המסגרת: בזמן שהסרטון רץ הדפדפן מצייר אותו בשכבה נפרדת,
+     ו-overflow לבד לא חותך אותו בפינות המעוגלות. המסכה חותכת הכל בדיוק לפי המסגרת */
+  clip-path: inset(0 round var(--reel-radius));
+  background-color: #000;
+  isolation: isolate; /* ה-screen של הממשק מתערבב רק עם מה שבתוך המסגרת */
+}
+
+/* הסרטון: למעלה, לכל הרוחב (782 מתוך 867 בגובה). מתחתיו שחור */
+.reel__video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 90.17%;
+  object-fit: cover;
+  /* גם הסרטון עצמו מעוגל למעלה, בפינות של המסגרת מבפנים */
+  border-radius: calc(var(--reel-radius) - var(--reel-border)) calc(var(--reel-radius) - var(--reel-border)) 0 0;
+}
+
+/* הצללה שחורה מלמטה, מאחורי הכיתוב והכפתורים (כמו בפיגמה) */
+.reel__shade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  aspect-ratio: 1317 / 1379; /* בגובה של הממשק התחתון */
+  background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+}
+
+/*
+  הממשק של אינסטגרם: לבן על שחור, וב-screen השחור נעלם ורק הלבן נשאר.
+  בתמונות של הממשק (מהפיגמה) כבר יש את המסגרת הלבנה, אז הן יושבות בדיוק על הקצה החיצוני של המסגרת,
+  והקו שלהן נופל בדיוק על הקו של המסגרת.
+*/
+.reel__ui {
+  position: absolute;
+  left: calc(-1 * var(--reel-border));
+  width: calc(100% + 2 * var(--reel-border));
+  max-width: none;
+  mix-blend-mode: screen;
+}
+
+.reel__ui--top    { top: calc(-1 * var(--reel-border)); }
+.reel__ui--bottom { bottom: calc(-1 * var(--reel-border)); }
+
+/*
+  כפתור PLAY באמצע ה-Reel: עיגול עם קו לבן (3, כמו כל הקווים באתר) ומשולש.
+  ב-hover הוא בצבע של הפרויקט. בזמן שהסרטון רץ הוא נעלם, ולחיצה על ה-Reel עוצרת ומחזירה אותו.
+*/
+.reel__play {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--reel-width) * 78 / 439);
+  aspect-ratio: 1;
+  padding: 0;
+  border: var(--reel-border) solid var(--color-text);
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.35);
+  color: var(--color-text);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition:
+    opacity 0.4s var(--ease-next),
+    color 0.3s var(--ease-next),
+    border-color 0.3s var(--ease-next);
+}
+
+/* המשולש: קצת ימינה מהאמצע, כדי שייראה באמצע (כמו בכל כפתור PLAY) */
+.reel__play::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  width: 34%;
+  height: 38%;
+  background-color: currentColor;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  transform: translate(-50%, -50%);
+}
+
+.reel__play:hover {
+  color: var(--color-project-accent);
+  border-color: var(--color-project-accent);
+}
+
+.reel.is-playing .reel__play {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* בזמן שהסרטון רץ: כל ה-Reel לחיץ (לעצירה) */
+.reel.is-playing {
+  cursor: pointer;
+}
+
+/*
+  הגלריה הקטנה של החוברת (PROGRAM): למעלה תמונה גדולה (668×701), ומתחתיה (25) שורה של תמונות קטנות (55×74, 8 ביניהן).
+  בשורה רואים רק את התמונות שלא מוצגות למעלה. היא נגללת הצידה, ולחיצה על תמונה קטנה מקפיצה אותה למעלה (mini-gallery.js).
+*/
+.mini-gallery {
+  --ratio: 668 / 701;
+  display: flex;
+  flex-direction: column;
+  gap: calc(25 * var(--u));
+  /* כל הגלריה נכנסת במסך: התמונה הגדולה בגובה שנשאר אחרי השורה של הקטנות */
+  width: min(100%, (var(--media-height) - 99 * var(--u)) * 668 / 701);
+}
+
+/* התמונות הגדולות אחת על השנייה, ורק אחת מוצגת. במעבר: אחת מתבהרת והשנייה נעלמת */
+.mini-gallery__main {
+  position: relative;
+  aspect-ratio: var(--ratio);
+  overflow: hidden;
+}
+
+.mini-gallery__main img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-next);
+}
+
+.mini-gallery__main img.is-active {
+  opacity: 1;
+}
+
+/* השורה של התמונות הקטנות: נגללת הצידה (בלי פס גלילה) */
+.mini-gallery__thumbs {
+  display: flex;
+  gap: calc(8 * var(--u));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mini-gallery__thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.mini-gallery__thumb {
+  flex: 0 0 auto;
+  width: calc(55 * var(--u));
+  height: calc(74 * var(--u));
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-next);
+}
+
+/* ב-hover: קצת שקופה, כדי שירגישו שאפשר ללחוץ */
+.mini-gallery__thumb:hover {
+  opacity: 0.6;
+}
+
+/* התמונה שמוצגת למעלה לא מופיעה בשורה */
+.mini-gallery__thumb.is-active {
+  display: none;
+}
+
+.mini-gallery__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+  הגלריה של הפוסטרים: למעלה הכיתוב של הפוסטר שמוצג (מתחלף איתו),
+  מתחתיו הפוסטר הגדול (567×810), ומימינו (11) עמודה של הפוסטרים הקטנים (94 רוחב, 6 ביניהם).
+  העמודה בגובה של הפוסטר הגדול, ואם יש יותר פוסטרים היא נגללת למטה.
+*/
+.mini-gallery--posters {
+  display: grid;
+  grid-template-columns: 567fr 94fr;
+  column-gap: calc(11 * var(--u));
+  row-gap: calc(6.668 * var(--u));
+  /*
+    הפוסטר הגדול תמיד נכנס במסך (מתחת לכיתוב, 40): הגובה שלו לכל היותר --media-height פחות 40.
+    הרוחב של כל הגלריה: הפוסטר (567 לכל 810 בגובה) ועוד העמודה (94) והרווח (11).
+  */
+  width: min(100%, (var(--media-height) - 40 * var(--u)) * (567 + 94) / 810 + 11 * var(--u));
+}
+
+.mini-gallery--posters .mini-gallery__caption {
+  grid-column: 1 / -1;
+}
+
+.mini-gallery--posters .mini-gallery__main {
+  aspect-ratio: 567 / 810;
+}
+
+.mini-gallery--posters .mini-gallery__thumbs {
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+  height: 0;         /* לא קובעת את הגובה של השורה: */
+  min-height: 100%;  /* היא בגובה של הפוסטר הגדול, ונגללת בתוכו */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.mini-gallery--posters .mini-gallery__thumb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2867 / 4096;
+}
+
+.mini-gallery__count {
+  font-family: var(--font-caption-number);
+}
+
+/* שני הפוסטרים ברחוב: לכל הרוחב, עם החיתוך מהפיגמה */
+.darom-citylight {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-gallery__main img,
+  .mini-gallery__thumb {
+    transition: none;
+  }
+}
+
+/* ב-OVERVIEW: ה-Reel והפוסטר בגובה של השורה, כמו כל חומר (בקרוסלה: הפוסטר, והשורה של החצים מעליו כמו כיתוב) */
+.is-overview .reel {
+  --reel-width: calc(var(--overview-media-height) * 439 / 874.49);
+  align-self: flex-start;
+}
+
+/* ב-OVERVIEW: רק הכיתוב והפוסטר הגדול, בגובה של השורה (בלי העמודה של הקטנים) */
+.is-overview .mini-gallery.mini-gallery--posters {
+  grid-template-columns: 1fr;
+  width: calc((var(--overview-media-height) - 40 * var(--u)) * 567 / 810);
+}
+
+.is-overview .mini-gallery--posters .mini-gallery__thumbs {
+  display: none;
+}
+
+.is-overview .mini-gallery {
+  width: calc((var(--overview-media-height) - 99 * var(--u)) * 668 / 701); /* פחות השורה של הקטנות */
+}
+
 
 /* מילה עם מקף שלא נשברת בין שתי שורות (למשל one-page) */
 .no-break {
@@ -2234,6 +2812,12 @@ em.project-text__highlight {
 .theme-hed-artzi {
   --color-project-accent: var(--color-hed-artzi);
   --cursor-green: var(--color-hed-artzi);
+}
+
+/* עמוד DAROM FILM FESTIVAL: צהוב במקום הירוק, גם בעכבר */
+.theme-darom {
+  --color-project-accent: var(--color-darom);
+  --cursor-green: var(--color-darom);
 }
 
 /* בעמוד הבית הירוק של ה-hover אחר, אז גם העכבר מקבל אותו */

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAROM FILM FESTIVAL – טל המלך</title>
+  <link rel="stylesheet" href="styles.css?v=127">
+  <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (project-page.js ממשיך את המעבר) -->
+  <script>
+    {
+      const enterLine = JSON.parse(sessionStorage.getItem("enter-line") || "null");
+      const desktopLayout = window.matchMedia("(min-width: 901px) and (orientation: landscape)").matches;
+      if (enterLine && desktopLayout) {
+        const root = document.documentElement;
+        root.classList.add("is-entering");
+        root.style.setProperty("--enter-line-left", enterLine.left + "px");
+        root.style.setProperty("--enter-line-width", enterLine.width + "px");
+      }
+    }
+  </script>
+</head>
+<body class="theme-darom">
+
+  <!--
+    עמוד פרויקט: DAROM FILM FESTIVAL (הפריימים Desktop - 69 ו-80 בפיגמה).
+    כמו עמוד WIKIPEDIA>FOOTBALL: משמאל הטקסט על הפרויקט, מימין הלשוניות והחומרים.
+    הצבע של הפרויקט: צהוב (במקום הירוק).
+  -->
+  <main class="project-page">
+
+    <!-- העמודה השמאלית -->
+    <section class="project-info">
+
+      <header class="project-header">
+        <!-- חזרה לעמוד הבית: החץ ושם הפרויקט הם קישור אחד (ב-hover השם מתחלף ל-HOME) -->
+        <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
+          <span class="project-header__back"><span class="project-header__back-icon"></span></span>
+          <h1 class="project-header__title">
+            <span class="project-header__name">DAROM FILM<br class="mobile-break"> FESTIVAL</span>
+            <span class="project-header__home" aria-hidden="true">HOME</span>
+          </h1>
+        </a>
+        <!-- הכפתור OVERVIEW: מראה את כל החומרים בשורה אחת, רק עם הכיתובים -->
+        <button class="overview-button" type="button">OVERVIEW <img src="images/eye.svg" alt=""></button>
+        <!--
+          בטלפון במקום OVERVIEW: שני כפתורים, INFO (הטקסט על הפרויקט) ו-GALLERY (החומרים).
+          הכפתור של החלק שבו נמצאים מראה את השם שלו, והשני מראה רק אייקון וחץ: לשם אפשר לעבור.
+        -->
+        <div class="section-buttons">
+          <button class="section-button section-button--info" type="button" aria-label="INFO: חזרה לטקסט על הפרויקט">
+            <span class="section-button__label">INFO</span>
+            <span class="section-button__icon section-button__icon--info"></span>
+            <span class="section-button__arrow section-button__arrow--up"></span>
+          </button>
+          <button class="section-button section-button--gallery" type="button" aria-label="GALLERY: מעבר לגלריה">
+            <span class="section-button__label">GALLERY</span>
+            <span class="section-button__icon section-button__icon--eye"></span>
+            <span class="section-button__arrow"></span>
+          </button>
+        </div>
+      </header>
+
+      <div class="project-info__scroll">
+        <!--
+          התמונה הראשית: הסרטון של האייקונים. רץ לבד בלי סאונד (ובלי אפשרות לסאונד), פעמיים, ואז נעצר
+          על הפריים האחרון (cover-video.js). עד שהסרטון נטען, מוצג פריים ממנו.
+        -->
+        <div class="project-cover project-cover--darom">
+          <video class="cover-video" src="images/darom-cover.mp4" poster="images/darom-cover.jpg" muted autoplay playsinline disablepictureinpicture data-plays="2" aria-label="הסרטון של האייקונים של הפסטיבל"></video>
+        </div>
+
+        <h2 class="project-headline">A Film Festival<br>as a Cultural Snapshot</h2>
+
+        <div class="project-text">
+          <p>
+            Branding for the <em class="project-text__highlight">DAROM Film Festival</em>, held in Sderot.<br>
+            The project includes a visual identity, poster series, website, social media campaign, festival program, and attendee guide.
+          </p>
+          <p>
+            <em class="project-text__highlight">My experience of the festival was that of a snapshot of Israeli culture</em>: a kind of living document capturing its many layers, nuances, and complexities.
+          </p>
+          <p>
+            Inspired by this experience, I developed an archival visual identity, transforming a contemporary snapshot of Israeli culture into an extensive visual archive.
+          </p>
+        </div>
+
+        <!-- מערכת האייקונים (החיתוך מהפיגמה) -->
+        <div class="work-crop darom-icons" style="--ratio: 662 / 692; --crop-top: -20.53%; --crop-left: -7.72%; --crop-width: 115.44%; --crop-height: 156.59%;">
+          <img src="images/darom-icons.png" alt="מערכת האייקונים של הפסטיבל, לכל סוג של תוכן">
+        </div>
+
+        <div class="project-text">
+          <p>
+            As part of the archival approach, I developed an <span class="project-text__highlight project-text__highlight--plain">icon system to represent the festival’s different content categories</span>. The system functions as a visual language that supports both the branding and the classification of content across the festival.
+          </p>
+          <p class="project-text__credit">
+            <br>
+            Developed within a Branding for Culture course <br>at Bezalel Academy of Arts and Design.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- הקו שבאמצע (במצב OVERVIEW הוא גולש שמאלה) -->
+    <img class="project-divider" src="images/home-line.svg" alt="">
+
+    <!-- במצב OVERVIEW, משמאל לקו: FULL VIEW, חזרה לתצוגה הרגילה של הפרויקט -->
+    <button class="full-view" type="button" aria-label="FULL VIEW: חזרה לתצוגה הרגילה">
+      <span>&lt;</span><span>F</span><span>U</span><span>L</span><span>L</span><span>&nbsp;</span><span>V</span><span>I</span><span>E</span><span>W</span><span>&lt;</span>
+    </button>
+
+    <!-- העמודה הימנית -->
+    <section class="project-work" id="gallery">
+
+      <div class="project-top">
+        <!-- הלשוניות. הלשונית הפתוחה צהובה, ומופיע לידה כמה פריטים יש בה -->
+        <nav class="project-tabs">
+          <button class="project-tab is-active" type="button" data-tab="social">SOCIAL<span class="project-tab__count"> (2)</span></button>
+          <button class="project-tab" type="button" data-tab="posters">POSTERS<span class="project-tab__count"> (4)</span></button>
+          <button class="project-tab" type="button" data-tab="program">PROGRAM<span class="project-tab__count"> (4)</span></button>
+          <button class="project-tab" type="button" data-tab="website">WEBSITE</button>
+        </nav>
+
+        <!-- החץ לפרויקט הבא (ב-hover: הלשוניות יוצאות, ובמקומן השם של הפרויקט הבא) -->
+        <a class="project-next" href="hed-artzi.html">
+          <p class="project-next-label">NEXT: HED ARTZI REBRANDING</p>
+          <span class="project-next__arrow" aria-label="הפרויקט הבא: HED ARTZI REBRANDING">
+            <span class="project-next__icon"></span>
+          </span>
+        </a>
+      </div>
+
+      <div class="project-panels">
+        <!-- ===== SOCIAL ===== -->
+        <div class="project-panel is-active" data-tab="social">
+          <button class="panel-title" type="button" aria-expanded="true">SOCIAL (2)</button>
+          <div class="work-item">
+            <p class="work-caption"><b></b> An Instagram reel presenting the festival.</p>
+            <!--
+              ה-Reel בתוך מסגרת של אינסטגרם: למטה הסרטון, מעליו הצללה שחורה מלמטה,
+              ומעליהם הממשק של אינסטגרם (לבן על שחור, ב"screen": השחור שקוף).
+              באמצע כפתור PLAY שמפעיל את הסרטון עם הסאונד (reel.js).
+            -->
+            <div class="reel">
+              <video class="reel__video" src="images/darom-reel.mp4" poster="images/darom-reel-still.jpg" playsinline preload="metadata" aria-label="ה-Reel של הפסטיבל"></video>
+              <div class="reel__shade"></div>
+              <img class="reel__ui reel__ui--top" src="images/darom-reel-top.png" alt="">
+              <img class="reel__ui reel__ui--bottom" src="images/darom-reel-bottom.png" alt="">
+              <button class="reel__play" type="button" aria-label="הפעלת ה-Reel"></button>
+            </div>
+          </div>
+        </div>
+
+        <!--
+          ===== POSTERS =====
+          למעלה שני הפוסטרים ברחוב (בלי כיתוב). מתחת: גלריה קטנה, כמו ב-PROGRAM:
+          הכיתוב של הפוסטר שמוצג (1\4 > והשם שלו), הפוסטר בגדול, ומימינו שאר הפוסטרים בקטן, אחד מתחת לשני.
+          לחיצה על פוסטר קטן מקפיצה אותו לגדול (mini-gallery.js).
+        -->
+        <div class="project-panel" data-tab="posters">
+          <button class="panel-title" type="button" aria-expanded="true">POSTERS (4)</button>
+          <div class="work-item">
+            <div class="work-crop darom-citylight" style="--ratio: 529 / 421; --crop-top: -15.2%; --crop-left: -13.86%; --crop-width: 126.78%; --crop-height: 119.48%;">
+              <img src="images/darom-poster-citylight.jpg" alt="שני פוסטרים של הפסטיבל במתקני פרסום ברחוב">
+            </div>
+          </div>
+          <div class="work-item">
+            <div class="mini-gallery mini-gallery--posters">
+              <p class="work-caption mini-gallery__caption"><span class="mini-gallery__count">1\4 &gt;</span> <span class="mini-gallery__text">The main poster</span></p>
+              <div class="mini-gallery__main">
+                <img class="is-active" src="images/darom-poster-1.jpg" alt="הפוסטר הראשי של פסטיבל קולנוע דרום" data-caption="The main poster">
+                <img src="images/darom-poster-3.jpg" alt="פוסטר הסיפור של הפסטיבל" data-caption="Festival story poster">
+                <img src="images/darom-poster-2.jpg" alt="פוסטר פרמיירת הפתיחה" data-caption="Opening premier poster">
+                <img src="images/darom-poster-4.jpg" alt="פוסטר המידע של הפסטיבל" data-caption="Information poster">
+              </div>
+              <div class="mini-gallery__thumbs">
+                <button class="mini-gallery__thumb is-active" type="button" aria-label="פוסטר 1"><img src="images/darom-poster-1.jpg" alt=""></button>
+                <button class="mini-gallery__thumb" type="button" aria-label="פוסטר 2"><img src="images/darom-poster-3.jpg" alt=""></button>
+                <button class="mini-gallery__thumb" type="button" aria-label="פוסטר 3"><img src="images/darom-poster-2.jpg" alt=""></button>
+                <button class="mini-gallery__thumb" type="button" aria-label="פוסטר 4"><img src="images/darom-poster-4.jpg" alt=""></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+          ===== PROGRAM: החוברת, בגלריה קטנה =====
+          למעלה תמונה גדולה, ולמטה שורה של תמונות קטנות שאפשר לגלול הצידה.
+          לחיצה על תמונה קטנה מציגה אותה למעלה (mini-gallery.js).
+        -->
+        <div class="project-panel" data-tab="program">
+          <button class="panel-title" type="button" aria-expanded="true">PROGRAM (4)</button>
+          <div class="work-item">
+            <p class="work-caption"><b></b> Festival program, schedule and guide, featuring the icon system that categorizes content and guides visitors throughout the festival.</p>
+            <div class="mini-gallery">
+              <div class="mini-gallery__main">
+                <img class="is-active" src="images/darom-program-7526.jpg" alt="החוברת של הפסטיבל, עם תפס" style="object-position: 50% 43%;">
+                <img src="images/darom-program-7544.jpg" alt="החוברת פתוחה: התוכנייה">
+                <img src="images/darom-program-7534.jpg" alt="החוברת מקופלת">
+              </div>
+              <!-- למטה רואים רק את התמונות שלא מוצגות עכשיו למעלה -->
+              <div class="mini-gallery__thumbs">
+                <button class="mini-gallery__thumb is-active" type="button" aria-label="תמונה 1"><img src="images/darom-program-7526-small.jpg" alt=""></button>
+                <button class="mini-gallery__thumb" type="button" aria-label="תמונה 2"><img src="images/darom-program-7544-small.jpg" alt=""></button>
+                <button class="mini-gallery__thumb" type="button" aria-label="תמונה 3"><img src="images/darom-program-7534-small.jpg" alt=""></button>
+              </div>
+            </div>
+          </div>
+          <div class="work-item">
+            <p class="work-caption"><b></b> Festival daily schedule and guide.</p>
+            <img class="work-image" data-be-label="PROGRAM COVER" data-be-size="small" src="images/darom-schedule-cover.jpg" alt="התוכנייה היומית: הכריכה השחורה, פתוחה לאורך">
+            <img class="work-image" data-be-label="DAILY SCHEDULE" data-be-size="small" src="images/darom-schedule-page.jpg" alt="התוכנייה היומית: עמוד מבפנים">
+          </div>
+        </div>
+
+        <!-- ===== WEBSITE: הקלטה של האתר, רצה לבד בלי סאונד ===== -->
+        <div class="project-panel" data-tab="website">
+          <button class="panel-title" type="button" aria-expanded="true">WEBSITE</button>
+          <div class="work-item">
+            <p class="work-caption"><b></b> The website provides information on the festival,<br>screening schedules, program highlights, ticket purchases, and special events.</p>
+            <video class="work-video work-video--darom-website" src="images/darom-website.mp4" autoplay muted loop playsinline disablepictureinpicture aria-label="הקלטה של האתר של הפסטיבל"></video>
+          </div>
+        </div>
+      </div>
+
+      <!-- בטלפון: בסוף הגלריה, הקישור לפרויקט הבא -->
+      <a class="mobile-next" href="hed-artzi.html">
+        <span class="mobile-next__label">NEXT:</span>
+        <span class="mobile-next__name">HED ARTZI</span>
+        <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
+      </a>
+    </section>
+
+  </main>
+
+  <!-- ההתנהגות של עמוד פרויקט: לשוניות, הופעת התוכן, OVERVIEW והחץ לפרויקט הבא -->
+  <script src="project-page.js?v=19"></script>
+
+  <!-- הגלריות הקטנות: הפוסטרים והחוברת -->
+  <script src="mini-gallery.js?v=4"></script>
+  <script src="reel.js?v=1"></script>
+  <script src="cover-video.js?v=1"></script>
+
+  <!-- OVERVIEW במבט מעוף הציפור: כל החומרים יחד -->
+  <script src="birdseye.js?v=5"></script>
+
+  <!-- העכבר של האתר: עיגול לבן שנהיה צהוב על דברים לחיצים -->
+  <script src="cursor.js?v=3"></script>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WIKIPEDIA&gt;FOOTBALL – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=106">
+  <link rel="stylesheet" href="styles.css?v=127">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (project-page.js ממשיך את המעבר) -->
   <script>
     {
@@ -113,14 +113,13 @@
         <!--
           החץ לפרויקט הבא. במצב hover: החץ נהיה ירוק, הלשוניות גולשות הצידה ונעלמות,
           ובמקומן מופיע השם של הפרויקט הבא. שאר המסך מתעמעם.
-          (יהפוך לקישור כשיהיה עמוד לפרויקט הבא)
-        -->
-        <div class="project-next">
+                  -->
+        <a class="project-next" href="darom.html">
           <p class="project-next-label">NEXT: DAR0M FILM FESTIVAL</p>
           <span class="project-next__arrow" aria-label="הפרויקט הבא: DAROM FILM FESTIVAL">
             <span class="project-next__icon"></span>
           </span>
-        </div>
+        </a>
       </div>
 
       <!--
@@ -139,7 +138,7 @@
           </div>
           <div class="work-item">
             <p class="work-caption"><b></b> Magazine unfolded poster presenting the evolution of CR7 face graphics in FIFA games throw the years.</p>
-            <img class="work-image" src="images/wikipedia-cr7-poster.png" alt="פוסטר מקופל מתוך המגזין: הפנים של רונלדו במשחקי FIFA לאורך השנים">
+            <img class="work-image" data-be-label="UNFOLDED POSTER" src="images/wikipedia-cr7-poster.png" alt="פוסטר מקופל מתוך המגזין: הפנים של רונלדו במשחקי FIFA לאורך השנים">
           </div>
         </div>
 
@@ -161,7 +160,7 @@
           </div>
           <div class="work-item">
             <p class="work-caption"><b></b> The website &amp; Magazine</p>
-            <img class="work-image" src="images/wikipedia-website-context.png" alt="האתר על מסך של מחשב נייד, ליד המגזין המודפס">
+            <img class="work-image" data-be-label="WEBSITE AND MAGAZINE" src="images/wikipedia-website-context.png" alt="האתר על מסך של מחשב נייד, ליד המגזין המודפס">
           </div>
         </div>
       </div>
@@ -177,7 +176,10 @@
   </main>
 
   <!-- ההתנהגות של עמוד פרויקט: לשוניות, הופעת התוכן, OVERVIEW והחץ לפרויקט הבא -->
-  <script src="project-page.js?v=16"></script>
+  <script src="project-page.js?v=19"></script>
+
+  <!-- OVERVIEW במבט מעוף הציפור: כל החומרים יחד -->
+  <script src="birdseye.js?v=5"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה ירוק על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>
