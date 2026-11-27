@@ -1763,7 +1763,7 @@ em.project-text__highlight {
 
 /* דברים שמופיעים רק בטלפון: ירידת השורה בשם הפרויקט, והכפתור GALLERY */
 .mobile-break,
-.gallery-button,
+.section-buttons,
 .panel-title,
 .mobile-next {
   display: none;
@@ -1829,19 +1829,12 @@ em.project-text__highlight {
     background-color: var(--color-hed-artzi-background);
   }
 
-  /* הכפתור GALLERY בקצה השמאלי, והשם והחזרה יחד בקצה הימני (8 ביניהם, החזרה הכי בחוץ) */
-  .gallery-button {
-    order: -1;
-    margin-right: auto;
-  }
-
-  .project-header__title {
-    order: 1;
-    margin-right: 8px;
-  }
-
+  /*
+    הכפתורים INFO ו-GALLERY בקצה השמאלי, והחץ לחזרה בקצה הימני.
+  */
   .project-header__back {
     order: 2;
+    margin-left: auto;
   }
 
   /* בצד ימין החץ פונה ימינה: ">" */
@@ -1868,11 +1861,9 @@ em.project-text__highlight {
     mask-image: url("images/chevron-back.svg");
   }
 
-  /* שם הפרויקט: בשתי שורות, במרכז */
+  /* בטלפון אין את שם הפרויקט בבר: רק הכפתורים והחץ לחזרה */
   .project-header__title {
-    top: 0;
-    font-size: 21px;
-    text-align: center;
+    display: none;
   }
 
   .mobile-break {
@@ -1883,15 +1874,24 @@ em.project-text__highlight {
     display: none; /* בטלפון אין hover שמחליף את השם ל-HOME */
   }
 
-  /* במקום OVERVIEW: GALLERY (באותו עיצוב), שגולל אל החומרים */
+  /* במקום OVERVIEW: הכפתורים INFO ו-GALLERY */
   .project-header .overview-button {
     display: none;
   }
 
-  .gallery-button {
+  .section-buttons {
+    position: absolute; /* לא תופסים מקום בבר, וכך יכולים לעלות על השם */
+    z-index: 1;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 12px;
+  }
+
+  .section-button {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
     padding: 8px 12px;
     border: 3px solid var(--color-text);
     background-color: var(--color-background);
@@ -1899,59 +1899,119 @@ em.project-text__highlight {
     font-family: var(--font-tab); /* Inter SemiBold, ריווח -1% */
     font-size: 20.13px;
     font-weight: 600;
+    line-height: 24px; /* בגובה של האייקון */
     letter-spacing: -0.01em;
-    text-decoration: none;
     white-space: nowrap;
-  }
-
-  /* האייקונים מצוירים כ"מסכה", כדי שיקבלו את הצבע של הכפתור (לבן, או ירוק בלחיצה) */
-  .gallery-button__icon {
-    width: 24px;
-    height: 24px;
-    background-color: currentColor;
-    -webkit-mask: var(--icon) center / contain no-repeat;
-    mask: var(--icon) center / contain no-repeat;
-  }
-
-  .gallery-button__icon--eye  { --icon: url("images/eye.svg"); }
-
-  /* החץ הקטן בכפתור: למטה ב-GALLERY (יורדים לגלריה), למעלה ב-INFO (חוזרים למעלה) */
-  .gallery-button__arrow {
-    --icon: url("images/chevron-back.svg");
-    width: 11.46px;
-    height: 20.36px;
-    margin-inline: 4.45px; /* אחרי הסיבוב הוא תופס 20 ברוחב, כמו בפיגמה */
-    background-color: currentColor;
-    -webkit-mask: var(--icon) center / contain no-repeat;
-    mask: var(--icon) center / contain no-repeat;
-    transform: rotate(-90deg); /* החץ "<" מסתובב ופונה למטה */
-  }
-
-  .gallery-button__arrow--up {
-    transform: rotate(90deg);
-  }
-  .gallery-button__icon--info { --icon: url("images/info-circle.svg"); }
-
-  /*
-    לחיצה על הכפתור (is-pressed), או כשהוא מתחלף בין GALLERY ל-INFO בזמן גלילה (is-flash):
-    הטקסט, האייקון והמסגרת נהיים ירוקים לרגע, כמו המילים המודגשות, וחוזרים ללבן בהדרגה.
-  */
-  .gallery-button {
+    cursor: pointer;
+    /*
+      לחיצה (is-pressed), או כשהכפתור נהיה "הנוכחי" בזמן גלילה (is-flash):
+      הטקסט, האייקון והמסגרת נהיים לרגע בצבע של הפרויקט, וחוזרים ללבן בהדרגה.
+    */
     transition:
-      border-radius 0.3s var(--ease-next),
       color 0.4s var(--ease-next),
       border-color 0.4s var(--ease-next);
   }
 
-  .gallery-button:is(.is-pressed, .is-flash) {
-    color: var(--color-project-accent);
-    border-color: var(--color-project-accent);
-    transition-duration: 0.3s, 0.1s, 0.1s; /* נדלק מהר, נכבה לאט */
+  .section-button--info {
+    border-radius: 20px; /* INFO עגול, GALLERY מרובע (כמו בפיגמה) */
   }
 
-  /* הכפתור הוא <button>: בלי העיצוב של הדפדפן */
-  .gallery-button {
-    cursor: pointer;
+  .section-button:is(.is-pressed, .is-flash) {
+    color: var(--color-project-accent);
+    border-color: var(--color-project-accent);
+    transition-duration: 0.1s; /* נדלק מהר, נכבה לאט */
+  }
+
+  /* האייקונים מצוירים כ"מסכה", כדי שיקבלו את הצבע של הכפתור */
+  .section-button__icon,
+  .section-button__arrow::before {
+    flex-shrink: 0;
+    background-color: currentColor;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+  }
+
+  .section-button__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .section-button__icon--eye  { --icon: url("images/eye.svg"); }
+  .section-button__icon--info { --icon: url("images/info-circle.svg"); }
+
+  /*
+    המעבר בין INFO ל-GALLERY: השם של כפתור אחד נסגר (הרוחב שלו מתכווץ לאפס והוא נעלם),
+    ובמקביל החץ שלו נפתח, ולהפך בכפתור השני. כך הכפתורים משנים רוחב בתנועה רכה.
+  */
+  .section-button__label,
+  .section-button__arrow {
+    overflow: hidden;
+    transition:
+      max-width 0.5s var(--ease-next),
+      margin 0.5s var(--ease-next),
+      opacity 0.35s var(--ease-next);
+  }
+
+  .section-button__label {
+    max-width: 100px; /* יותר מהשם הכי ארוך (GALLERY) */
+    margin-right: 10px; /* הרווח מהאייקון */
+  }
+
+  /* החץ: למטה ב-GALLERY (יורדים לגלריה), למעלה ב-INFO (חוזרים למעלה) */
+  .section-button__arrow {
+    position: relative;
+    flex-shrink: 0;
+    width: 20.36px;
+    max-width: 20.36px;
+    height: 20.36px;
+    margin-left: 10px; /* הרווח מהאייקון */
+  }
+
+  .section-button__arrow::before {
+    --icon: url("images/chevron-back.svg");
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 4.45px;
+    width: 11.46px;
+    height: 20.36px;
+    transform: rotate(-90deg); /* החץ "<" מסתובב ופונה למטה */
+  }
+
+  .section-button__arrow--up::before {
+    transform: rotate(90deg);
+  }
+
+  /*
+    למעלה (בטקסט): INFO מראה את השם שלו, ו-GALLERY רק אייקון וחץ למטה.
+    בגלריה (is-in-gallery): GALLERY מראה את השם שלו, ו-INFO רק אייקון וחץ למעלה.
+  */
+  .section-button--info .section-button__arrow,
+  .section-button--gallery .section-button__label,
+  .is-in-gallery .section-button--info .section-button__label,
+  .is-in-gallery .section-button--gallery .section-button__arrow {
+    max-width: 0;
+    margin: 0;
+    opacity: 0;
+  }
+
+  .is-in-gallery .section-button--info .section-button__arrow {
+    max-width: 20.36px;
+    margin-left: 10px;
+    opacity: 1;
+  }
+
+  .is-in-gallery .section-button--gallery .section-button__label {
+    max-width: 100px;
+    margin-right: 10px;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section-button__label,
+    .section-button__arrow {
+      transition: none;
+    }
   }
 
   /* ---------- התמונה, הכותרת והטקסט ---------- */
@@ -2095,26 +2155,6 @@ em.project-text__highlight {
     height: 20.34px;
   }
 
-  /* GALLERY מתחלף ל-INFO כשנמצאים בגלריה, ואז הפינות מעוגלות (כמו בפיגמה) */
-
-  .gallery-button > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .gallery-button__info,
-  .gallery-button.is-info .gallery-button__gallery {
-    display: none !important;
-  }
-
-  .gallery-button.is-info .gallery-button__info {
-    display: inline-flex !important;
-  }
-
-  .gallery-button.is-info {
-    border-radius: 20px;
-  }
 
   /* ירידות השורה של המחשב: בטלפון נשארת רק הראשונה ("The work features" בשורה חדשה), כמו בפיגמה */
   .project-text p:first-child br:not(:first-of-type),

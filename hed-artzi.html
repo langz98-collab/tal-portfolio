@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HED ARTZI – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=94">
+  <link rel="stylesheet" href="styles.css?v=99">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
   <script>
     {
@@ -42,11 +42,22 @@
 
       <button class="overview-button" type="button">OVERVIEW <img src="images/eye.svg" alt=""></button>
 
-      <!-- בטלפון במקום OVERVIEW: GALLERY, שגולל אל החומרים. בגלריה הוא מתחלף ל-INFO, שחוזר למעלה -->
-      <button class="gallery-button" type="button">
-        <span class="gallery-button__gallery">GALLERY <span class="gallery-button__icon gallery-button__icon--eye"></span><span class="gallery-button__arrow"></span></span>
-        <span class="gallery-button__info">INFO <span class="gallery-button__icon gallery-button__icon--info"></span><span class="gallery-button__arrow gallery-button__arrow--up"></span></span>
-      </button>
+      <!--
+        בטלפון במקום OVERVIEW: שני כפתורים, INFO (הטקסט על הפרויקט) ו-GALLERY (החומרים).
+        הכפתור של החלק שבו נמצאים מראה את השם שלו, והשני מראה רק אייקון וחץ: לשם אפשר לעבור.
+      -->
+      <div class="section-buttons">
+        <button class="section-button section-button--info" type="button" aria-label="INFO: חזרה לטקסט על הפרויקט">
+          <span class="section-button__label">INFO</span>
+          <span class="section-button__icon section-button__icon--info"></span>
+          <span class="section-button__arrow section-button__arrow--up"></span>
+        </button>
+        <button class="section-button section-button--gallery" type="button" aria-label="GALLERY: מעבר לגלריה">
+          <span class="section-button__label">GALLERY</span>
+          <span class="section-button__icon section-button__icon--eye"></span>
+          <span class="section-button__arrow"></span>
+        </button>
+      </div>
 
       <!-- הלשוניות והחץ לפרויקט הבא (כמו בעמוד פרויקט) -->
       <div class="project-top event-top">
@@ -186,7 +197,7 @@
   <script src="hed-voice.js?v=6"></script>
 
   <!-- הלשוניות: לחיצה על לשונית מראה את התוכן שלה -->
-  <script src="event-tabs.js?v=10"></script>
+  <script src="event-tabs.js?v=11"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה אדום על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>

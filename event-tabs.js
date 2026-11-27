@@ -244,9 +244,11 @@ if (root.classList.contains("is-entering")) {
 sessionStorage.removeItem("enter-line");
 
 /* ---------- בטלפון: כמו בעמוד פרויקט ----------
-   GALLERY / INFO, סגירה ופתיחה של חלקים בגלריה, והופעה של החומרים בגלילה. */
+   INFO ו-GALLERY, סגירה ופתיחה של חלקים בגלריה, והופעה של החומרים בגלילה. */
 const mobileLayout = window.matchMedia("(max-width: 900px), (orientation: portrait)");
-const galleryButton = document.querySelector(".gallery-button");
+const sectionButtons = document.querySelector(".section-buttons");
+const infoButton = document.querySelector(".section-button--info");
+const galleryButton = document.querySelector(".section-button--gallery");
 const gallery = document.getElementById("gallery");
 
 // נמצאים בגלריה? (הגלריה הגיעה עד מתחת לבר שלמעלה)
@@ -255,40 +257,39 @@ function isInGallery() {
   return gallery.getBoundingClientRect().top <= barBottom + 10;
 }
 
-// בגלריה הכפתור הוא INFO, ולמעלה הוא GALLERY. כשהוא מתחלף, הוא מהבהב לרגע בצבע של הפרויקט
+// הכפתור של החלק שבו נמצאים מראה את השם שלו. כשהוא מתחלף, הוא מהבהב לרגע בצבע של הפרויקט
 let flashTimer = null;
 
-function updateGalleryButton() {
-  const nowInfo = isInGallery();
-  if (galleryButton.classList.contains("is-info") === nowInfo) return;
-  galleryButton.classList.toggle("is-info", nowInfo);
-  galleryButton.classList.add("is-flash");
+function updateSectionButtons() {
+  const nowInGallery = isInGallery();
+  if (sectionButtons.classList.contains("is-in-gallery") === nowInGallery) return;
+  sectionButtons.classList.toggle("is-in-gallery", nowInGallery);
+  const current = nowInGallery ? galleryButton : infoButton;
+  [infoButton, galleryButton].forEach((button) => button.classList.remove("is-flash"));
+  current.classList.add("is-flash");
   clearTimeout(flashTimer);
-  flashTimer = setTimeout(() => galleryButton.classList.remove("is-flash"), 350);
+  flashTimer = setTimeout(() => current.classList.remove("is-flash"), 350);
 }
 
-window.addEventListener("scroll", updateGalleryButton, { passive: true });
-galleryButton.classList.toggle("is-info", isInGallery()); // בטעינה: בלי הבהוב
+window.addEventListener("scroll", updateSectionButtons, { passive: true });
+sectionButtons.classList.toggle("is-in-gallery", isInGallery()); // בטעינה: בלי הבהוב
 
-// GALLERY: גוללים אל הגלריה. INFO: חוזרים לתחילת העמוד
-galleryButton.addEventListener("click", () => {
-  if (galleryButton.classList.contains("is-info")) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  } else {
-    gallery.scrollIntoView({ behavior: "smooth" });
-  }
-});
+// INFO: חוזרים לתחילת העמוד. GALLERY: גוללים אל הגלריה
+infoButton.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+galleryButton.addEventListener("click", () => gallery.scrollIntoView({ behavior: "smooth" }));
 
-// לחיצה: הכפתור צבוע כל עוד לוחצים (ולפחות 150 מילישניות)
-galleryButton.addEventListener("pointerdown", () => {
-  const pressedAt = performance.now();
-  galleryButton.classList.add("is-pressed");
-  const release = () => {
-    const wait = Math.max(0, 150 - (performance.now() - pressedAt));
-    setTimeout(() => galleryButton.classList.remove("is-pressed"), wait);
-  };
-  window.addEventListener("pointerup", release, { once: true });
-  window.addEventListener("pointercancel", release, { once: true });
+// לחיצה: הכפתור צבוע כל עוד לוחצים (ולפחות 150 מילישניות, כדי שיראו את זה גם בהקשה מהירה)
+[infoButton, galleryButton].forEach((button) => {
+  button.addEventListener("pointerdown", () => {
+    const pressedAt = performance.now();
+    button.classList.add("is-pressed");
+    const release = () => {
+      const wait = Math.max(0, 150 - (performance.now() - pressedAt));
+      setTimeout(() => button.classList.remove("is-pressed"), wait);
+    };
+    window.addEventListener("pointerup", release, { once: true });
+    window.addEventListener("pointercancel", release, { once: true });
+  });
 });
 
 // הקשה על השם של חלק בגלריה: החלק נסגר (נשאר רק השם) או נפתח, בתנועה רכה
