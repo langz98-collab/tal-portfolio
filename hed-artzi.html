@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HED ARTZI – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=68">
+  <link rel="stylesheet" href="styles.css?v=94">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
   <script>
     {
@@ -41,6 +41,12 @@
       </a>
 
       <button class="overview-button" type="button">OVERVIEW <img src="images/eye.svg" alt=""></button>
+
+      <!-- בטלפון במקום OVERVIEW: GALLERY, שגולל אל החומרים. בגלריה הוא מתחלף ל-INFO, שחוזר למעלה -->
+      <button class="gallery-button" type="button">
+        <span class="gallery-button__gallery">GALLERY <span class="gallery-button__icon gallery-button__icon--eye"></span><span class="gallery-button__arrow"></span></span>
+        <span class="gallery-button__info">INFO <span class="gallery-button__icon gallery-button__icon--info"></span><span class="gallery-button__arrow gallery-button__arrow--up"></span></span>
+      </button>
 
       <!-- הלשוניות והחץ לפרויקט הבא (כמו בעמוד פרויקט) -->
       <div class="project-top event-top">
@@ -99,7 +105,9 @@
 
     <!-- ===== INDUSTRIAL PEACE (האירוע) ===== -->
     <!-- כאן הכל נגלל יחד: למעלה הלוגו שמגיב לקול לכל הרוחב, ומתחתיו שתי העמודות -->
-    <div class="event-columns event-columns--stacked" data-tab="event">
+    <div class="event-columns event-columns--stacked" data-tab="event" id="gallery">
+      <!-- בטלפון: השם של החלק בגלריה (במחשב יש במקומו לשוניות). הקשה עליו סוגרת ופותחת את החלק -->
+      <button class="panel-title" type="button" aria-expanded="true">INDUSTRIAL PEACE (3)</button>
       <!-- הלוגו שמגיב לקול (hed-voice.js מצייר אותו בתוך האזור הזה) -->
       <div class="hed-voice"></div>
 
@@ -125,6 +133,7 @@
 
     <!-- ===== MUSIC & MERCH ===== -->
     <div class="event-columns" data-tab="music">
+      <button class="panel-title" type="button" aria-expanded="true">MUSIC &amp; MERCH (4)</button>
       <!-- עמודה 1: השקית עם התקליט -->
       <div class="event-column">
         <div class="work-item">
@@ -156,6 +165,13 @@
     </div>
     </div>
 
+    <!-- בטלפון: בסוף הגלריה, הקישור לפרויקט הבא -->
+    <a class="mobile-next" href="wikipedia-football.html">
+      <span class="mobile-next__label">NEXT:</span>
+      <span class="mobile-next__name">WIKIPEDIA&gt;<br>F00TBALL</span>
+      <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
+    </a>
+
     <!-- הקו, בצד ימין (במצב OVERVIEW הוא גולש שמאלה) -->
     <img class="event-line" src="images/home-line.svg" alt="">
 
@@ -170,7 +186,7 @@
   <script src="hed-voice.js?v=6"></script>
 
   <!-- הלשוניות: לחיצה על לשונית מראה את התוכן שלה -->
-  <script src="event-tabs.js?v=8"></script>
+  <script src="event-tabs.js?v=10"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה אדום על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>

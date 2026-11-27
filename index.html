@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=68">
+  <link rel="stylesheet" href="styles.css?v=94">
   <!-- חוזרים מעמוד פרויקט? העמוד מתחיל באמצע הגלילה (הסקריפט בסוף העמוד ממשיך את המעבר) -->
   <script>
     if (sessionStorage.getItem("return-home")) {
       document.documentElement.classList.add("is-returning");
+    } else if (window.matchMedia("(max-width: 900px), (orientation: portrait)").matches &&
+               !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+               !(document.referrer && new URL(document.referrer).origin === location.origin)) {
+      // בטלפון: אנימציית פתיחה, רק כשנכנסים לאתר (לא כשחוזרים מעמוד של פרויקט).
+      // בהתחלה המסך ריק (הסקריפט בסוף העמוד ממשיך)
+      document.documentElement.classList.add("is-intro", "is-intro-list");
     }
   </script>
 </head>
@@ -86,11 +92,12 @@
     const previewWindow = document.querySelector(".preview-window");
     const previewTriggers = document.querySelectorAll(".home-name, .project");
     let hoveredTrigger = null;
+    let autoTrigger = null; // בטלפון: מה שמוצג עכשיו במעבר האוטומטי (ראו למטה)
 
     // מה להציג עכשיו: מה שהעכבר עליו, ואם אין, מה שנבחר בלחיצה (בטלפון)
     function updatePreview() {
       const focusedTrigger = [...previewTriggers].find((trigger) => trigger.contains(document.activeElement));
-      const activeTrigger = hoveredTrigger || focusedTrigger;
+      const activeTrigger = hoveredTrigger || focusedTrigger || autoTrigger;
 
       if (activeTrigger) {
         previewWindow.dataset.showing = activeTrigger.dataset.project;
@@ -112,6 +119,138 @@
       trigger.addEventListener("focusin", updatePreview);
       trigger.addEventListener("focusout", () => setTimeout(updatePreview)); // אחרי שהפוקוס עבר
     });
+
+    /*
+      בטלפון (אין hover): העמוד עובר לבד בין הפרויקטים, אחד-אחד, מלמעלה למטה,
+      ובסוף אל TAL∅ טל. השם נצבע, והתריס נפתח עם התמונה המתאימה. ואז מההתחלה.
+    */
+    const mobileLayout = window.matchMedia("(max-width: 900px), (orientation: portrait)");
+    const autoOrder = [...document.querySelectorAll(".project"), document.querySelector(".home-name")];
+    const autoStepTime = 1500; // כמה זמן כל פרויקט מוצג (מילישניות)
+    let autoIndex = 0;
+    let autoTimer = null;
+
+    function showAutoStep() {
+      if (autoTrigger) autoTrigger.classList.remove("is-auto");
+      autoTrigger = autoOrder[autoIndex];
+      autoTrigger.classList.add("is-auto");
+      updatePreview();
+      autoIndex = (autoIndex + 1) % autoOrder.length; // אחרי TAL חוזרים לפרויקט הראשון
+    }
+
+    function startAutoPreview() {
+      if (autoTimer || !mobileLayout.matches || introRoot.classList.contains("is-intro-list")) return;
+      autoIndex = 0;
+      autoTimer = setTimeout(function step() {
+        showAutoStep();
+        autoTimer = setTimeout(step, autoStepTime);
+      }, 800); // מתחילים רגע אחרי שהעמוד נטען
+    }
+
+    function stopAutoPreview() {
+      clearTimeout(autoTimer);
+      autoTimer = null;
+      if (autoTrigger) autoTrigger.classList.remove("is-auto");
+      autoTrigger = null;
+      updatePreview();
+    }
+
+    /*
+      אנימציית הפתיחה בטלפון (כמו המעבר בין העמודים במחשב):
+      1. המסך ריק, והקו יורד מלמעלה עד למטה, לכל הגובה של המסך.
+      2. ואז כאילו גוללים: הקצה העליון של הקו יורד למקום שלו, הקצה התחתון עולה,
+         והשם יורד מלמעלה יחד איתו. כך "נוצר" המסך.
+      3. כשהקו נעצר, הפרויקטים מופיעים אחד-אחד, ואז מתחיל המעבר האוטומטי ביניהם.
+    */
+    const introRoot = document.documentElement;
+    const introDrawDuration = 1300;   // 1. הקו יורד עד למטה (מילישניות)
+    const introScrollDuration = 1300; // 2. המסך נוצר
+    const introListStart = 450;       // 3. הפרויקטים מתחילים לעלות כשהקו עוד מאט (אחרי 450 מתוך 1300)
+    const introFadeDuration = 1360;   //    הם מופיעים אחד-אחד (4 × 140 ועוד 800, כמו ב-CSS)
+    const easeInOut = "cubic-bezier(0.65, 0, 0.35, 1)"; // מתחיל לאט ונעצר לאט
+    const easeOut = "cubic-bezier(0.22, 1, 0.36, 1)";   // ממשיך בתנופה ונעצר בעדינות
+
+    if (introRoot.classList.contains("is-intro")) {
+      const homeLineImage = document.querySelector(".home-line__line");
+      const header = document.querySelector(".home-header");
+      const lineBox = homeLineImage.getBoundingClientRect();
+      const screenHeight = introRoot.clientHeight;
+      const lineTopAbove = lineBox.top - screenHeight; // הקצה העליון: מעל המסך, בדיוק במרחק של מסך אחד
+
+      // קו של המעבר (כמו במחשב), באותו מקום ובאותו עובי כמו הקו של העמוד
+      const introLine = document.createElement("div");
+      introLine.className = "page-line";
+      introLine.style.left = lineBox.left + "px";
+      introLine.style.width = lineBox.width + "px";
+      introLine.style.transition = "none";
+      document.body.append(introLine);
+
+      // 1. הקו יורד מלמעלה עד הקצה התחתון של המסך
+      introLine.animate(
+        [
+          { top: lineTopAbove + "px", height: -lineTopAbove + "px" },  // נגמר בראש המסך
+          { top: lineTopAbove + "px", height: screenHeight - lineTopAbove + "px" } // נגמר בתחתית המסך
+        ],
+        { duration: introDrawDuration, easing: easeInOut, fill: "forwards" }
+      );
+
+      // 2. המסך נוצר: הקו מתכווץ למקום שלו, והשם יורד מלמעלה
+      setTimeout(() => {
+        introLine.animate(
+          [
+            { top: lineTopAbove + "px", height: screenHeight - lineTopAbove + "px" },
+            { top: lineBox.top + "px", height: lineBox.height + "px" }
+          ],
+          { duration: introScrollDuration, easing: easeOut, fill: "forwards" }
+        );
+        header.animate(
+          [{ transform: `translateY(${-screenHeight}px)` }, { transform: "none" }],
+          { duration: introScrollDuration, easing: easeOut }
+        );
+        introRoot.classList.add("is-intro-scrolling"); // השם כבר לא מוסתר (האנימציה מזיזה אותו)
+      }, introDrawDuration);
+
+      // 3. הקו עוד נעצר בעדינות, והפרויקטים כבר מתחילים לעלות, כך שהכל זורם ברצף
+      setTimeout(() => {
+        introRoot.classList.remove("is-intro-list");
+        setTimeout(startAutoPreview, introFadeDuration);
+      }, introDrawDuration + introListStart);
+
+      // הקו נעצר: הקו של העמוד חוזר במקום הקו של המעבר
+      setTimeout(() => {
+        introLine.remove();
+        introRoot.classList.remove("is-intro", "is-intro-scrolling");
+      }, introDrawDuration + introScrollDuration);
+    } else {
+      startAutoPreview();
+    }
+
+    /*
+      בטלפון: השורה הכי ארוכה ממלאת את הרוחב, עם רווח מכל צד (--home-text-gutter ב-CSS).
+      כאן מודדים כמה היא רחבה בדפדפן הזה, כי בכל דפדפן הפונט קצת שונה.
+    */
+    function measureLongestRow() {
+      if (!mobileLayout.matches) return;
+      const homePage = document.querySelector(".home");
+      const u = parseFloat(getComputedStyle(homePage).fontSize) / 80.4; // גודל הטקסט הוא 80.4 u
+      let widest = 0;
+      document.querySelectorAll(".project").forEach((project) => {
+        const name = project.querySelector(".project__name").getBoundingClientRect();
+        const tag = project.querySelector(".project__tag").getBoundingClientRect();
+        widest = Math.max(widest, tag.right - name.left);
+      });
+      homePage.style.setProperty("--home-row-width", widest / u);
+    }
+
+    document.fonts.ready.then(measureLongestRow); // אחרי שהפונט נטען, כי הוא קובע את הרוחב
+    mobileLayout.addEventListener("change", measureLongestRow);
+    // נוגעים בפרויקט: המעבר האוטומטי עוצר, ומוצג מה שנגעו בו. כשיוצאים, הוא מתחיל שוב
+    previewTriggers.forEach((trigger) => {
+      trigger.addEventListener("focusin", stopAutoPreview);
+      trigger.addEventListener("focusout", startAutoPreview);
+    });
+    // אם המסך מתחלף (למשל מסובבים את הטאבלט): מפעילים או עוצרים
+    mobileLayout.addEventListener("change", () => (mobileLayout.matches ? startAutoPreview() : stopAutoPreview()));
 
     /*
       המעבר לעמוד פרויקט (רק במחשב, ורק אם לא ביקשו פחות תנועה), כאילו גוללים למטה לאורך הקו:

@@ -230,3 +230,83 @@ homeLink.addEventListener("click", (event) => {
 window.addEventListener("pageshow", (event) => {
   if (event.persisted) root.classList.remove("is-leaving-page");
 });
+
+/* ---------- בטלפון: GALLERY / INFO, וסגירה ופתיחה של חלקים בגלריה ---------- */
+const galleryButton = document.querySelector(".gallery-button");
+const gallery = document.getElementById("gallery");
+
+if (galleryButton && gallery) {
+  // נמצאים בגלריה? (הגלריה הגיעה עד מתחת לבר שלמעלה)
+  function isInGallery() {
+    const barBottom = document.querySelector(".project-header").getBoundingClientRect().bottom;
+    return gallery.getBoundingClientRect().top <= barBottom + 10;
+  }
+
+  // בגלריה הכפתור הוא INFO, ולמעלה הוא GALLERY. כשהוא מתחלף, הוא מהבהב לרגע בירוק
+  let flashTimer = null;
+
+  function updateGalleryButton() {
+    const wasInfo = galleryButton.classList.contains("is-info");
+    const nowInfo = isInGallery();
+    if (wasInfo === nowInfo) return;
+    galleryButton.classList.toggle("is-info", nowInfo);
+    galleryButton.classList.add("is-flash");
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => galleryButton.classList.remove("is-flash"), 350);
+  }
+
+  window.addEventListener("scroll", updateGalleryButton, { passive: true });
+  galleryButton.classList.toggle("is-info", isInGallery()); // בטעינה: בלי הבהוב
+
+  // לחיצה: הכפתור ירוק כל עוד לוחצים (ולפחות 150 מילישניות, כדי שיראו את זה גם בהקשה מהירה)
+  galleryButton.addEventListener("pointerdown", () => {
+    const pressedAt = performance.now();
+    galleryButton.classList.add("is-pressed");
+    const release = () => {
+      const wait = Math.max(0, 150 - (performance.now() - pressedAt));
+      setTimeout(() => galleryButton.classList.remove("is-pressed"), wait);
+    };
+    window.addEventListener("pointerup", release, { once: true });
+    window.addEventListener("pointercancel", release, { once: true });
+  });
+
+  // GALLERY: גוללים אל הגלריה. INFO: חוזרים לתחילת העמוד
+  galleryButton.addEventListener("click", () => {
+    if (galleryButton.classList.contains("is-info")) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      gallery.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+}
+
+// הקשה על השם של חלק בגלריה: החלק נסגר (נשאר רק השם) או נפתח, בתנועה רכה
+const panelDuration = 500;
+const panelEasing = "cubic-bezier(0.65, 0, 0.35, 1)"; // כמו --ease-next ב-CSS
+
+document.querySelectorAll(".panel-title").forEach((title) => {
+  const panel = title.closest(".project-panel");
+
+  title.addEventListener("click", () => {
+    const closing = !panel.classList.contains("is-closed");
+    const startHeight = panel.offsetHeight;
+
+    // מודדים את הגובה בסוף: סוגרים או פותחים לרגע
+    panel.classList.toggle("is-closed", closing);
+    const endHeight = panel.offsetHeight;
+    title.setAttribute("aria-expanded", String(!closing));
+    if (pageReducedMotion.matches) return;
+
+    // בזמן התנועה החומרים עוד מוצגים, והחלק "מכסה" או "חושף" אותם
+    panel.classList.remove("is-closed");
+    panel.style.overflow = "hidden";
+    const motion = panel.animate(
+      [{ height: startHeight + "px" }, { height: endHeight + "px" }],
+      { duration: panelDuration, easing: panelEasing }
+    );
+    motion.onfinish = () => {
+      panel.classList.toggle("is-closed", closing);
+      panel.style.overflow = "";
+    };
+  });
+});

@@ -242,3 +242,97 @@ if (root.classList.contains("is-entering")) {
 
 // חזרה לעמוד בכפתורים של הדפדפן: בלי מעבר
 sessionStorage.removeItem("enter-line");
+
+/* ---------- בטלפון: כמו בעמוד פרויקט ----------
+   GALLERY / INFO, סגירה ופתיחה של חלקים בגלריה, והופעה של החומרים בגלילה. */
+const mobileLayout = window.matchMedia("(max-width: 900px), (orientation: portrait)");
+const galleryButton = document.querySelector(".gallery-button");
+const gallery = document.getElementById("gallery");
+
+// נמצאים בגלריה? (הגלריה הגיעה עד מתחת לבר שלמעלה)
+function isInGallery() {
+  const barBottom = document.querySelector(".event-header").getBoundingClientRect().bottom;
+  return gallery.getBoundingClientRect().top <= barBottom + 10;
+}
+
+// בגלריה הכפתור הוא INFO, ולמעלה הוא GALLERY. כשהוא מתחלף, הוא מהבהב לרגע בצבע של הפרויקט
+let flashTimer = null;
+
+function updateGalleryButton() {
+  const nowInfo = isInGallery();
+  if (galleryButton.classList.contains("is-info") === nowInfo) return;
+  galleryButton.classList.toggle("is-info", nowInfo);
+  galleryButton.classList.add("is-flash");
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => galleryButton.classList.remove("is-flash"), 350);
+}
+
+window.addEventListener("scroll", updateGalleryButton, { passive: true });
+galleryButton.classList.toggle("is-info", isInGallery()); // בטעינה: בלי הבהוב
+
+// GALLERY: גוללים אל הגלריה. INFO: חוזרים לתחילת העמוד
+galleryButton.addEventListener("click", () => {
+  if (galleryButton.classList.contains("is-info")) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    gallery.scrollIntoView({ behavior: "smooth" });
+  }
+});
+
+// לחיצה: הכפתור צבוע כל עוד לוחצים (ולפחות 150 מילישניות)
+galleryButton.addEventListener("pointerdown", () => {
+  const pressedAt = performance.now();
+  galleryButton.classList.add("is-pressed");
+  const release = () => {
+    const wait = Math.max(0, 150 - (performance.now() - pressedAt));
+    setTimeout(() => galleryButton.classList.remove("is-pressed"), wait);
+  };
+  window.addEventListener("pointerup", release, { once: true });
+  window.addEventListener("pointercancel", release, { once: true });
+});
+
+// הקשה על השם של חלק בגלריה: החלק נסגר (נשאר רק השם) או נפתח, בתנועה רכה
+document.querySelectorAll(".panel-title").forEach((title) => {
+  const panel = title.closest(".event-columns");
+
+  title.addEventListener("click", () => {
+    const closing = !panel.classList.contains("is-closed");
+    const startHeight = panel.offsetHeight;
+
+    // מודדים את הגובה בסוף: סוגרים או פותחים לרגע
+    panel.classList.toggle("is-closed", closing);
+    const endHeight = panel.offsetHeight;
+    title.setAttribute("aria-expanded", String(!closing));
+    if (reducedMotion.matches) return;
+
+    // בזמן התנועה החומרים עוד מוצגים, והחלק "מכסה" או "חושף" אותם
+    panel.classList.remove("is-closed");
+    panel.style.overflow = "hidden";
+    const motion = panel.animate(
+      [{ height: startHeight + "px" }, { height: endHeight + "px" }],
+      { duration: 500, easing: easeNext }
+    );
+    motion.onfinish = () => {
+      panel.classList.toggle("is-closed", closing);
+      panel.style.overflow = "";
+    };
+  });
+});
+
+// בגלילה: כל חומר עולה ומופיע בהדרגה (כמו בעמוד פרויקט)
+if (mobileLayout.matches) {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.filter((entry) => entry.isIntersecting).forEach((entry, index) => {
+      entry.target.style.setProperty("--reveal-delay", index * 0.12 + "s"); // כמה יחד: אחד אחרי השני
+      entry.target.classList.add("is-visible");
+      revealObserver.unobserve(entry.target); // מופיע פעם אחת
+    });
+  });
+
+  document.querySelectorAll(
+    ".event-page :is(.project-headline, .event-about__text p, .work-caption, .event-media, .work-crop, .work-collage, .hed-voice)"
+  ).forEach((item) => {
+    item.classList.add("reveal");
+    revealObserver.observe(item);
+  });
+}

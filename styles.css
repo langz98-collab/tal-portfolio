@@ -417,21 +417,21 @@ body {
 }
 
 /* =========================================
-   מצב hover של פרויקט (גם בלחיצה בטלפון)
+   מצב hover של פרויקט (גם בלחיצה בטלפון, ובמעבר האוטומטי בטלפון: is-auto)
    ========================================= */
-.project:is(:hover, :focus-within) {
+.project:is(:hover, :focus-within, .is-auto) {
   gap: calc(10.05 * var(--u));
   color: var(--color-accent);
 }
 
 /* 1. העיגול מתרחב לכפסולה */
-.project:is(:hover, :focus-within) .project__tag {
+.project:is(:hover, :focus-within, .is-auto) .project__tag {
   width: calc(112.05 * var(--u));
   border-radius: 33% / 50%; /* צורת הכפסולה מפיגמה */
 }
 
 /* 2. ואחרי שהתרחב, התווית מופיעה */
-.project:is(:hover, :focus-within) .project__tag-text {
+.project:is(:hover, :focus-within, .is-auto) .project__tag-text {
   opacity: 1;
   /* מתחילה להופיע מיד, בהדרגה, יחד עם ההתרחבות, ונראית במלואה כשהכפסולה פתוחה */
   transition: opacity var(--duration-tag) ease;
@@ -455,6 +455,15 @@ body {
    ========================================= */
 /* ה-∅ נצבע בירוק (והתמונה שלי נפתחת בתריס, דרך הסקריפט) */
 .home-name:is(:hover, :focus) .home-name__mark {
+  color: var(--color-accent);
+}
+
+/*
+  בטלפון אין hover, אז עמוד הבית עובר לבד בין הפרויקטים, אחד-אחד, ובסוף אל TAL∅ טל.
+  הסקריפט ב-index.html מוסיף is-auto למה שמוצג עכשיו: השם נצבע, והתריס נפתח עם התמונה.
+*/
+.project.is-auto,
+.home-name.is-auto .home-name__mark {
   color: var(--color-accent);
 }
 
@@ -542,6 +551,140 @@ body {
 
 .is-coming-back .home {
   pointer-events: none;
+}
+
+/* =========================================
+   עמוד הבית בטלפון (הפריים "דף הבית" למובייל בפיגמה, 393×852)
+   נקודת השבירה: כמו בשאר האתר, מסך צר מ-900 או מסך לאורך (טלפון וטאבלט לאורך).
+   הכל בנוי באותו u כמו במחשב, רק שכאן u נקבע לפי רוחב המסך:
+   השורה הכי ארוכה (HED ARTZI REBRANDING והעיגול, 962 u) ממלאת את כל הרוחב,
+   פחות --home-text-gutter מכל צד. כך כל שורה נשארת שורה אחת, ויש מקום לתווית (UX/UI, BRAND)
+   כשהעיגול מתרחב. ככל שהטקסט קטן יותר, הקו והתריס שבאמצע גבוהים יותר.
+   ========================================= */
+@media (max-width: 900px), (orientation: portrait) {
+  .home {
+    --home-text-gutter: 28px;  /* הרווח מהקצה של המסך לשורה הכי ארוכה (כשהתווית פתוחה: כ-20) */
+    --home-mobile-gutter: 8px; /* הרווח מהקצה של המסך לתריס הפתוח */
+    /* לפי הרוחב, אבל במסך נמוך (טלפון לרוחב) לא גדול מדי, כדי שהעמוד ייכנס בגובה */
+    /* --home-row-width: הרוחב של השורה הכי ארוכה ב-u. הסקריפט ב-index.html מודד אותו בדפדפן עצמו
+       (בכל דפדפן הפונט קצת שונה), ו-962.3 הוא המדידה בכרום, למקרה שהסקריפט עוד לא רץ */
+    --u: min((100vw - 2 * var(--home-text-gutter)) / var(--home-row-width, 962.3), 100svh / 1100);
+    /* הגדלים של הטקסט מחושבים מחדש לפי ה-u החדש */
+    --font-size-tag: calc(25.12 * var(--u));
+    font-size: calc(80.4 * var(--u));
+    /* הריווחים במובייל (כולם עד האותיות עצמן, לא עד הקופסה של השורה) */
+    --home-edge: 8px;      /* מהקצה העליון עד TAL, ומהפרויקט האחרון עד התחתית */
+    --home-row-gap: 3px;   /* בין פרויקט לפרויקט */
+    /*
+      בכל שורה יש רווח ריק מעל ומתחת לאותיות (נמדד בדפדפן, ב-u, כי הוא גדל עם הטקסט).
+      מורידים אותו, כדי שהריווחים יהיו עד האותיות עצמן.
+    */
+    --home-text-inset-top: calc(12.85 * var(--u));   /* מעל TAL */
+    --home-text-inset-bottom: calc(9.28 * var(--u)); /* מתחת לפרויקט האחרון */
+    --home-about-inset: calc(18.56 * var(--u));      /* מתחת ל-About & Contact */
+    --home-project-inset-top: calc(7.85 * var(--u)); /* מעל שם של פרויקט */
+    --home-project-inset-bottom: calc(8.56 * var(--u)); /* מתחת לשם של פרויקט */
+    /* הקו: מעליו ומתחתיו אותו רווח כמו בין פרויקט לפרויקט (מהאותיות עד הקו) */
+    --home-line-gap-top: calc(var(--home-row-gap) + var(--home-project-inset-bottom) + var(--home-project-inset-top) - var(--home-about-inset));
+    --home-line-gap-bottom: calc(var(--home-row-gap) + var(--home-project-inset-bottom));
+    padding-top: calc(var(--home-edge) - var(--home-text-inset-top));
+    padding-bottom: calc(var(--home-edge) - var(--home-text-inset-bottom));
+    background-color: var(--color-hed-artzi-background); /* בפיגמה הרקע במובייל #131313 */
+  }
+
+  /* הרקע של כל העמוד, גם מתחת לעמוד כשגוללים */
+  body:has(.home) {
+    background-color: var(--color-hed-artzi-background);
+  }
+
+  /* התריס מסתיר את הקו באותו צבע של הרקע */
+  .preview-window {
+    background-color: var(--color-hed-artzi-background);
+  }
+
+  /* גם התריס הפתוח והתמונה בתוכו: לכל היותר עד 8 מהצדדים של המסך */
+  .preview-window.is-open {
+    width: min(calc(100cqh * var(--ratio) + 60 * var(--u)), 100vw - 2 * var(--home-mobile-gutter));
+  }
+
+  .preview-window img {
+    width: min(calc(100cqh * var(--ratio)), 100vw - 2 * var(--home-mobile-gutter) - 60 * var(--u));
+  }
+
+  /* הקו קצת יותר דק מאשר בפיגמה (3) */
+  .home-line__line {
+    width: 2px;
+  }
+
+  /* הרווחים מעל ומתחת לקו (מוגדרים למעלה, ב-.home) */
+  .home-line {
+    margin-top: var(--home-line-gap-top);
+    margin-bottom: var(--home-line-gap-bottom);
+  }
+
+  /*
+    אנימציית הפתיחה (is-intro, מ-index.html): בהתחלה המסך ריק, והקו יורד מלמעלה עד למטה.
+    אחר כך השם יורד מלמעלה עם הקו (is-intro-scrolling), ועוד לפני שהקו נעצר
+    הפרויקטים מתחילים לעלות אחד-אחד (כש-is-intro-list יורד).
+  */
+  .home-header {
+    transition:
+      transform var(--duration-page-out) var(--ease-page-in),
+      opacity var(--duration-shutter) var(--ease-next);
+  }
+
+  .is-intro .home-header {
+    opacity: 0;
+    transition: none;
+  }
+
+  /*
+    הפרויקטים מופיעים אחד-אחד, מלמעלה למטה: כל אחד עולה קצת ומתבהר, ונעצר בעדינות.
+    --i: המקום של הפרויקט ברשימה, וכל אחד מחכה --intro-stagger יותר מזה שלפניו.
+  */
+  .project-list {
+    --intro-stagger: 140ms;
+  }
+
+  .project {
+    transition:
+      gap var(--duration-tag) ease,
+      color 0.5s var(--ease-next), /* במעבר האוטומטי: השם נצבע ומתנקה בהדרגה */
+      opacity 0.8s var(--ease-reveal) calc(var(--i) * var(--intro-stagger)),
+      transform 0.8s var(--ease-reveal) calc(var(--i) * var(--intro-stagger));
+  }
+
+  .project:nth-child(1) { --i: 0; }
+  .project:nth-child(2) { --i: 1; }
+  .project:nth-child(3) { --i: 2; }
+  .project:nth-child(4) { --i: 3; }
+  .project:nth-child(5) { --i: 4; }
+
+  .home-name__mark {
+    transition: color 0.5s var(--ease-next);
+  }
+
+  .is-intro-list .project {
+    opacity: 0;
+    transform: translateY(calc(var(--distance-reveal) * 0.75)); /* מתחיל קצת למטה */
+    transition: none;
+  }
+
+  /* בשלב 2 השם יורד מלמעלה (הסקריפט מזיז אותו), אז כבר רואים אותו */
+  .is-intro-scrolling .home-header {
+    opacity: 1;
+  }
+
+  .is-intro .home-line__line {
+    visibility: hidden; /* במקומו זז הקו של המעבר */
+  }
+
+  /* 4px בין שם פרויקט לשם פרויקט */
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--home-row-gap);
+  }
 }
 
 /* =========================================
@@ -1613,6 +1756,19 @@ em.project-text__highlight {
   transition: transform var(--duration-page-out) var(--ease-page-in);
 }
 
+/* מילה עם מקף שלא נשברת בין שתי שורות (למשל one-page) */
+.no-break {
+  white-space: nowrap;
+}
+
+/* דברים שמופיעים רק בטלפון: ירידת השורה בשם הפרויקט, והכפתור GALLERY */
+.mobile-break,
+.gallery-button,
+.panel-title,
+.mobile-next {
+  display: none;
+}
+
 /*
   טלפון וטאבלט לאורך: העמודות אחת מתחת לשנייה, והעמוד כולו נגלל.
   u כאן נקבע לפי רוחב המסך, כדי שהעמודה (674) תמלא אותו.
@@ -1622,9 +1778,10 @@ em.project-text__highlight {
     --u: calc((100vw - 32px) / 674);
     --media-height: calc(100svh - 32px);
     --bar-u: min(var(--u), 1px); /* בטלפון הבר מוקטן לרוחב המסך */
+    --mobile-bar-height: 62px;     /* הבר הקבוע למעלה (פיגמה: עמוד פרויקט במובייל) */
     width: auto;
     height: auto;
-    padding: 21px 16px 40px;
+    padding: calc(var(--mobile-bar-height) + 8px) 8px 40px; /* 8 מתחת לבר ומהצדדים */
     overflow: visible;
     display: flex;
     flex-direction: column;
@@ -1647,8 +1804,321 @@ em.project-text__highlight {
     overflow: visible;
   }
 
-  /* ירידות השורה מהפיגמה מתאימות רק לרוחב של מחשב */
-  .project-text p:first-child br {
+  /* הרקע בטלפון, כמו בפיגמה */
+  body:has(.project-page) {
+    background-color: var(--color-hed-artzi-background);
+  }
+
+  /* כשלוחצים על GALLERY: גוללים בתנועה רכה, והגלריה נעצרת מתחת לבר */
+  html:has(.project-page) {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--mobile-bar-height) + 8px);
+  }
+
+  /* ---------- הבר למעלה: חזרה, שם הפרויקט ו-GALLERY. תמיד נשאר למעלה, גם כשגוללים ---------- */
+  .project-header {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--mobile-bar-height);
+    padding: 0 20px;
+    justify-content: flex-start;
+    gap: 0;
+    background-color: var(--color-hed-artzi-background);
+  }
+
+  /* הכפתור GALLERY בקצה השמאלי, והשם והחזרה יחד בקצה הימני (8 ביניהם, החזרה הכי בחוץ) */
+  .gallery-button {
+    order: -1;
+    margin-right: auto;
+  }
+
+  .project-header__title {
+    order: 1;
+    margin-right: 8px;
+  }
+
+  .project-header__back {
+    order: 2;
+  }
+
+  /* בצד ימין החץ פונה ימינה: ">" */
+  .project-header__back-icon {
+    transform: scaleX(-1);
+  }
+
+  /* החץ והשם הם עדיין קישור אחד, אבל כל אחד מהם יושב לבד בבר */
+  .project-home {
+    display: contents;
+  }
+
+  /* החזרה: חץ ">" דק בתוך ריבוע של 28 */
+  .project-header__back {
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+  }
+
+  .project-header__back-icon {
+    width: 11.46px;
+    height: 20.36px;
+    -webkit-mask-image: url("images/chevron-back.svg");
+    mask-image: url("images/chevron-back.svg");
+  }
+
+  /* שם הפרויקט: בשתי שורות, במרכז */
+  .project-header__title {
+    top: 0;
+    font-size: 21px;
+    text-align: center;
+  }
+
+  .mobile-break {
+    display: inline;
+  }
+
+  .project-header__home {
+    display: none; /* בטלפון אין hover שמחליף את השם ל-HOME */
+  }
+
+  /* במקום OVERVIEW: GALLERY (באותו עיצוב), שגולל אל החומרים */
+  .project-header .overview-button {
+    display: none;
+  }
+
+  .gallery-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 3px solid var(--color-text);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-tab); /* Inter SemiBold, ריווח -1% */
+    font-size: 20.13px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* האייקונים מצוירים כ"מסכה", כדי שיקבלו את הצבע של הכפתור (לבן, או ירוק בלחיצה) */
+  .gallery-button__icon {
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+  }
+
+  .gallery-button__icon--eye  { --icon: url("images/eye.svg"); }
+
+  /* החץ הקטן בכפתור: למטה ב-GALLERY (יורדים לגלריה), למעלה ב-INFO (חוזרים למעלה) */
+  .gallery-button__arrow {
+    --icon: url("images/chevron-back.svg");
+    width: 11.46px;
+    height: 20.36px;
+    margin-inline: 4.45px; /* אחרי הסיבוב הוא תופס 20 ברוחב, כמו בפיגמה */
+    background-color: currentColor;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+    transform: rotate(-90deg); /* החץ "<" מסתובב ופונה למטה */
+  }
+
+  .gallery-button__arrow--up {
+    transform: rotate(90deg);
+  }
+  .gallery-button__icon--info { --icon: url("images/info-circle.svg"); }
+
+  /*
+    לחיצה על הכפתור (is-pressed), או כשהוא מתחלף בין GALLERY ל-INFO בזמן גלילה (is-flash):
+    הטקסט, האייקון והמסגרת נהיים ירוקים לרגע, כמו המילים המודגשות, וחוזרים ללבן בהדרגה.
+  */
+  .gallery-button {
+    transition:
+      border-radius 0.3s var(--ease-next),
+      color 0.4s var(--ease-next),
+      border-color 0.4s var(--ease-next);
+  }
+
+  .gallery-button:is(.is-pressed, .is-flash) {
+    color: var(--color-project-accent);
+    border-color: var(--color-project-accent);
+    transition-duration: 0.3s, 0.1s, 0.1s; /* נדלק מהר, נכבה לאט */
+  }
+
+  /* הכפתור הוא <button>: בלי העיצוב של הדפדפן */
+  .gallery-button {
+    cursor: pointer;
+  }
+
+  /* ---------- התמונה, הכותרת והטקסט ---------- */
+  .project-info__scroll {
+    gap: 13.14px;
+    padding-bottom: 0;
+  }
+
+  /* התמונה הראשית: ריבוע לכל הרוחב, והחיתוך מהפיגמה של המובייל */
+  .project-cover {
+    width: 100%;
+  }
+
+  .project-cover--wikipedia img {
+    position: relative;
+    top: -1.99%;
+    height: 118.87%;
+    object-fit: fill;
+  }
+
+  /* הכותרת קצת יותר צרה מהתמונה (364 מתוך 377). הטקסט מגיע עד 8 מהצדדים, כמו התמונה */
+  .project-headline {
+    padding-inline: 6.5px;
+  }
+
+  .project-headline {
+    font-size: 27px;
+  }
+
+  .project-text {
+    font-size: 18px; /* בפיגמה 20, הוקטן ב-2 */
+    line-height: 1.25; /* קצת יותר אוויר בין השורות, כדי שיהיה נוח לקרוא */
+  }
+
+  .project-text__credit {
+    font-size: 14px; /* בפיגמה 17, הוקטן ב-3 */
+    line-height: 1.15;
+  }
+
+  /* ---------- הגלריה (פיגמה: עמוד גלריה במובייל) ----------
+     כל החלקים אחד מתחת לשני, ובין חלק לחלק קו לבן. גוללים בהם רגיל עד הסוף. */
+  .project-page {
+    gap: 24px;
+    padding-bottom: 25px;
+  }
+
+  .project-divider,
+  .project-top {
+    display: none; /* במקום הלשוניות: השם של כל חלק, מעליו */
+  }
+
+  .project-work {
+    gap: 0; /* הריווחים בגלריה מוגדרים בכל חלק */
+    scroll-margin-top: calc(var(--mobile-bar-height) + 8px); /* GALLERY גולל עד 8 מתחת לבר */
+  }
+
+  .project-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  /* הקו בסוף הגלריה: מתחת לחלק האחרון, באותו רוחב כמו הקווים שבין החלקים */
+  .project-panel:last-child {
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--color-text);
+  }
+
+  /* חלק אחד: קו מעליו, השם בירוק, והחומרים */
+  .project-panel,
+  .project-panel.is-active {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0 0;
+    border-top: 3px solid var(--color-text);
+    overflow: visible;
+    flex: none; /* הגובה לפי התוכן (וכך אפשר להנפיש אותו בסגירה ובפתיחה) */
+  }
+
+  .panel-title {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-project-accent);
+    font-family: var(--font-tab); /* Inter SemiBold, ריווח -1% */
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+
+  /* חלק סגור: רק השם שלו */
+  .project-panel.is-closed .work-item {
+    display: none;
+  }
+
+  .work-item {
+    gap: 12px;
+  }
+
+  /* הכיתובים בטלפון: בפיגמה 16, הוקטנו ב-3 */
+  .work-caption {
+    font-size: 13px;
+  }
+
+  /* התמונות והסרטונים: לכל הרוחב */
+  .project-panel :is(.work-video, .work-image, .work-poster) {
+    width: 100%;
+  }
+
+  /* בסוף: NEXT, מתחתיו שם הפרויקט הבא, ומתחתיו שלושה חצים. הכל במרכז */
+  .mobile-next {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px;
+    font-family: var(--font-main);
+    font-size: 35px;
+    letter-spacing: 0.01em;
+    line-height: normal;
+    color: var(--color-muted);
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .mobile-next__label {
+    color: var(--color-text);
+  }
+
+  .mobile-next__name {
+    margin-top: -8px; /* שתי השורות צמודות, כמו בפיגמה (ה-8 הוא רק עד החצים) */
+  }
+
+  .mobile-next__icon {
+    width: 61px;
+    height: 20.34px;
+  }
+
+  /* GALLERY מתחלף ל-INFO כשנמצאים בגלריה, ואז הפינות מעוגלות (כמו בפיגמה) */
+
+  .gallery-button > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .gallery-button__info,
+  .gallery-button.is-info .gallery-button__gallery {
+    display: none !important;
+  }
+
+  .gallery-button.is-info .gallery-button__info {
+    display: inline-flex !important;
+  }
+
+  .gallery-button.is-info {
+    border-radius: 20px;
+  }
+
+  /* ירידות השורה של המחשב: בטלפון נשארת רק הראשונה ("The work features" בשורה חדשה), כמו בפיגמה */
+  .project-text p:first-child br:not(:first-of-type),
+  .project-text__credit br:not(:first-child) {
     display: none;
   }
 
@@ -2090,81 +2560,149 @@ em.project-text__highlight {
   }
 }
 
-/* טלפון וטאבלט לאורך: הכל אחד מתחת לשני, והעמוד נגלל כרגיל */
+/*
+  טלפון וטאבלט לאורך: כמו עמוד פרויקט בטלפון (WIKIPEDIA>FOOTBALL).
+  למעלה בר קבוע (חזרה, שם, GALLERY), מתחתיו הכרזה, הכותרת והטקסט (BACKGROUND),
+  ואחריהם הגלריה: INDUSTRIAL PEACE ו-MUSIC & MERCH, עם קו לבן מעל כל חלק. בסוף NEXT.
+  הכפתור GALLERY, השמות של החלקים ו-NEXT מעוצבים יחד עם עמוד הפרויקט (למעלה בקובץ).
+*/
 @media (max-width: 900px), (orientation: portrait) {
   .event-page {
     --u: calc(100vw / 700);
     --bar-u: min(var(--u), 1px);
+    --mobile-bar-height: 62px;
     height: auto;
     overflow: visible;
-    padding: 20px 16px 48px;
-  }
-
-  .event-header {
-    position: static;
-    flex-wrap: wrap;
-    height: auto;
-    row-gap: 12px;
-  }
-
-  .event-tabs {
-    margin-left: 0;
-    flex-wrap: wrap;
-    row-gap: 12px;
-  }
-
-  .event-header {
-    right: auto;
-  }
-
-  .event-top {
-    flex: none;
-    width: 100%;
-    position: relative;
-  }
-
-  .event-page .project-next-label {
-    margin-left: calc(2 * var(--u));
-  }
-
-  .event-page .overview-button,
-  .full-view {
-    display: none; /* בטלפון אין OVERVIEW: הכל כבר אחד מתחת לשני */
-  }
-
-  .event-line {
-    display: none;
-  }
-
-  .event-columns {
-    position: static;
+    padding: calc(var(--mobile-bar-height) + 8px) 8px 25px; /* 8 מתחת לבר ומהצדדים */
+    display: flex;
     flex-direction: column;
     gap: 24px;
-    margin-top: 24px;
+  }
+
+  /* GALLERY גולל בתנועה רכה, והגלריה נעצרת 8 מתחת לבר */
+  html:has(.event-page) {
+    scroll-behavior: smooth;
+  }
+
+  #gallery {
+    scroll-margin-top: calc(var(--mobile-bar-height) + 8px);
+  }
+
+  /* ---------- הבר למעלה: תמיד נשאר למעלה ---------- */
+  .event-header {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--mobile-bar-height);
+    padding: 0 20px;
+    gap: 0;
+    background-color: var(--color-hed-artzi-background);
+  }
+
+  .event-header .overview-button,
+  .event-top,
+  .event-line,
+  .full-view {
+    display: none; /* בטלפון אין OVERVIEW ולשוניות: הכל אחד מתחת לשני */
+  }
+
+  /* ---------- כל החלקים אחד מתחת לשני ---------- */
+  .event-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .event-columns,
+  .event-columns.is-active {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    flex: none; /* הגובה לפי התוכן (וכך אפשר להנפיש אותו בסגירה ובפתיחה) */
+    gap: 12px;
+    padding: 0;
+    overflow: visible;
+    opacity: 1;
   }
 
   .event-column {
     width: 100%;
     overflow: visible;
-    gap: 24px;
+    gap: 12px;
     padding: 0;
   }
 
+  .event-page .work-item {
+    gap: 12px;
+  }
+
+  /* ---------- BACKGROUND: הכרזה, הכותרת והטקסט (כמו התמונה והטקסט בעמוד פרויקט) ---------- */
+  .event-columns[data-tab="background"] {
+    gap: 13.14px;
+    margin-bottom: 12px; /* 24 עד הגלריה */
+  }
+
+  .event-columns[data-tab="background"] > .event-column:not(.event-about) {
+    order: -1; /* הכרזה ראשונה */
+  }
+
+  .event-columns[data-tab="background"] .work-caption {
+    display: none; /* כמו התמונה הראשונה בעמוד פרויקט: בלי כיתוב */
+  }
+
+  .event-page .event-crop--poster {
+    width: 100%;
+  }
+
+  .event-about {
+    gap: 13.14px;
+  }
+
   .event-page .project-headline {
-    font-size: 26px;
+    padding-inline: 6.5px;
+    font-size: 27px;
   }
 
   .event-about__text {
-    font-size: 19px;
+    font-size: 18px;
+    line-height: 1.25;
   }
 
-  .event-media--poster {
-    width: min(100%, 495px);
+  .event-about__credit {
+    font-size: 14px;
   }
 
+  .event-about__text p + .event-about__credit {
+    margin-top: 1.1em;
+  }
+
+  /* ---------- הגלריה: קו לבן מעל כל חלק, ובסוף עוד קו ---------- */
+  .event-columns:not([data-tab="background"]) {
+    margin-inline: 10px;
+    padding-top: 12px;
+    border-top: 3px solid var(--color-text);
+  }
+
+  .event-columns:last-child {
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--color-text);
+  }
+
+  /* חלק סגור: רק השם שלו */
+  .event-columns.is-closed > :not(.panel-title) {
+    display: none;
+  }
+
+  .event-media--poster,
   .event-media--screen,
   .event-media--concert,
   .event-page .hed-voice {
     width: 100%;
+  }
+
+  .event-page .mobile-next {
+    margin-top: 0; /* הרווח (24) כבר בין החלקים של העמוד */
   }
 }

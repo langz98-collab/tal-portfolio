@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WIKIPEDIA&gt;FOOTBALL – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=68">
+  <link rel="stylesheet" href="styles.css?v=94">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (project-page.js ממשיך את המעבר) -->
   <script>
     {
@@ -40,12 +40,20 @@
         <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
           <span class="project-header__back"><span class="project-header__back-icon"></span></span>
           <h1 class="project-header__title">
-            <span class="project-header__name">WIKIPEDIA&gt;F00TBALL</span>
+            <span class="project-header__name">WIKIPEDIA&gt;<br class="mobile-break">F00TBALL</span>
             <span class="project-header__home" aria-hidden="true">HOME</span>
           </h1>
         </a>
         <!-- הכפתור OVERVIEW: מראה את כל החומרים בשורה אחת, רק עם הכיתובים -->
         <button class="overview-button" type="button">OVERVIEW <img src="images/eye.svg" alt=""></button>
+        <!--
+          בטלפון במקום OVERVIEW: GALLERY, שגולל למטה אל החומרים.
+          כשנמצאים בגלריה הוא מתחלף ל-INFO, שגולל חזרה למעלה (project-page.js).
+        -->
+        <button class="gallery-button" type="button">
+          <span class="gallery-button__gallery">GALLERY <span class="gallery-button__icon gallery-button__icon--eye"></span><span class="gallery-button__arrow"></span></span>
+          <span class="gallery-button__info">INFO <span class="gallery-button__icon gallery-button__icon--info"></span><span class="gallery-button__arrow gallery-button__arrow--up"></span></span>
+        </button>
       </header>
 
       <div class="project-info__scroll">
@@ -59,14 +67,14 @@
           <p>
             A project based on the <em class="project-text__highlight">"Football"</em> Wikipedia article, combining visual and textual research.<br>
             The work features a printed edition of the Wikipedia entry, as well as a poster and<br>
-            a one-page website designed for a conceptual event inspired by the research.
+            a <span class="no-break">one-page</span> website designed for a conceptual event inspired by the research.
           </p>
           <p>
             In this project, I focused on <span class="project-text__highlight">the history of football and the diverse range of simulation games</span> based on the sport. The research explores their evolution and refinement over the years, highlighting the contrast between the old and the new, while speculating on what the future holds.
           </p>
           <p class="project-text__credit">
             <br>
-            Developed within a Graphic-Typographic Design course<br>at Bezalel Academy of Arts and Design.
+            Developed within a Graphic-Typographic Design course <br>at Bezalel Academy of Arts and Design.
           </p>
         </div>
       </div>
@@ -81,7 +89,7 @@
     </button>
 
     <!-- העמודה הימנית -->
-    <section class="project-work">
+    <section class="project-work" id="gallery">
 
       <div class="project-top">
         <!--
@@ -115,6 +123,8 @@
       -->
       <div class="project-panels">
         <div class="project-panel is-active" data-tab="magazine">
+          <!-- בטלפון: השם של החלק (במחשב יש במקומו לשוניות). הקשה עליו סוגרת ופותחת את החלק -->
+          <button class="panel-title" type="button" aria-expanded="true">MAGAZINE (2)</button>
           <div class="work-item">
             <p class="work-caption"><b></b> Wikipedia&gt;Football : the print addition.</p>
             <video class="work-video work-video--magazine" src="images/wikipedia-magazine.mp4" autoplay muted loop playsinline></video>
@@ -126,6 +136,7 @@
         </div>
 
         <div class="project-panel" data-tab="event-poster">
+          <button class="panel-title" type="button" aria-expanded="true">EVENT POSTER (1)</button>
           <div class="work-item">
             <p class="work-caption"><b></b> The event poster retains visual elements<br>from the booklet’s design</p>
             <div class="work-poster">
@@ -135,6 +146,7 @@
         </div>
 
         <div class="project-panel" data-tab="website">
+          <button class="panel-title" type="button" aria-expanded="true">WEBSITE (2)</button>
           <div class="work-item">
             <p class="work-caption"><b></b> The website contains the program of the event, info about the content and place to buy tickets.</p>
             <video class="work-video work-video--website" src="images/wikipedia-website.mp4" autoplay muted loop playsinline></video>
@@ -145,12 +157,19 @@
           </div>
         </div>
       </div>
+
+      <!-- בטלפון: בסוף הגלריה, הקישור לפרויקט הבא -->
+      <a class="mobile-next" href="hed-artzi.html">
+        <span class="mobile-next__label">NEXT:</span>
+        <span class="mobile-next__name">HED ARTZI</span>
+        <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
+      </a>
     </section>
 
   </main>
 
   <!-- ההתנהגות של עמוד פרויקט: לשוניות, הופעת התוכן, OVERVIEW והחץ לפרויקט הבא -->
-  <script src="project-page.js?v=8"></script>
+  <script src="project-page.js?v=12"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה ירוק על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>
