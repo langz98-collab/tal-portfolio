@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=130">
+  <link rel="stylesheet" href="styles.css?v=149">
   <!-- חוזרים מעמוד פרויקט? העמוד מתחיל באמצע הגלילה (הסקריפט בסוף העמוד ממשיך את המעבר) -->
   <script>
     if (sessionStorage.getItem("return-home")) {
@@ -39,10 +39,10 @@
           <div class="preview-window__images">
             <img data-project="about" src="images/about-tal.png" alt="טל המלך">
             <img data-project="view" src="images/project-view.png" alt="VIEW">
-            <img data-project="chick-check" src="images/project-chick-check.png" alt="CHICK-CHECK">
-            <img data-project="hed-artzi" src="images/project-hed-artzi.png" alt="HED ARTZI REBRANDING">
+            <img data-project="hed-artzi" src="images/project-hed-artzi.png" alt="HED ARTZI">
             <img data-project="wikipedia-football" src="images/project-wikipedia-football.png" alt="WIKIPEDIA>FOOTBALL">
             <img data-project="darom" src="images/project-darom.png" alt="DAROM FILM FESTIVAL">
+            <img data-project="other" src="images/other-self-portrait.jpg" alt="ILLUSTRATION & OTHER">
           </div>
         </div>
       </div>
@@ -55,17 +55,15 @@
       ה-data-project מחבר בין הפרויקט לתמונה שלו למעלה.
     -->
     <ul class="project-list">
-      <li class="project" data-project="view" tabindex="0">
-        <span class="project__name">VIEW</span>
-        <span class="project__tag"><span class="project__tag-text">UX/UI</span></span>
-      </li>
-      <li class="project" data-project="chick-check" tabindex="0">
-        <span class="project__name">CHICK-CHECK</span>
-        <span class="project__tag"><span class="project__tag-text">UX/UI</span></span>
+      <li class="project" data-project="view">
+        <a class="project__link" href="view.html">
+          <span class="project__name">VIEW</span>
+          <span class="project__tag"><span class="project__tag-text">UX/UI</span></span>
+        </a>
       </li>
       <li class="project" data-project="hed-artzi">
         <a class="project__link" href="hed-artzi.html">
-          <span class="project__name">HED ARTZI REBRANDING</span>
+          <span class="project__name">HED ARTZI</span>
           <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
         </a>
       </li>
@@ -79,6 +77,13 @@
         <a class="project__link" href="darom.html">
           <span class="project__name">DAR0M FILM FESTIVAL</span>
           <span class="project__tag"><span class="project__tag-text">BRAND</span></span>
+        </a>
+      </li>
+      <!-- התווית ILLUSTRATION ארוכה, אז הכפסולה שלה רחבה יותר (219 במקום 112) -->
+      <li class="project" data-project="other" style="--tag-width: 219;">
+        <a class="project__link" href="other.html">
+          <span class="project__name">ILLUSTRATI0N &amp; 0THER</span>
+          <span class="project__tag"><span class="project__tag-text">ILLUSTRATION</span></span>
         </a>
       </li>
     </ul>
@@ -239,7 +244,9 @@
       document.querySelectorAll(".project").forEach((project) => {
         const name = project.querySelector(".project__name").getBoundingClientRect();
         const tag = project.querySelector(".project__tag").getBoundingClientRect();
-        widest = Math.max(widest, tag.right - name.left);
+        // הכפסולה כשהיא פתוחה (112, או --tag-width), כדי שגם אז השורה תיכנס במסך
+        const openTagWidth = (parseFloat(getComputedStyle(project).getPropertyValue("--tag-width")) || 112.05) * u;
+        widest = Math.max(widest, tag.left + openTagWidth - name.left);
       });
       homePage.style.setProperty("--home-row-width", widest / u);
     }

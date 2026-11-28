@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIEW – טל המלך</title>
+  <link rel="stylesheet" href="styles.css?v=149">
+  <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
+  <script>
+    {
+      const enterLine = JSON.parse(sessionStorage.getItem("enter-line") || "null");
+      const desktopLayout = window.matchMedia("(min-width: 901px) and (orientation: landscape)").matches;
+      if (enterLine && desktopLayout) {
+        const root = document.documentElement;
+        root.classList.add("is-entering");
+        root.style.setProperty("--enter-line-left", enterLine.left + "px");
+        root.style.setProperty("--enter-line-width", enterLine.width + "px");
+      }
+    }
+  </script>
+</head>
+<body class="theme-view">
+
+  <!--
+    העמוד של VIEW, פרויקט UX/UI (case study). הפריימים Desktop - 86 עד 90 בפיגמה.
+    בנוי כמו העמוד של הד ארצי: למעלה שורה אחת (חזרה והלשוניות, בלי OVERVIEW),
+    מתחתיה שתי עמודות, והקו בצד ימין. הצבע של העמוד: תכלת (--color-view).
+    חמש לשוניות: BACKGROUND (נפתחת ראשונה), RESEARCH, SOLUTION, STATES ו-VISUAL.
+    לחיצה על לשונית: התוכן גולש הצידה, והלשונית הבאה נחשפת מאחוריו (event-tabs.js, data-tab-motion="slide").
+  -->
+  <main class="event-page view-page" data-tab-motion="slide">
+
+    <!-- השורה העליונה (בעמוד הזה אין OVERVIEW) -->
+    <header class="event-header">
+      <!-- חזרה לעמוד הבית: במצב hover השם מתחלף ל-HOME -->
+      <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
+        <span class="project-header__back"><span class="project-header__back-icon"></span></span>
+        <h1 class="project-header__title">
+          <span class="project-header__name">VIEW</span>
+          <span class="project-header__home" aria-hidden="true">HOME</span>
+        </h1>
+      </a>
+
+      <!-- בטלפון: INFO (הטקסט על הפרויקט) ו-GALLERY (שאר הלשוניות) -->
+      <div class="section-buttons">
+        <button class="section-button section-button--info" type="button" aria-label="INFO: חזרה לטקסט על הפרויקט">
+          <span class="section-button__label">INFO</span>
+          <span class="section-button__icon section-button__icon--info"></span>
+          <span class="section-button__arrow section-button__arrow--up"></span>
+        </button>
+        <button class="section-button section-button--gallery" type="button" aria-label="GALLERY: מעבר לגלריה">
+          <span class="section-button__label">GALLERY</span>
+          <span class="section-button__icon section-button__icon--eye"></span>
+          <span class="section-button__arrow"></span>
+        </button>
+      </div>
+
+      <!-- הלשוניות והחץ לפרויקט הבא -->
+      <div class="project-top event-top">
+        <!-- הלשונית הפתוחה בתכלת (בעמוד הזה בלי מספר החומרים). data-tab מחבר לשונית לתוכן שלה -->
+        <nav class="project-tabs event-tabs">
+          <button class="project-tab is-active" type="button" data-tab="background">BACKGROUND</button>
+          <button class="project-tab" type="button" data-tab="research">RESEARCH</button>
+          <button class="project-tab" type="button" data-tab="solution">SOLUTION</button>
+          <button class="project-tab" type="button" data-tab="states">STATES</button>
+          <button class="project-tab" type="button" data-tab="visual">VISUAL</button>
+        </nav>
+
+        <!-- החץ לפרויקט הבא -->
+        <a class="project-next" href="hed-artzi.html">
+          <p class="project-next-label">NEXT: HED ARTZI</p>
+          <span class="project-next__arrow" aria-label="הפרויקט הבא: HED ARTZI">
+            <span class="project-next__icon"></span>
+          </span>
+        </a>
+      </div>
+    </header>
+
+    <!--
+      התוכן של הלשוניות. בכל לשונית: משמאל הטקסט (ולפעמים גם חומרים מתחתיו), ומימין החומרים.
+      הכיתוב של כל חומר: <b></b> הוא המספר (1 >), והוא נכתב לבד.
+    -->
+    <div class="event-panels">
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="event-columns is-active" data-tab="background">
+      <div class="event-column event-about">
+        <h2 class="project-headline">An AI-based system that translates the brain activity of coma patients into a humane visual language</h2>
+        <div class="event-about__text">
+          <p>
+            <em class="event-about__highlight">VIEW</em> is a speculative system designed to help families communicate with loved ones in a medically induced coma. <em class="event-about__highlight">By combining EEG</em> <em>(brain activity mapping technology)</em> <em class="event-about__highlight">data with AI, the system translates brain activity into simple visual feedback, helping families better understand the patient's state and maintain a connection over time</em>.
+          </p>
+          <p>
+            The project began with a shared personal experience. Both of us had stood beside a loved one in a medically induced coma, unable to communicate or know whether our presence made a difference. Although medical staff encourage families to talk, share memories, and play familiar voices, the absence of any visible response can make maintaining that connection difficult
+          </p>
+          <p class="event-about__credit">Developed within UX/UI Lab, Bezalel Academy<br>Collaboration with Ghadir Salman</p>
+        </div>
+      </div>
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> The poster for the event “industrial peace”.</p>
+          <img class="view-media" src="images/view-monitor.jpg" alt="מסך VIEW ליד המיטה" style="--ratio: 653 / 490;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RESEARCH ===== -->
+    <div class="event-columns" data-tab="research" id="gallery">
+      <!-- בטלפון: השם של החלק בגלריה. הקשה עליו סוגרת ופותחת את החלק -->
+      <button class="panel-title" type="button" aria-expanded="true">RESEARCH</button>
+      <div class="event-column event-about">
+        <div class="event-about__text">
+          <p>
+            Through interviews with people who had experienced similar situations and research into EEG and coma patients, <em class="event-about__highlight">we explored how brain activity might offer families a different form of feedback.</em>
+          </p>
+          <p>
+            Our research suggested that a lack of physical response does not necessarily mean a lack of awareness. Studies such as FAST (Familiar Voice Stimulation) highlight the potential influence of familiar voices and personal memories on patient’s neurological responses.
+          </p>
+        </div>
+      </div>
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> <strong>EEG Readings</strong><br>Color-coded visualization highlighting active and inactive areas of the brain.</p>
+          <img class="view-media" src="images/view-eeg.png" alt="מיפוי EEG: פעילות המוח בצבעים" style="--ratio: 722 / 537;">
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SOLUTION ===== -->
+    <div class="event-columns" data-tab="solution">
+      <button class="panel-title" type="button" aria-expanded="true">SOLUTION</button>
+      <!-- עמודה 1: הטקסט, הסכמה (טלפון + מסך) והמסך בחדר -->
+      <div class="event-column event-about">
+        <div class="event-about__text">
+          <p>
+            The system combines EEG readings with information about what is happening in the room, using AI to provide families with real-time feedback.
+          </p>
+          <p>
+            <em class="event-about__highlight">A bedside monitor presents the patient's state</em>, helps interpret the readings, and suggests ways to interact. A companion <em class="event-about__highlight">mobile app allows family members to connect remotely</em>, follow changes over time, and speak to the patient even when they cannot be physically present.
+          </p>
+        </div>
+        <img class="view-diagram" src="images/view-diagram-solution.svg" alt="טלפון ועוד מסך" style="--width: 647;">
+        <div class="work-item">
+          <p class="work-caption"><b></b> The bedside monitor.</p>
+          <img class="view-media" src="images/view-hospital.jpg" alt="המסך של VIEW בחדר בבית חולים, ליד המיטה" style="--ratio: 643 / 459;">
+        </div>
+      </div>
+      <!-- עמודה 2: שלושה מסכים של האפליקציה בשורה, ומתחתם המסך שליד המיטה -->
+      <div class="event-column">
+        <div class="view-phones">
+          <div class="work-item">
+            <p class="work-caption"><b></b> Insights and instructions</p>
+            <img class="view-media" src="images/view-phone-insights.png" alt="האפליקציה: תובנות והנחיות" style="--ratio: 192 / 403;">
+          </div>
+          <div class="work-item">
+            <p class="work-caption"><b></b> Remote visit control</p>
+            <img class="view-media" src="images/view-phone-remote.png" alt="האפליקציה: ביקור מרחוק" style="--ratio: 192 / 403;">
+          </div>
+          <div class="work-item">
+            <p class="work-caption"><b></b> The activity tab.<br>routine and main events</p>
+            <img class="view-media" src="images/view-phone-activity.png" alt="האפליקציה: לשונית הפעילות" style="--ratio: 192 / 403;">
+          </div>
+        </div>
+        <div class="work-item">
+          <p class="work-caption"><b></b> The bedside monitor displays balanced brain activity, suggesting that the current interaction may be stimulating a positive response and encouraging the family to continue.</p>
+          <video class="view-media" src="images/view-monitor-feedback.mp4" style="--ratio: 1882 / 1302;" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STATES ===== -->
+    <div class="event-columns" data-tab="states">
+      <button class="panel-title" type="button" aria-expanded="true">STATES</button>
+      <!-- עמודה 1: הטקסט, והסכמה של שלושת המצבים -->
+      <div class="event-column event-about">
+        <div class="event-about__text">
+          <p>
+            One of the main challenges was creating a visual language that could communicate complex neurological data without implying more than it can reveal. EEG cannot tell us what a patient feels, but it can indicate patterns of brain activity.
+          </p>
+          <p>
+            We translated these patterns into <em class="event-about__highlight">three simplified states</em>:
+          </p>
+          <ul class="event-about__list">
+            <li><em class="event-about__highlight">No Activity</em> An invitation to engage through conversation, touch, music, or familiar memories.</li>
+            <li><em class="event-about__highlight">Regulated Activity</em> Indicates a balanced level of brain activity during the interaction.</li>
+            <li><em class="event-about__highlight">Overload</em> Suggests excessive stimulation and encourages a calmer environment.</li>
+          </ul>
+          <p>
+            This system aims to provide families with <em class="event-about__highlight">practical guidance while avoiding false interpretations or expectations</em>.
+          </p>
+        </div>
+        <img class="view-diagram" src="images/view-diagram-states.svg" alt="שלושת המצבים: עומס, פעילות מאוזנת, אין פעילות" style="--width: 450;">
+      </div>
+      <!-- עמודה 2: הטלפונים, ושני מצבים של המסך שליד המיטה -->
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> The three states - mobile indications.</p>
+          <img class="view-media" src="images/view-states-phones.jpg" alt="שלושה טלפונים, בכל אחד מצב אחר" style="--ratio: 653 / 490;">
+        </div>
+        <div class="work-item">
+          <p class="work-caption"><b></b> The bedside monitor displays balanced brain activity, suggesting that the current interaction may be stimulating a positive response and encouraging the family to continue.</p>
+          <video class="view-media" src="images/view-state-balanced.mp4" style="--ratio: 1882 / 1302;" autoplay muted loop playsinline></video>
+        </div>
+        <div class="work-item">
+          <p class="work-caption"><b></b> The bedside monitor displays low brain activity, encouraging family members and visitors to interact with the patient to help stimulate brain activity.</p>
+          <video class="view-media" src="images/view-state-low.mp4" style="--ratio: 1882 / 1302;" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VISUAL ===== -->
+    <div class="event-columns" data-tab="visual">
+      <button class="panel-title" type="button" aria-expanded="true">VISUAL</button>
+      <div class="event-column event-about">
+        <div class="event-about__text">
+          <p>
+            The visual identity was designed to feel <em class="event-about__highlight">calm and approachable within a clinical environment</em>. A palette of three tones, represents the different states of brain activity.
+          </p>
+          <p>
+            Soft shapes evoke breathing and subtle movement, while The Basics and Simpler Pro typefaces maintain <em class="event-about__highlight">clarity and accessibility,</em> and EditorSans to add a <em class="event-about__highlight">humanistic tone</em> throughout the interface.
+          </p>
+        </div>
+      </div>
+      <div class="event-column">
+        <div class="work-item">
+          <p class="work-caption"><b></b> The poster for the event “industrial peace”.</p>
+          <img class="view-media" src="images/view-visual-board.svg" alt="השפה החזותית: שלושת הצבעים, הצורות והפונטים" style="--ratio: 651 / 423;">
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- בטלפון: בסוף הגלריה, הקישור לפרויקט הבא -->
+    <a class="mobile-next" href="hed-artzi.html">
+      <span class="mobile-next__label">NEXT:</span>
+      <span class="mobile-next__name">HED ARTZI</span>
+      <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
+    </a>
+
+    <!-- הקו, בצד ימין -->
+    <img class="event-line" src="images/home-line.svg" alt="">
+
+  </main>
+
+  <!-- בלי מילה בודדת בשורה האחרונה של פסקה -->
+  <script src="no-orphans.js?v=1"></script>
+
+  <!-- הלשוניות: לחיצה על לשונית גולשת הצידה אל התוכן שלה (כמו בעמוד של הד ארצי) -->
+  <script src="event-tabs.js?v=16"></script>
+
+  <!-- העכבר של האתר: עיגול לבן שנהיה תכלת על דברים לחיצים -->
+  <script src="cursor.js?v=3"></script>
+
+</body>
+</html>

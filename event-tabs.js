@@ -63,6 +63,7 @@ function switchTab(tabName) {
   setActiveTab(tabName);
   scrollPanelToTop(newPanel);
   if (!withMotion()) return;
+  if (eventPage.dataset.tabMotion === "slide") return slideTab(oldPanel, newPanel);
 
   isWiping = true;
   oldPanel.classList.add("is-leaving"); // הלשונית הקודמת עוד מוצגת בזמן המעבר
@@ -87,6 +88,32 @@ function switchTab(tabName) {
     const back = eventLine.animate([{ transform: `translateX(${outsideRight}px)` }, { transform: "none" }],
       { duration: lineReturnDuration, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
     back.onfinish = () => (isWiping = false);
+  };
+}
+
+/* ---------- מעבר פשוט בין לשוניות (בעמוד עם data-tab-motion="slide", למשל VIEW) ----------
+   התוכן הנוכחי גולש הצידה, והלשונית החדשה צמודה אליו מהצד השני ונחשפת, בלי שהן עולות זו על זו.
+   ללשונית שמימין: הכל זז שמאלה. ללשונית שמשמאל: הכל זז ימינה.
+   בזמן המעבר (is-sliding) התוכן נחתך בקו שמימין, כדי שלא יעבור מעליו. */
+const slideDuration = 800;
+
+function slideTab(oldPanel, newPanel) {
+  const tabNames = [...eventTabs].map((tab) => tab.dataset.tab);
+  const forward = tabNames.indexOf(newPanel.dataset.tab) > tabNames.indexOf(oldPanel.dataset.tab);
+  const u = eventPage.clientWidth / 1440;
+  const distance = (1399 - 33) * u * (forward ? 1 : -1); // מתחילת התוכן ועד הקו
+
+  isWiping = true;
+  eventPage.classList.add("is-sliding");
+  oldPanel.classList.add("is-leaving"); // הלשונית הקודמת עוד מוצגת בזמן המעבר
+  const options = { duration: slideDuration, easing: easeNext };
+  newPanel.animate([{ transform: `translateX(${distance}px)` }, { transform: "none" }], options);
+  const leaving = oldPanel.animate([{ transform: "none" }, { transform: `translateX(${-distance}px)` }], options);
+
+  leaving.onfinish = () => {
+    oldPanel.classList.remove("is-leaving");
+    eventPage.classList.remove("is-sliding");
+    isWiping = false;
   };
 }
 
@@ -149,8 +176,9 @@ window.addEventListener("resize", () => {
   tabsNav.style.transition = "";
 });
 
-overviewButton.addEventListener("click", () => setOverview(true));
-fullViewButton.addEventListener("click", () => setOverview(false));
+// בעמוד בלי OVERVIEW (למשל VIEW) אין את הכפתורים האלה
+if (overviewButton) overviewButton.addEventListener("click", () => setOverview(true));
+if (fullViewButton) fullViewButton.addEventListener("click", () => setOverview(false));
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && isOverview()) setOverview(false);
 });

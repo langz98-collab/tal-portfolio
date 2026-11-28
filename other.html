@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ILLUSTRATION &amp; OTHER – טל המלך</title>
+  <link rel="stylesheet" href="styles.css?v=149">
+  <!-- בעמוד הזה אין קו, אז המעבר מעמוד הבית לא ממשיך כאן -->
+  <script>sessionStorage.removeItem("enter-line");</script>
+</head>
+<body>
+
+  <!--
+    העמוד ILLUSTRATION & OTHER (הפריים Desktop - 91 בפיגמה).
+    אוסף של עבודות קטנות: הכל בעמודה אחת באמצע, ומעל כל עבודה כיתוב קצר. העמוד כולו נגלל.
+    כדי להוסיף עבודה: מעתיקים בלוק של gallery-item, ומחליפים את הכיתוב, את התמונות ואת --width (הרוחב בפיגמה).
+    --fit: הרוחב המקסימלי, כדי שהעבודה תיכנס כולה בגובה המסך (גובה המסך כפול הפרופורציות של העבודה).
+  -->
+  <main class="gallery-page">
+
+    <!-- השורה העליונה: חזרה לעמוד הבית, והחץ לפרויקט הבא -->
+    <header class="gallery-header">
+      <!-- חזרה לעמוד הבית: במצב hover השם מתחלף ל-HOME (כמו בעמודי הפרויקטים) -->
+      <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
+        <span class="project-header__back"><span class="project-header__back-icon"></span></span>
+        <h1 class="project-header__title">
+          <span class="project-header__name">ILLUSTRATION &amp; OTHER</span>
+          <span class="project-header__home" aria-hidden="true">HOME</span>
+        </h1>
+      </a>
+
+      <a class="gallery-next" href="view.html" aria-label="הפרויקט הבא: VIEW"></a>
+    </header>
+
+    <!-- העבודות. <b></b> בכיתוב הוא המספר (1 >), והוא נכתב לבד -->
+    <div class="gallery-list">
+
+      <!-- 1. קלפי משחק: ארבעה קלפים בשורה -->
+      <div class="work-item gallery-item" style="--width: 1226; --caption-width: 653; --fit: calc(var(--media-height) * 4 * 298 / 415 + 36 * var(--u));">
+        <p class="work-caption"><b></b> Illustrations for playing cards featuring a King, Queen, and Joker, inspired by Inca culture and South American deities.</p>
+        <div class="gallery-row" style="--gap: 12;">
+          <img src="images/other-cards-joker.jpg" alt="קלף הג'וקר" style="--ratio: 298 / 415;">
+          <img src="images/other-cards-king.jpg" alt="קלף המלך" style="--ratio: 298 / 415;">
+          <img src="images/other-cards-queen.jpg" alt="קלף המלכה" style="--ratio: 298 / 415;">
+          <img src="images/other-cards-pattern.jpg" alt="הגב של הקלפים" style="--ratio: 298 / 415;">
+        </div>
+      </div>
+
+      <!-- 2. דיוקן עצמי -->
+      <div class="work-item gallery-item" style="--width: 454; --fit: calc(var(--media-height) * 454 / 471);">
+        <p class="work-caption"><b></b> self portrait</p>
+        <img src="images/other-self-portrait.jpg" alt="דיוקן עצמי: פנים ירוקות מנייר גזור" style="--ratio: 454 / 471;">
+      </div>
+
+      <!-- 3. התווית של שפירא -->
+      <div class="work-item gallery-item" style="--width: 775; --fit: var(--media-height);">
+        <p class="work-caption"><b></b> A special Purim edition beer label for Shapira, a local Israeli brewery, created as part of my volunteer work with Shekel, an organization supporting people with disabilities. I collaborated with Refael, an autistic illustrator, adapting his artwork and designing the final label.</p>
+        <img src="images/other-shapira-label.jpg" alt="תווית בירה לפורים של מבשלת שפירא" style="--ratio: 1;">
+      </div>
+
+      <!--
+        4. מדריכי טיולים, בגלריה קטנה (כמו בעמודי הפרויקטים, mini-gallery.js):
+        למעלה תמונה גדולה, ולמטה התמונות הקטנות. לחיצה על תמונה קטנה מציגה אותה למעלה.
+        gallery-item--fit: המסגרת מקבלת את הפרופורציות של התמונה שמוצגת (data-ratio), לרוחב או לגובה,
+        והיא גדולה כמה שנכנס במסך (עד 915). גם הכיתוב שמעליה ברוחב שלה.
+      -->
+      <div class="work-item gallery-item gallery-item--fit" style="--width: 915; --ratio: 1920 / 1080;">
+        <p class="work-caption"><b></b> Speculative travel guide covers designed for fugitives, created as part of an illustration course at Bezalel.<br>The project reimagines the traditional tourist guide for an unconventional audience.</p>
+        <div class="mini-gallery mini-gallery--fit">
+          <div class="mini-gallery__main">
+            <img class="is-active" src="images/other-guide-covers.jpg" data-ratio="1920 / 1080" alt="שלושת המדריכים על שולחן">
+            <img src="images/other-guide-cairo.jpg" data-ratio="848 / 1200" alt="הכריכה של קהיר">
+            <img src="images/other-guide-prague.jpg" data-ratio="848 / 1200" alt="הכריכה של פראג">
+            <img src="images/other-guide-london.jpg" data-ratio="848 / 1200" alt="הכריכה של לונדון">
+          </div>
+          <div class="mini-gallery__thumbs">
+            <button class="mini-gallery__thumb is-active" type="button" aria-label="תמונה 1"><img src="images/other-guide-covers.jpg" alt=""></button>
+            <button class="mini-gallery__thumb" type="button" aria-label="תמונה 2"><img src="images/other-guide-cairo.jpg" alt=""></button>
+            <button class="mini-gallery__thumb" type="button" aria-label="תמונה 3"><img src="images/other-guide-prague.jpg" alt=""></button>
+            <button class="mini-gallery__thumb" type="button" aria-label="תמונה 4"><img src="images/other-guide-london.jpg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- בטלפון: בסוף העמוד, הקישור לפרויקט הבא (במקום החץ שלמעלה) -->
+    <a class="mobile-next" href="view.html">
+      <span class="mobile-next__label">NEXT:</span>
+      <span class="mobile-next__name">VIEW</span>
+      <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
+    </a>
+  </main>
+
+  <!-- הגלריות הקטנות (המדריכים והקטלוג) -->
+  <script src="mini-gallery.js?v=5"></script>
+
+  <!-- בלי מילה בודדת בשורה האחרונה של פסקה -->
+  <script src="no-orphans.js?v=1"></script>
+
+  <!-- העכבר של האתר -->
+  <script src="cursor.js?v=3"></script>
+
+</body>
+</html>

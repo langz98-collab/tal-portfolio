@@ -18,6 +18,7 @@
   --color-hed-artzi-background: #131313; /* אפור כהה מאוד: הרקע בעמוד החדש של HED ARTZI */
   --color-darom: #ffd555;          /* צהוב: הצבע של עמוד DAROM FILM FESTIVAL (במקום הירוק) */
   --color-about: #e100bf;          /* ורוד: הצבע של עמוד About & Contact */
+  --color-view: #9bb0ff;           /* תכלת: הצבע של עמוד VIEW */
   --color-football: #0ae60d;       /* הירוק של WIKIPEDIA>FOOTBALL (גם כשבעמוד יש צבע אחר) */
 
   /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
@@ -37,6 +38,16 @@
   --font-size-tag: calc(25.12 * var(--u));     /* התווית בתוך הכפסולה (UX/UI, BRAND) */
   --font-size-big: clamp(1.6rem, 6.1vw, 5.5rem); /* כותרות עמוד התהליך: 88px במחשב */
   --font-size-letter: clamp(5rem, 12.8vw, 11.5rem); /* האותיות A, B, C (185px בפיגמה) */
+
+  /*
+    הגודל המקסימלי של הטקסטים בעמודי הפרויקטים (במחשב).
+    במסך קטן מ-1440 הטקסט קטן יחד עם המסך, ובמסך גדול יותר הוא נעצר בגודל הזה,
+    ותיבת הטקסט פשוט מכניסה יותר מילים בשורה (כמו הכיתובים של התמונות, שתמיד 18).
+  */
+  --max-project-text: 25px;       /* הטקסט על הפרויקט */
+  --max-project-text-small: 22px; /* הטקסט בעמודים DAROM ו-About */
+  --max-headline: 38px;           /* הכותרת הגדולה, והטלפון והמייל ב-About */
+  --max-credit: 16px;             /* "Developed within..." הקטן והאפור */
 
   /* ריווחים */
   --space-name-left: calc(23 * var(--u));  /* בין TAL ל-∅ (נקבע לפי מדידה, כדי ששני הרווחים ייראו שווים) */
@@ -80,6 +91,11 @@
 @font-face {
   font-family: "TheBasics Regular";
   src: url("fonts/thebasics-regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "TheBasics Bold";
+  src: url("fonts/thebasics-bold.otf") format("opentype");
 }
 
 @font-face {
@@ -259,7 +275,7 @@ body {
   /* הפרופורציות (רוחב / גובה) של כל תמונה, כמו בפיגמה */
   --ratio-about: 518 / 576;
   --ratio-view: 627 / 458;
-  --ratio-chick-check: 849 / 458;
+  --ratio-other: 454 / 471;
   --ratio-hed-artzi: 310 / 458;
   --ratio-wikipedia-football: 1;
   --ratio-darom: 321 / 458;
@@ -329,7 +345,7 @@ body {
 
 .preview-window[data-showing="about"] img[data-project="about"],
 .preview-window[data-showing="view"] img[data-project="view"],
-.preview-window[data-showing="chick-check"] img[data-project="chick-check"],
+.preview-window[data-showing="other"] img[data-project="other"],
 .preview-window[data-showing="hed-artzi"] img[data-project="hed-artzi"],
 .preview-window[data-showing="wikipedia-football"] img[data-project="wikipedia-football"],
 .preview-window[data-showing="darom"] img[data-project="darom"] {
@@ -339,7 +355,7 @@ body {
 /* הרוחב של החלון: לפי התמונה המוצגת */
 .preview-window[data-showing="about"]              { --ratio: var(--ratio-about); }
 .preview-window[data-showing="view"]               { --ratio: var(--ratio-view); }
-.preview-window[data-showing="chick-check"]        { --ratio: var(--ratio-chick-check); }
+.preview-window[data-showing="other"]              { --ratio: var(--ratio-other); }
 .preview-window[data-showing="hed-artzi"]          { --ratio: var(--ratio-hed-artzi); }
 .preview-window[data-showing="wikipedia-football"] { --ratio: var(--ratio-wikipedia-football); }
 .preview-window[data-showing="darom"]              { --ratio: var(--ratio-darom); }
@@ -347,7 +363,7 @@ body {
 /* הרוחב של כל תמונה: לפי הפרופורציות שלה עצמה */
 .preview-window img[data-project="about"]              { --ratio: var(--ratio-about); }
 .preview-window img[data-project="view"]               { --ratio: var(--ratio-view); }
-.preview-window img[data-project="chick-check"]        { --ratio: var(--ratio-chick-check); }
+.preview-window img[data-project="other"]              { --ratio: var(--ratio-other); }
 .preview-window img[data-project="hed-artzi"]          { --ratio: var(--ratio-hed-artzi); }
 .preview-window img[data-project="wikipedia-football"] { --ratio: var(--ratio-wikipedia-football); }
 .preview-window img[data-project="darom"]              { --ratio: var(--ratio-darom); }
@@ -432,8 +448,9 @@ body {
 
 /* 1. העיגול מתרחב לכפסולה */
 .project:is(:hover, :focus-within, .is-auto) .project__tag {
-  width: calc(112.05 * var(--u));
-  border-radius: 33% / 50%; /* צורת הכפסולה מפיגמה */
+  /* הרוחב של הכפסולה: 112 (כמו בפיגמה). לתווית ארוכה יותר: --tag-width על הפרויקט ב-HTML */
+  width: calc(var(--tag-width, 112.05) * var(--u));
+  border-radius: calc(36.98 * var(--u)) / 50%; /* צורת הכפסולה מפיגמה (העיגול בקצוות, גם בכפסולה ארוכה) */
 }
 
 /* 2. ואחרי שהתרחב, התווית מופיעה */
@@ -996,7 +1013,7 @@ body {
 
 .project-headline {
   font-family: var(--font-project-headline);
-  font-size: calc(38 * var(--u));
+  font-size: min(38 * var(--u), var(--max-headline));
   font-weight: bold;
   line-height: 1.1;
   letter-spacing: -0.04em;
@@ -1007,7 +1024,7 @@ body {
 
 .project-text {
   font-family: var(--font-project-text);
-  font-size: calc(28 * var(--u));
+  font-size: min(25 * var(--u), var(--max-project-text)); /* בפיגמה 28, הוקטן ב-3 */
   font-style: italic; /* בפיגמה: נטוי, חוץ מהפסקה הראשונה ותחילת השנייה */
   line-height: 1.1;
   text-wrap: pretty;
@@ -1075,7 +1092,11 @@ em.project-text__highlight {
   font-weight: 600; /* SemiBold */
   letter-spacing: -0.01em; /* -1% */
   cursor: pointer;
-  transition: border-radius 0.3s var(--ease-next); /* הפינות משתנות באנימציה, כמו ב-OVERVIEW */
+  /* הפינות, הצבע של הקו והצבע של הטקסט משתנים באנימציה (גם כשעוברים מלשונית ללשונית) */
+  transition:
+    border-radius 0.3s var(--ease-next),
+    border-color 0.4s var(--ease-next),
+    color 0.4s var(--ease-next);
 }
 
 /* hover: הפינות כמעט ישרות */
@@ -2050,7 +2071,7 @@ em.project-text__highlight {
    משמאל הטקסט (25) ופרטי הקשר בתחתית, ומימין רק הכפתור OVERVIEW.
    ========================================= */
 :where(.about-page) .project-text {
-  font-size: calc(25 * var(--u));
+  font-size: min(22 * var(--u), var(--max-project-text-small)); /* בפיגמה 25, הוקטן ב-3 */
   font-style: normal;
 }
 
@@ -2067,7 +2088,7 @@ em.project-text__highlight {
 .about-contact {
   margin-top: auto;
   font-family: var(--font-project-headline);
-  font-size: calc(38 * var(--u));
+  font-size: min(38 * var(--u), var(--max-headline));
   font-weight: bold;
   line-height: 1.1;
   letter-spacing: -0.04em;
@@ -2087,11 +2108,23 @@ em.project-text__highlight {
     border-radius 0.3s var(--ease-next);
 }
 
-/* בטלפון: אין OVERVIEW */
+/* בטלפון: אין OVERVIEW, והטלפון והמייל בתחתית המסך (לא צמודים לטקסט) */
 @media (max-width: 900px), (orientation: portrait) {
   .about-overview,
   .about-works {
     display: none;
+  }
+
+  .about-page {
+    min-height: 100svh; /* העמוד לפחות בגובה המסך */
+  }
+
+  /* העמודה ממלאת את כל הגובה, כך שהטלפון והמייל (margin-top: auto) נדחפים למטה */
+  .about-page .project-info,
+  .about-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -2238,7 +2271,7 @@ em.project-text__highlight {
 
 /* הטקסט: 25 (ולא 28), וכולו ישר. רק המילים המודגשות נטויות */
 :where(.theme-darom) .project-text {
-  font-size: calc(25 * var(--u));
+  font-size: min(22 * var(--u), var(--max-project-text-small)); /* בפיגמה 25, הוקטן ב-3 */
   font-style: normal;
 }
 
@@ -3002,6 +3035,12 @@ em.project-text__highlight {
   --cursor-green: var(--color-about);
 }
 
+/* עמוד VIEW: תכלת במקום הירוק, גם בעכבר */
+.theme-view {
+  --color-project-accent: var(--color-view);
+  --cursor-green: var(--color-view);
+}
+
 /* עמוד DAROM FILM FESTIVAL: צהוב במקום הירוק, גם בעכבר */
 .theme-darom {
   --color-project-accent: var(--color-darom);
@@ -3056,6 +3095,11 @@ em.project-text__highlight {
   --bar-u: min(1px, 100vw / 1378); /* הבר העליון בגודל של הפיגמה, כמו בעמוד פרויקט */
   --overview-media-height: calc(100svh - 177 * var(--u)); /* הגובה של כל חומר בשורה של OVERVIEW (כמו בעמוד פרויקט) */
   --full-view-hint: calc(24 * var(--u)); /* כמה הקו זז ימינה ב-hover על FULL VIEW */
+  /*
+    הגובה המקסימלי של כל תמונה וסרטון: מה שנשאר במסך מתחת לשורה העליונה ולכיתוב (96 + 15 + 10, ועוד שורת כיתוב).
+    כך כל חומר תמיד נכנס כולו במסך, ובמסך נמוך הוא פשוט קטן יותר.
+  */
+  --media-height: calc(100svh - 121 * var(--u) - 20px);
   position: relative;
   height: 100vh;
   height: 100svh;
@@ -3115,7 +3159,7 @@ em.project-text__highlight {
   bottom: calc(10 * var(--u));
   left: calc(33 * var(--u));
   display: none;
-  gap: calc(3 * var(--u));
+  gap: calc(42 * var(--u)); /* בין העמודות */
   counter-reset: work-number; /* המספור (1 >, 2 >, 3 >) רץ על שתי העמודות */
 }
 
@@ -3123,8 +3167,9 @@ em.project-text__highlight {
   display: flex;
 }
 
+/* במחשב: 42 בין העמודות, כדי שהטקסט והחומרים לא יהיו קרובים מדי (כמו בפיגמה של VIEW) */
 .event-column {
-  width: calc(674 * var(--u)); /* 670 ועוד 2 מכל צד */
+  width: calc(650 * var(--u)); /* 646 ועוד 2 מכל צד */
   overflow-x: clip;
   overflow-y: auto;
   display: flex;
@@ -3138,38 +3183,33 @@ em.project-text__highlight {
 }
 
 
-/*
-  THE EVENT: הלוגו שמגיב לקול למעלה, לכל הרוחב (1369×468, כמו בפיגמה), עם הרקע של העמוד.
-  מתחתיו שתי העמודות, והכל נגלל יחד (העמודות עצמן לא נגללות לבד).
-*/
-.event-columns--stacked {
-  flex-wrap: wrap;
-  align-content: flex-start;
-  row-gap: calc(36 * var(--u));
-  padding-top: calc(10 * var(--u));
-  overflow-x: clip;
-  overflow-y: auto;
-}
-
-.event-columns--stacked .event-column {
-  overflow: visible;
-}
-
+/* INDUSTRIAL PEACE: הלוגו שמגיב לקול, למעלה בעמודה הימנית ולכל הרוחב שלה (660×226 בפיגמה), עם הרקע של העמוד */
 .event-page .hed-voice {
   --voice-background: var(--color-hed-artzi-background);
-  width: calc(1369 * var(--u));
+  flex: none;
+  width: 100%;
   aspect-ratio: 1369 / 468;
 }
 
-/* הכפתור של המיקרופון: באמצע, מתחת ללוגו */
+/*
+  הכפתור של המיקרופון: באמצע, מתחת לאזור של הלוגו (16 מתחתיו), ולא בתוכו,
+  כדי שלא יהיה צמוד ללוגו. מתחת לאזור נשמר מקום לכפתור (16 + 24).
+*/
+.event-page .hed-voice {
+  overflow: visible;
+  margin-bottom: 40px;
+}
+
 .event-page .hed-voice__mic {
+  top: calc(100% + 16px);
+  bottom: auto;
   right: auto;
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* תמונות חתוכות וקולאז': ברוחב העמודה (670) */
-.event-page :is(.work-crop, .work-collage) {
+/* קולאז' התקליטים: ברוחב העמודה (תמונות חתוכות: ברוחב העמודה, אבל לא גבוהות מהמסך, ב-.work-crop) */
+.event-page .work-collage {
   width: 100%;
 }
 
@@ -3180,7 +3220,7 @@ em.project-text__highlight {
 
 .event-about__text {
   font-family: var(--font-project-text);
-  font-size: calc(28 * var(--u));
+  font-size: min(25 * var(--u), var(--max-project-text)); /* בפיגמה 28, הוקטן ב-3 */
   line-height: 1.1;
   text-wrap: pretty;
 }
@@ -3196,7 +3236,7 @@ em.project-text__highlight {
 /* "In collaboration with": קטן ואפור, כמו בפיגמה (16) */
 .event-about__credit {
   font-family: var(--font-caption);
-  font-size: calc(16 * var(--u));
+  font-size: min(16 * var(--u), var(--max-credit));
   color: var(--color-muted);
 }
 
@@ -3212,18 +3252,18 @@ em.project-text__highlight {
 }
 
 .event-media--poster {
-  width: calc(495 * var(--u));
+  width: min(495 * var(--u), var(--media-height) * 495 / 880); /* 495 כמו בפיגמה, אבל לא גבוה מהמסך */
   aspect-ratio: 495 / 880;
 }
 
 .event-media--screen {
-  width: calc(661 * var(--u));
+  width: min(100%, var(--media-height) * 661 / 365); /* ברוחב העמודה, אבל לא גבוה מהמסך */
   aspect-ratio: 661 / 365;
   object-position: 50% 0%; /* החיתוך מלמטה: בתחתית הסרטון יש פס לבן מהקלטת המסך, והוא נחתך */
 }
 
 .event-media--concert {
-  width: calc(661 * var(--u));
+  width: min(100%, var(--media-height) * 661 / 451); /* ברוחב העמודה, אבל לא גבוה מהמסך */
   aspect-ratio: 661 / 451;
   object-position: 50% 24%; /* רואים את הבמה */
 }
@@ -3388,6 +3428,13 @@ em.project-text__highlight {
   display: flex;
 }
 
+/* במעבר הפשוט (data-tab-motion="slide"): התוכן נחתך בקו שמימין, כדי שלא יעבור מעליו */
+.is-sliding .event-panels {
+  position: absolute;
+  inset: 0 calc(100% - 1399 * var(--u)) 0 0;
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .event-line,
   .is-overview .event-panels {
@@ -3405,6 +3452,7 @@ em.project-text__highlight {
   .event-page {
     --u: calc(100vw / 700);
     --bar-u: min(var(--u), 1px);
+    --media-height: calc(100svh - 32px); /* בטלפון: כל חומר לכל היותר בגובה המסך (כמו בעמוד פרויקט) */
     --mobile-bar-height: 62px;
     height: auto;
     overflow: visible;
@@ -3539,5 +3587,260 @@ em.project-text__highlight {
 
   .event-page .mobile-next {
     margin-top: 0; /* הרווח (24) כבר בין החלקים של העמוד */
+  }
+}
+
+
+/* =========================================
+   עמוד VIEW (view.html): case study, הפריימים Desktop - 86 עד 90 בפיגמה.
+   בנוי כמו העמוד של הד ארצי (event-page), עם אותם גדלים של טקסט וכיתובים.
+   כאן רק מה שמיוחד לעמוד הזה. (הרקע #131313, כמו בהד ארצי)
+   ========================================= */
+
+/* רשימה עם נקודות בצבע של הפרויקט (ב-STATES) */
+.event-about__list {
+  margin: 0;
+  padding-left: 1.5em;
+}
+
+.event-about__list li::marker {
+  color: var(--color-project-accent);
+}
+
+.event-about__text p + .event-about__list {
+  margin-top: 0; /* הרשימה ממשיכה את המשפט שלפניה */
+}
+
+.event-about__list + p {
+  margin-top: 1.1em;
+}
+
+/* כותרת מודגשת בתוך כיתוב (ב-RESEARCH: "EEG Readings") */
+.work-caption strong {
+  font-family: "TheBasics Bold", var(--font-caption);
+  font-weight: normal;
+}
+
+/* תמונה או סרטון: ברוחב העמודה, בפרופורציות מהפיגמה (--ratio), אבל לא גבוה מהמסך */
+.view-media {
+  display: block;
+  width: min(100%, var(--media-height) * var(--ratio));
+  aspect-ratio: var(--ratio);
+  object-fit: cover;
+}
+
+/* הסכמות שמתחת לטקסט (טלפון + מסך, שלושת המצבים): בגודל שלהן בפיגמה (--width) */
+.view-diagram {
+  display: block;
+  flex: none;
+  width: calc(var(--width) * var(--u));
+  max-width: 100%;
+  margin-block: calc(10 * var(--u));
+}
+
+/* שלושה מסכים של האפליקציה בשורה אחת (192 כל אחד, 29 ביניהם) */
+.view-phones {
+  display: flex;
+  gap: calc(29 * var(--u));
+}
+
+.view-phones .work-item {
+  width: calc(192 * var(--u));
+}
+
+/* הכיתובים מעל הטלפונים ממלאים את המקום, כדי שכל הטלפונים יתחילו באותו גובה */
+.view-phones .work-caption {
+  flex: 1;
+}
+
+@media (max-width: 900px), (orientation: portrait) {
+  .view-diagram {
+    width: 100%;
+  }
+
+  .view-phones {
+    gap: 12px;
+  }
+
+  .view-phones .work-item {
+    flex: 1;
+    width: auto;
+  }
+}
+
+
+/* =========================================
+   עמוד ILLUSTRATION & OTHER (other.html): הפריים Desktop - 91 בפיגמה.
+   עמודה אחת באמצע, ומעל כל עבודה כיתוב קצר. העמוד כולו נגלל.
+   המידות ב-u (פיקסל בפיגמה, לפי רוחב המסך). --width של כל עבודה: הרוחב שלה בפיגמה.
+   ========================================= */
+.gallery-page {
+  --u: calc(100vw / 1440);
+  --bar-u: min(1px, 100vw / 1378); /* הבר העליון בגודל של הפיגמה, כמו בעמודי הפרויקטים */
+  /* הגובה המקסימלי של כל עבודה: המסך, פחות מקום לכיתוב ולרווחים. כך כל עבודה נכנסת כולה במסך */
+  --media-height: calc(100svh - 130px);
+  min-height: 100svh;
+  padding: calc(21 * var(--u)) calc(26 * var(--u)) calc(80 * var(--u)) calc(33 * var(--u));
+  background-color: var(--color-background);
+}
+
+/* השורה העליונה: החזרה משמאל, והחץ לפרויקט הבא מימין */
+.gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(40 * var(--bar-u));
+}
+
+/* החץ לפרויקט הבא: קצר (49, כמו בפיגמה). ב-hover בצבע של האתר */
+.gallery-next {
+  width: calc(49 * var(--bar-u));
+  height: calc(30 * var(--bar-u));
+  background-color: var(--color-text);
+  -webkit-mask: url("images/arrow-next.svg") right center / 100% 100% no-repeat;
+  mask: url("images/arrow-next.svg") right center / 100% 100% no-repeat;
+  transition: background-color var(--duration-next) var(--ease-next);
+}
+
+.gallery-next:hover {
+  background-color: var(--color-project-accent);
+}
+
+/* כל העבודות, אחת מתחת לשנייה, באמצע. 112 מלמעלה, 24 ביניהן */
+.gallery-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(24 * var(--u));
+  margin-top: calc(51 * var(--u));
+  counter-reset: work-number; /* המספור (1 >, 2 >...) */
+}
+
+/* עבודה אחת: הכיתוב, ו-12 מתחתיו התמונות */
+.gallery-item {
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
+  /* הרוחב מהפיגמה, אבל לא יותר ממה שנכנס בגובה המסך (--fit, לכל עבודה לפי הפרופורציות שלה) */
+  width: min(var(--width) * var(--u), var(--fit, 100%));
+  max-width: 100%;
+}
+
+.gallery-item .work-caption {
+  max-width: calc(var(--caption-width, 2000) * var(--u));
+}
+
+/* התמונות (חוץ מהגלריות הקטנות): ברוחב שלהן, בפרופורציות מהפיגמה (--ratio) */
+.gallery-item > img,
+.gallery-row > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--ratio);
+  object-fit: cover;
+}
+
+/* תמונות בשורה (הקלפים, שלוש הכריכות): כולן באותו רוחב */
+.gallery-row {
+  display: flex;
+  gap: calc(var(--gap) * var(--u));
+}
+
+.gallery-row img {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/*
+  הגלריות הקטנות בעמוד הזה (המדריכים והקטלוג): ברוחב של העבודה.
+  gallery-item--fit: המסגרת בפרופורציות של התמונה שמוצגת עכשיו (--ratio, mini-gallery.js מעדכן אותו).
+  הרוחב: עד 915, ולא יותר ממה שנכנס בגובה המסך (פחות השורה של התמונות הקטנות, 99).
+  הכיתוב שמעל באותו רוחב, אז הוא מתארך או מתקצר יחד עם התמונה.
+*/
+.gallery-item .mini-gallery {
+  width: 100%;
+}
+
+/*
+  התמונות הקטנות בעמודה צרה מימין לתמונה הגדולה (94, ו-11 רווח, כמו בגלריית הפוסטרים של DAROM),
+  כדי שהתמונה הגדולה תהיה בכל הגובה של המסך.
+  הרוחב של העבודה: התמונה הגדולה (עד 915, ולא יותר ממה שנכנס בגובה המסך) ועוד העמודה.
+*/
+.gallery-item--fit {
+  --thumbs-column: calc(105 * var(--u)); /* 94 העמודה ועוד 11 רווח */
+  width: calc(min(var(--width) * var(--u), var(--media-height) * var(--ratio)) + var(--thumbs-column));
+}
+
+.gallery-item--fit .mini-gallery {
+  --ratio: inherit; /* הפרופורציות מהעבודה (ולא הברירת מחדל של הגלריה) */
+  display: grid;
+  grid-template-columns: 1fr calc(94 * var(--u));
+  column-gap: calc(11 * var(--u));
+}
+
+.gallery-item--fit .mini-gallery__thumbs {
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+  height: 0;         /* לא קובעת את הגובה: */
+  min-height: 100%;  /* היא בגובה של התמונה הגדולה, ונגללת בתוכה */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.gallery-item--fit .mini-gallery__thumb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 55 / 74;
+}
+
+.mini-gallery--fit .mini-gallery__main img {
+  object-fit: contain;
+}
+
+/* בטלפון: 8 מהצדדים, וכל העבודות לכל הרוחב */
+@media (max-width: 900px), (orientation: portrait) {
+  .gallery-page {
+    --bar-u: min(calc((100vw - 16px) / 674), 1px);
+    padding: 16px 8px 40px;
+  }
+
+  .gallery-list {
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .gallery-item {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .gallery-item .work-caption {
+    max-width: none;
+  }
+
+  /* החץ לפרויקט הבא: בטלפון הוא בסוף העמוד (mobile-next) */
+  .gallery-next {
+    display: none;
+  }
+
+  /* הגלריות: בטלפון התמונות הקטנות בשורה מתחת לתמונה הגדולה (כמו בעמודי הפרויקטים) */
+  .gallery-item--fit .mini-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .gallery-item--fit .mini-gallery__thumbs {
+    flex-direction: row;
+    gap: 8px;
+    height: auto;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .gallery-item--fit .mini-gallery__thumb {
+    width: 55px;
+    height: 74px;
+    aspect-ratio: auto;
   }
 }

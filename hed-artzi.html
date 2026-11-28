@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HED ARTZI – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=130">
+  <link rel="stylesheet" href="styles.css?v=149">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
   <script>
     {
@@ -25,7 +25,7 @@
     סקיצה: העמוד החדש של הד ארצי (הפריימים Desktop - 75, 76, 77 בפיגמה).
     בעמוד הזה אין עמודה קבועה של טקסט: למעלה שורה אחת (חזרה, OVERVIEW והלשוניות),
     מתחתיה שתי עמודות של חומרים, והקו נמצא בצד ימין.
-    שלוש לשוניות: BACKGROUND (נפתחת ראשונה), INDUSTRIAL PEACE (האירוע) ו-MUSIC & MERCH (הטקסט על הפרויקט).
+    שלוש לשוניות: BACKGROUND (נפתחת ראשונה), INDUSTRIAL PEACE (האירוע) ו-MUSIC & MERCH (המוצרים).
   -->
   <main class="event-page">
 
@@ -92,14 +92,9 @@
         <h2 class="project-headline">an iconic national music label<br>transforming into a resistance movement</h2>
         <div class="event-about__text">
           <p>
-            A speculative rebranding of Hed Artzi, an iconic Israeli music label, set in an imagined future where Israel has become a dictatorship and <em class="event-about__highlight">independent artistic expression is forbidden</em>.
-          </p>
-          <p>
+            A speculative rebranding of Hed Artzi, an iconic Israeli music label, set in an imagined future where Israel has become a dictatorship and <em class="event-about__highlight">independent artistic expression is forbidden</em>.<br>
             In this reality, Hed Artzi goes underground, transforming into a secret cultural movement dedicated to preserving and spreading free Israeli culture. With citizens under constant surveillance, music is distributed through underground events and analog formats, beyond the reach of digital monitoring.<br>
             <em class="event-about__highlight">The project explores the role of creativity in a broken reality</em><em>,</em> and how a brand's identity can shift in response to political change.
-          </p>
-          <p>
-            <span class="event-about__highlight">“Industrial Peace 2026”</span> features banned Israeli artists, celebrating the brand’s spirit and the fight for creative freedom.
           </p>
           <p class="event-about__credit">In collaboration with Sahar Barel.</p>
         </div>
@@ -115,22 +110,26 @@
     </div>
 
     <!-- ===== INDUSTRIAL PEACE (האירוע) ===== -->
-    <!-- כאן הכל נגלל יחד: למעלה הלוגו שמגיב לקול לכל הרוחב, ומתחתיו שתי העמודות -->
-    <div class="event-columns event-columns--stacked" data-tab="event" id="gallery">
+    <!-- משמאל הטקסט על האירוע והכרזה. מימין הלוגו שמגיב לקול, ומתחתיו שני הסרטונים -->
+    <div class="event-columns" data-tab="event" id="gallery">
       <!-- בטלפון: השם של החלק בגלריה (במחשב יש במקומו לשוניות). הקשה עליו סוגרת ופותחת את החלק -->
       <button class="panel-title" type="button" aria-expanded="true">INDUSTRIAL PEACE (3)</button>
-      <!-- הלוגו שמגיב לקול (hed-voice.js מצייר אותו בתוך האזור הזה) -->
-      <div class="hed-voice"></div>
 
-      <!-- עמודה 1: הכרזה -->
+      <!-- עמודה 1: הטקסט על האירוע, ומתחתיו הכרזה -->
       <div class="event-column">
+        <div class="event-about__text">
+          <p>
+            <em class="event-about__highlight">“Industrial Peace 2026”</em> is a line of illegal underground cultural events held under the radar of the authorities. Featuring live shows and the distribution of banned music and cultural materials, celebrating the brand’s spirit and the fight for creative freedom.
+          </p>
+        </div>
         <div class="work-item">
           <p class="work-caption"><b></b> Animated Event Poster</p>
           <video class="event-media event-media--poster" data-be-label="POSTER" src="images/hed-artzi-poster.mp4" autoplay muted loop playsinline></video>
         </div>
       </div>
-      <!-- עמודה 2: הטקסט על המסך, והסרטון מההופעה -->
+      <!-- עמודה 2: הלוגו שמגיב לקול (hed-voice.js מצייר אותו כאן), הטקסט על המסך, והסרטון מההופעה -->
       <div class="event-column">
+        <div class="hed-voice"></div>
         <div class="work-item">
           <p class="work-caption"><b></b> Manifesto for Freedom of Creativity and Expression</p>
           <video class="event-media event-media--screen" src="images/hed-artzi-event-text.mp4" autoplay muted loop playsinline></video>
@@ -193,11 +192,14 @@
 
   </main>
 
+  <!-- בלי מילה בודדת בשורה האחרונה של פסקה -->
+  <script src="no-orphans.js?v=1"></script>
+
   <!-- הלוגו שמגיב לקול, בלשונית INDUSTRIAL PEACE -->
   <script src="hed-voice.js?v=6"></script>
 
   <!-- הלשוניות: לחיצה על לשונית מראה את התוכן שלה -->
-  <script src="event-tabs.js?v=14"></script>
+  <script src="event-tabs.js?v=16"></script>
 
   <!-- OVERVIEW במבט מעוף הציפור: כל החומרים יחד -->
   <script src="birdseye.js?v=9"></script>
