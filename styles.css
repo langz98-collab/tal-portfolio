@@ -17,6 +17,8 @@
   --color-hed-artzi: #fe3200;      /* אדום: הצבע של עמוד HED ARTZI (במקום הירוק) */
   --color-hed-artzi-background: #131313; /* אפור כהה מאוד: הרקע בעמוד החדש של HED ARTZI */
   --color-darom: #ffd555;          /* צהוב: הצבע של עמוד DAROM FILM FESTIVAL (במקום הירוק) */
+  --color-about: #e100bf;          /* ורוד: הצבע של עמוד About & Contact */
+  --color-football: #0ae60d;       /* הירוק של WIKIPEDIA>FOOTBALL (גם כשבעמוד יש צבע אחר) */
 
   /* יחידת מידה של עמוד הבית: פיקסל אחד בפריים (1440×1024) מוקטן לגודל המסך */
   --u: min(100vw / 1440, 100vh / 1024);
@@ -187,7 +189,10 @@ body {
 }
 
 .home-about {
-  cursor: default;
+  display: block; /* קישור לעמוד About & Contact, בשורה משלו */
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
   outline: none; /* במצב פוקוס הצבע הירוק מראה איפה נמצאים */
 }
 
@@ -1870,9 +1875,9 @@ em.project-text__highlight {
   opacity: 1;
 }
 
-/* הקטגוריה: בצבע של הפרויקט */
+/* הקטגוריה: בצבע של הפרויקט (בעמוד About: הצבע של הפרויקט שממנו החומר הגיע) */
 .birdseye__title {
-  color: var(--color-project-accent);
+  color: var(--be-label-color, var(--color-project-accent));
 }
 
 /* החומר: בגובה של השורה, והרוחב לפי הפרופורציות שלו
@@ -2038,6 +2043,183 @@ em.project-text__highlight {
   .birdseye {
     display: none;
   }
+}
+
+/* =========================================
+   עמוד About & Contact (about.html): על הגריד של עמוד פרויקט
+   משמאל הטקסט (25) ופרטי הקשר בתחתית, ומימין רק הכפתור OVERVIEW.
+   ========================================= */
+:where(.about-page) .project-text {
+  font-size: calc(25 * var(--u));
+  font-style: normal;
+}
+
+/* שורה ריקה לפני הפסקה האחרונה, כמו בפיגמה */
+.about-page .project-text p:last-child {
+  margin-top: 1.1em;
+}
+
+.about-info {
+  padding-bottom: calc(29 * var(--u));
+}
+
+/* פרטי הקשר: בתחתית העמודה, גדולים ובמרכז (Inter Bold 38, כמו הכותרות בעמודי הפרויקטים) */
+.about-contact {
+  margin-top: auto;
+  font-family: var(--font-project-headline);
+  font-size: calc(38 * var(--u));
+  font-weight: bold;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* OVERVIEW: למעלה מימין */
+.about-overview {
+  position: absolute;
+  z-index: 2;
+  top: calc(21 * var(--u));
+  right: calc(22 * var(--u));
+  margin: 0;
+  transition:
+    opacity var(--duration-overview) var(--ease-next),
+    border-radius 0.3s var(--ease-next);
+}
+
+/* בטלפון: אין OVERVIEW */
+@media (max-width: 900px), (orientation: portrait) {
+  .about-overview,
+  .about-works {
+    display: none;
+  }
+}
+
+/*
+  OVERVIEW בעמוד About (הפריים Desktop - 84 בפיגמה): עבודות נבחרות מימין לקו, בשתי עמודות.
+  התמונות מתחילות 24 מימין לקו (744) ומגיעות עד 24 מהקצה, ונגללות למטה.
+  מעל כל עבודה שורה עם המספר (כמו ב-OVERVIEW של עמודי הפרויקטים), וב-hover גם השם של הפרויקט.
+*/
+.about-works {
+  --works-gap: calc(14 * var(--u));     /* בין העמודות ובין העבודות */
+  --works-caption: calc(31 * var(--u)); /* שורת המספר (24) ועוד 7 עד התמונה */
+  position: absolute;
+  z-index: 1;
+  top: calc(88 * var(--u) - var(--works-caption)); /* כך שהתמונות העליונות מתחילות ב-88, כמו בפיגמה */
+  bottom: 0;
+  left: calc(744 * var(--u));
+  right: calc(24 * var(--u));
+  display: grid;
+  grid-template-columns: 328fr 330fr; /* כמו בפיגמה */
+  align-items: start;
+  column-gap: var(--works-gap);
+  padding-bottom: calc(24 * var(--u));
+  overflow-y: auto;
+  scrollbar-width: none; /* בלי פס גלילה */
+  visibility: hidden;
+  transition: visibility 0s linear 0.4s; /* נעלם רק אחרי שהעבודות דהו */
+}
+
+.about-works::-webkit-scrollbar {
+  display: none;
+}
+
+.is-works-open .about-works {
+  visibility: visible;
+  transition: none;
+}
+
+.about-works__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--works-gap);
+}
+
+/*
+  עבודה אחת: שורת המספר, ומתחתיה התמונה (או הסרטון).
+  הכניסה: כל עבודה עולה קצת מלמטה ומופיעה בפייד משלה, אחת אחרי השנייה
+  (--work-delay נקבע ב-about.js לפי המספר). הסגירה: כולן דוהות יחד, מהר.
+*/
+.about-work {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none; /* בלי קו מתחת, למרות שזה קישור */
+  gap: calc(7 * var(--u));
+  opacity: 0;
+  transform: translateY(calc(24 * var(--u)));
+  transition:
+    opacity 0.4s var(--ease-next),
+    transform 0s linear 0.4s; /* חוזרת למטה רק כשכבר לא רואים אותה */
+}
+
+.is-works-open .about-work {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.9s var(--ease-page-out) var(--work-delay, 0s),
+    transform 1.1s var(--ease-page-out) var(--work-delay, 0s);
+}
+
+.about-work__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--work-ratio);
+  object-fit: cover;
+  object-position: var(--work-position, center);
+}
+
+/* hover על עבודה: כל השאר חצי שקופות (כמו ב-OVERVIEW של עמודי הפרויקטים) */
+.about-work > * {
+  transition: opacity 0.35s var(--ease-next);
+}
+
+.about-works:has(.about-work:hover) .about-work:not(:hover) > * {
+  opacity: 0.5;
+}
+
+/* שורת המספר: כמו מעל החומרים ב-OVERVIEW של עמודי הפרויקטים */
+.about-work__caption {
+  height: calc(24 * var(--u));
+  font-family: var(--font-caption);
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.about-work__number {
+  font-family: var(--font-caption-number);
+}
+
+/* השם של הפרויקט: אחרי המספר, בצבע של הפרויקט. מופיע רק ב-hover */
+.about-work__name {
+  color: var(--work-color);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-next);
+}
+
+.about-work:is(:hover, :focus-visible) .about-work__name {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-work,
+  .is-works-open .about-work {
+    transform: none;
+    transition: opacity 0.3s linear;
+  }
+}
+
+/* המעבר לעמוד של פרויקט: גם העבודות יורדות ויוצאות מהמסך, יחד עם הטקסט */
+.is-leaving-page .about-works {
+  transform: translateY(100svh);
+  pointer-events: none;
+  transition: transform var(--duration-page-out) var(--ease-page-in);
+}
+
+.is-leaving-page .about-overview {
+  opacity: 0;
 }
 
 /* =========================================
@@ -2812,6 +2994,12 @@ em.project-text__highlight {
 .theme-hed-artzi {
   --color-project-accent: var(--color-hed-artzi);
   --cursor-green: var(--color-hed-artzi);
+}
+
+/* עמוד About & Contact: ורוד במקום הירוק, גם בעכבר */
+.theme-about {
+  --color-project-accent: var(--color-about);
+  --cursor-green: var(--color-about);
 }
 
 /* עמוד DAROM FILM FESTIVAL: צהוב במקום הירוק, גם בעכבר */

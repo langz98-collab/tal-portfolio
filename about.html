@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- בטלפון: הטלפון והמייל לא הופכים לקישורים לבד -->
+  <meta name="format-detection" content="telephone=no, email=no">
+  <title>ABOUT &amp; CONTACT – טל המלך</title>
+  <link rel="stylesheet" href="styles.css?v=134">
+</head>
+<body class="theme-about">
+
+  <!--
+    עמוד About & Contact (הפריים Desktop - 84 בפיגמה).
+    על אותו גריד כמו עמודי הפרויקטים: משמאל הטקסט עליי ופרטי הקשר, קו באמצע,
+    ומימין הכפתור OVERVIEW.
+    OVERVIEW: מימין לקו מופיעות עבודות נבחרות מכל הפרויקטים, בשתי עמודות.
+    ב-hover מופיע השם של הפרויקט בצבע שלו, ולחיצה עוברת לעמוד של הפרויקט (about.js).
+  -->
+  <main class="project-page about-page">
+
+    <!-- העמודה השמאלית -->
+    <section class="project-info">
+      <header class="project-header">
+        <!-- חזרה לעמוד הבית: החץ והשם הם קישור אחד (ב-hover השם מתחלף ל-HOME) -->
+        <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
+          <span class="project-header__back"><span class="project-header__back-icon"></span></span>
+          <h1 class="project-header__title">
+            <span class="project-header__name">AB0UT &amp; CONTACt</span>
+            <span class="project-header__home" aria-hidden="true">HOME</span>
+          </h1>
+        </a>
+      </header>
+
+      <div class="project-info__scroll about-info">
+        <div class="project-text">
+          <p>
+            Hi, I'm Tal, a fourth-year Visual Communication student at Bezalel Academy of Arts and Design, with a focus on<br>
+            <span class="project-text__highlight">UX/UI, branding, and illustration</span>.
+          </p>
+          <p>
+            I'm a calm and straightforward person, and I hope that comes through in my work. I believe in thoughtful, <span class="no-break">content-driven</span> design rather than trendy or loud.<br>
+            My approach can be playful or serious, depending on the context, but always aims to be <span class="project-text__highlight">clear, approachable, and <span class="no-break">down-to-earth</span></span>.
+          </p>
+          <p>
+            I've been drawing for as long as I can remember, and I intend to keep doing so for the rest of my life.
+          </p>
+        </div>
+
+        <!-- פרטי הקשר: בתחתית העמודה (לקריאה בלבד, לא לחיצים) -->
+        <p class="about-contact">
+          0535291463<br>
+          langz98@gmail.com
+        </p>
+      </div>
+    </section>
+
+    <!-- הקו שבאמצע (במצב OVERVIEW הוא גולש שמאלה) -->
+    <img class="project-divider" src="images/home-line.svg" alt="">
+
+    <!-- הכפתור OVERVIEW: למעלה מימין. פותח וסוגר את העבודות -->
+    <button class="overview-button about-overview" type="button" aria-expanded="false" aria-controls="about-works">OVERVIEW <img src="images/eye.svg" alt=""></button>
+
+    <!--
+      OVERVIEW: עבודות נבחרות, בשתי עמודות, בדיוק כמו בפיגמה (Frame 160 ו-Frame 161).
+      כדי להחליף עבודה: מחליפים את התמונה (או הסרטון), את הקישור, את השם ואת הצבע.
+      --work-ratio: הפרופורציות של המסגרת (רוחב / גובה), כמו בפיגמה.
+      המספרים (1 >) נכתבים לבד (about.js), לפי הסדר: משמאל לימין, ואז שורה למטה.
+    -->
+    <div class="about-works" id="about-works">
+
+      <!-- העמודה השמאלית -->
+      <div class="about-works__column">
+        <a class="about-work" href="wikipedia-football.html" style="--work-color: var(--color-football); --work-ratio: 462 / 659;">
+          <span class="about-work__caption"><span class="about-work__number"></span> <span class="about-work__name">WIKIPEDIA&gt;F00TBALL</span></span>
+          <img class="about-work__media" src="images/wikipedia-event-poster.png" alt="הפוסטר של האירוע סימולטור כדורגל">
+        </a>
+        <a class="about-work" href="hed-artzi.html" style="--work-color: var(--color-hed-artzi); --work-ratio: 1219 / 1290;">
+          <span class="about-work__caption"><span class="about-work__number"></span> <span class="about-work__name">HED ARTZI</span></span>
+          <img class="about-work__media" src="images/hed-artzi-bag.png" alt="שקית נייר עם תקליט, מדבקה וקבלה">
+        </a>
+        <a class="about-work" href="darom.html" style="--work-color: var(--color-darom); --work-ratio: 2867 / 4096;">
+          <span class="about-work__caption"><span class="about-work__number"></span> <span class="about-work__name">DAROM FILM FESTIVAL</span></span>
+          <img class="about-work__media" src="images/darom-poster-1.jpg" alt="הכרזה של פסטיבל קולנוע דרום">
+        </a>
+      </div>
+
+      <!-- העמודה הימנית -->
+      <div class="about-works__column">
+        <a class="about-work" href="darom.html" style="--work-color: var(--color-darom); --work-ratio: 846 / 570;">
+          <span class="about-work__caption"><span class="about-work__number"></span> <span class="about-work__name">DAROM FILM FESTIVAL</span></span>
+          <video class="about-work__media" src="images/darom-cover.mp4" muted loop playsinline preload="metadata"></video>
+        </a>
+        <!-- התמונה חתוכה מלמעלה, כמו בפיגמה (רואים את התחתית שלה) -->
+        <a class="about-work" href="hed-artzi.html" style="--work-color: var(--color-hed-artzi); --work-ratio: 671 / 929; --work-position: bottom;">
+          <span class="about-work__caption"><span class="about-work__number"></span> <span class="about-work__name">HED ARTZI</span></span>
+          <img class="about-work__media" src="images/hed-artzi-concert.jpg" alt="הכרזה בתנועה על מסך אנכי בהופעה">
+        </a>
+        <a class="about-work" href="wikipedia-football.html" style="--work-color: var(--color-football); --work-ratio: 2074 / 1536;">
+          <span class="about-work__caption"><span class="about-work__number"></span> <span class="about-work__name">WIKIPEDIA&gt;F00TBALL</span></span>
+          <video class="about-work__media" src="images/wikipedia-magazine.mp4" muted loop playsinline preload="metadata"></video>
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- OVERVIEW: פתיחה וסגירה, ומעבר לעמוד של פרויקט -->
+  <script src="about.js?v=3"></script>
+
+  <!-- העכבר של האתר -->
+  <script src="cursor.js?v=3"></script>
+
+</body>
+</html>

@@ -11,21 +11,23 @@
   data-be-text: התיאור שמופיע בלחיצה במקום הכיתוב (ריק: בלי תיאור)
   data-be-size="small": החומר קטן יותר
 
+  בעמוד About (data-birdseye-sources): כל החומרים מכל הפרויקטים, וב-hover השם של הפרויקט בצבע שלו.
+
   הסקריפט בונה את התצוגה מהחומרים שכבר יש בעמוד (העתקים שלהם), ומראה אותה כשלעמוד יש is-overview.
   (הקו, FULL VIEW והמעבר עצמו נשארים כמו שהיו, ב-project-page.js / event-tabs.js וב-CSS)
 */
-(function () {
+(async function () {
   const page = document.querySelector(".project-page, .event-page");
   if (!page) return;
 
   // ---------- 1. אוספים את החומרים, לפי הסדר של הלשוניות ----------
-  const panels = page.querySelectorAll(".project-panel, .event-columns");
-  const materials = []; // לכל חומר: הלשונית, התיאור, והאלמנט שמוצג
+  const materials = []; // לכל חומר: מה שמופיע ב-hover, התיאור, והאלמנט שמוצג
 
-  // השם של הלשונית (בלי מספר הפריטים)
-  function tabName(panel) {
-    const tab = page.querySelector(`.project-tab[data-tab="${panel.dataset.tab}"]`);
-    return tab ? tab.firstChild.textContent.trim() : "";
+  // הצבע של כל פרויקט (לפי ה-theme של העמוד שלו)
+  function projectColor(body) {
+    if (body.classList.contains("theme-hed-artzi")) return "var(--color-hed-artzi)";
+    if (body.classList.contains("theme-darom")) return "var(--color-darom)";
+    return "var(--color-football)";
   }
 
   // התיאור של חומר: הכיתוב שלו, בלי המספר
@@ -51,7 +53,8 @@
   // חומר אחד: מה שמופיע ב-hover, התיאור, והאלמנט שמוצג (source: המקור, שממנו נלקחות ההגדרות)
   function addMaterial(source, title, text, element, extra = {}) {
     materials.push({
-      label: source.dataset.beLabel ?? title,
+      label: extra.project ? title : source.dataset.beLabel ?? title,
+      color: extra.project?.color,
       text: source.dataset.beText ?? text,
       small: source.dataset.beSize === "small",
       element,
@@ -59,35 +62,42 @@
     });
   }
 
-  panels.forEach((panel) => {
-    const title = tabName(panel);
+  /*
+    אוספים את החומרים מעמוד (root: העמוד הזה, או עמוד של פרויקט אחר).
+    project: בעמוד About, ב-hover מופיע השם של הפרויקט (ולא הלשונית), בצבע שלו.
+  */
+  function collect(root, project) {
+    // השם של הלשונית (בלי מספר הפריטים)
+    function tabName(panel) {
+      const tab = root.querySelector(`.project-tab[data-tab="${panel.dataset.tab}"]`);
+      return tab ? tab.firstChild.textContent.trim() : "";
+    }
+
+  root.querySelectorAll(".project-panel, .event-columns").forEach((panel) => {
+    const title = project ? project.name : tabName(panel);
     panel.querySelectorAll(".work-item").forEach((item) => {
       if (item.querySelector(".hed-voice")) return; // הלוגו שמגיב לקול לא נכנס לכאן
 
       // גלריה קטנה: כל תמונה בה היא חומר בפני עצמו
       const gallery = item.querySelector(".mini-gallery");
       if (gallery) {
-        const frameRatio = getComputedStyle(gallery.querySelector(".mini-gallery__main")).aspectRatio;
+        const frameRatio = gallery.classList.contains("mini-gallery--posters") ? "567 / 810" : "668 / 701"; // כמו ב-CSS
         gallery.querySelectorAll(".mini-gallery__main img").forEach((image) => {
           const copy = image.cloneNode();
           copy.style.aspectRatio = frameRatio; // אותו חיתוך כמו במסגרת של הגלריה
-          addMaterial(image, title, image.dataset.caption || captionText(item), copy);
+          addMaterial(image, title, image.dataset.caption || captionText(item), copy, { project });
         });
         return;
       }
 
-      // ה-Reel: הפריים שלו, בתוך המסגרת של אינסטגרם
+      // ה-Reel: בתוך המסגרת של אינסטגרם, רץ בלי סאונד (כמו כל הסרטונים כאן)
       const reel = item.querySelector(".reel");
       if (reel) {
         const copy = reel.cloneNode(true);
         copy.querySelector(".reel__play")?.remove();
         const video = copy.querySelector("video");
-        const still = document.createElement("img");
-        still.className = video.className;
-        still.src = video.poster;
-        still.alt = "";
-        video.replaceWith(still);
-        addMaterial(reel, title, captionText(item), copy, { reel }); // בלחיצה: ה-Reel האמיתי, שמתנגן
+        video.replaceWith(silentCopy(reel.querySelector("video")));
+        addMaterial(reel, title, captionText(item), copy, { reel, project }); // בלחיצה: ה-Reel האמיתי, שמתנגן
         return;
       }
 
@@ -95,10 +105,27 @@
       const media = item.querySelectorAll(":scope > :is(video, img, .work-crop, .work-collage, .work-poster)");
       media.forEach((element) => {
         const copy = element.tagName === "VIDEO" ? silentCopy(element) : element.cloneNode(true);
-        addMaterial(element, title, captionText(item), copy);
+        addMaterial(element, title, captionText(item), copy, { project });
       });
     });
   });
+  }
+
+  // בעמוד About: החומרים מכל הפרויקטים (טוענים את העמודים שלהם). בעמוד פרויקט: החומרים שלו
+  const sources = page.dataset.birdseyeSources;
+  if (sources) {
+    const parser = new DOMParser();
+    for (const address of sources.split(" ")) {
+      const html = await fetch(address).then((response) => response.text());
+      const other = parser.parseFromString(html, "text/html");
+      collect(other, {
+        name: other.querySelector(".project-header__name").textContent.replace(/\s+/g, " ").trim(),
+        color: projectColor(other.body),
+      });
+    }
+  } else {
+    collect(page);
+  }
 
   // ---------- 2. בונים את התצוגה ----------
   const view = document.createElement("div");
@@ -122,6 +149,7 @@
       </figcaption>
       <div class="birdseye__media"></div>`;
     item.querySelector(".birdseye__title").textContent = material.label; // ב-hover: רק הקטגוריה
+    if (material.color) item.style.setProperty("--be-label-color", material.color); // בעמוד About: הצבע של הפרויקט
     materialOf.set(item, material);
     material.element.classList.remove("reveal", "is-visible", "is-active"); // ההעתק כבר מוצג, בלי האנימציה של העמוד
     item.querySelector(".birdseye__media").append(material.element);
@@ -131,13 +159,49 @@
   page.append(view);
 
   // ---------- 3. מחלקים לשתי שורות באורך דומה ----------
-  // הסדר: אקראי (מערבבים בכל כניסה ל-OVERVIEW). המספרים לפי המקום החדש
+  /*
+    הסדר: אקראי לגמרי, ומשתנה בכל כניסה ל-OVERVIEW. המספרים לפי המקום החדש.
+    בעמוד About (חומרים מכמה פרויקטים): מערבבים כך ששני חומרים מאותו פרויקט כמעט אף פעם
+    לא יהיו אחד ליד השני, כדי שתמיד יהיו כמה שיותר צבעים על המסך.
+  */
   let order = [...items];
-  function shuffle() {
-    order = [...items];
-    for (let i = order.length - 1; i > 0; i--) {
+
+  function randomized(list) {
+    const copy = [...list];
+    for (let i = copy.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [order[i], order[j]] = [order[j], order[i]];
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function shuffle() {
+    // קבוצה לכל פרויקט (בעמוד פרויקט יש רק קבוצה אחת)
+    const groups = new Map();
+    randomized(items).forEach((item) => {
+      const key = materialOf.get(item).color || "";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    });
+    if (groups.size < 2) {
+      order = randomized(items);
+      return;
+    }
+    /*
+      כל פעם לוקחים חומר מפרויקט אחר מהקודם, ומהפרויקט שנשארו לו הכי הרבה חומרים
+      (בין כמה פרויקטים קרובים: אחד מהם באקראי). כך הפרויקט הגדול מתפזר לאורך כל השורות,
+      ולא נשאר לבד בסוף.
+    */
+    order = [];
+    let last = null;
+    while (order.length < items.length) {
+      const options = [...groups.entries()].filter(([key, list]) => list.length && key !== last);
+      const pool = options.length ? options : [...groups.entries()].filter(([, list]) => list.length);
+      const most = Math.max(...pool.map(([, list]) => list.length));
+      const close = pool.filter(([, list]) => list.length >= most - 1);
+      const [key, list] = close[Math.floor(Math.random() * close.length)];
+      order.push(list.pop());
+      last = key;
     }
   }
 
