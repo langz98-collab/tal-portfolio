@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VIEW – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=149">
+  <link rel="stylesheet" href="styles.css?v=164">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
   <script>
     {
@@ -28,7 +28,7 @@
     חמש לשוניות: BACKGROUND (נפתחת ראשונה), RESEARCH, SOLUTION, STATES ו-VISUAL.
     לחיצה על לשונית: התוכן גולש הצידה, והלשונית הבאה נחשפת מאחוריו (event-tabs.js, data-tab-motion="slide").
   -->
-  <main class="event-page view-page" data-tab-motion="slide">
+  <main class="event-page case-study view-page" data-tab-motion="slide">
 
     <!-- השורה העליונה (בעמוד הזה אין OVERVIEW) -->
     <header class="event-header">
@@ -55,6 +55,12 @@
         </button>
       </div>
 
+      <!--
+        בטלפון (רק בעמודי ה-case study): במקום INFO ו-GALLERY, השם של החלק שבו נמצאים עכשיו, ומספרו בתוך מסגרת.
+        נשאר למעלה כל הגלילה, ומתחלף כשמגיעים לחלק הבא (event-tabs.js).
+      -->
+      <p class="section-now"><span class="section-now__name">BACKGROUND</span><span class="section-now__count"><span class="section-now__count-text">1/5</span></span></p>
+
       <!-- הלשוניות והחץ לפרויקט הבא -->
       <div class="project-top event-top">
         <!-- הלשונית הפתוחה בתכלת (בעמוד הזה בלי מספר החומרים). data-tab מחבר לשונית לתוכן שלה -->
@@ -67,9 +73,9 @@
         </nav>
 
         <!-- החץ לפרויקט הבא -->
-        <a class="project-next" href="hed-artzi.html">
-          <p class="project-next-label">NEXT: HED ARTZI</p>
-          <span class="project-next__arrow" aria-label="הפרויקט הבא: HED ARTZI">
+        <a class="project-next" href="wikipedia-football.html">
+          <p class="project-next-label">NEXT: WIKIPEDIA&gt;F00TBALL</p>
+          <span class="project-next__arrow" aria-label="הפרויקט הבא: WIKIPEDIA>FOOTBALL">
             <span class="project-next__icon"></span>
           </span>
         </a>
@@ -91,9 +97,9 @@
             <em class="event-about__highlight">VIEW</em> is a speculative system designed to help families communicate with loved ones in a medically induced coma. <em class="event-about__highlight">By combining EEG</em> <em>(brain activity mapping technology)</em> <em class="event-about__highlight">data with AI, the system translates brain activity into simple visual feedback, helping families better understand the patient's state and maintain a connection over time</em>.
           </p>
           <p>
-            The project began with a shared personal experience. Both of us had stood beside a loved one in a medically induced coma, unable to communicate or know whether our presence made a difference. Although medical staff encourage families to talk, share memories, and play familiar voices, the absence of any visible response can make maintaining that connection difficult
+            The project began with a shared personal experience. Both of us had stood beside a loved one in a medically induced coma, unable to communicate or know whether our presence made a difference. Although medical staff encourage families to talk, share memories, and play familiar voices, the absence of any visible response can make maintaining that connection difficult.
           </p>
-          <p class="event-about__credit">Developed within UX/UI Lab, Bezalel Academy<br>Collaboration with Ghadir Salman</p>
+          <p class="event-about__credit">Developed within UX/UI Lab, Bezalel Academy.<br>Collaboration with Ghadir Salman.</p>
         </div>
       </div>
       <div class="event-column">
@@ -120,7 +126,7 @@
       </div>
       <div class="event-column">
         <div class="work-item">
-          <p class="work-caption"><b></b> <strong>EEG Readings</strong><br>Color-coded visualization highlighting active and inactive areas of the brain.</p>
+          <p class="work-caption"><b></b> <strong>EEG Readings.</strong><br>Color-coded visualization highlighting active and inactive areas of the brain.</p>
           <img class="view-media" src="images/view-eeg.png" alt="מיפוי EEG: פעילות המוח בצבעים" style="--ratio: 722 / 537;">
         </div>
       </div>
@@ -149,15 +155,15 @@
       <div class="event-column">
         <div class="view-phones">
           <div class="work-item">
-            <p class="work-caption"><b></b> Insights and instructions</p>
+            <p class="work-caption"><b></b> Insights and instructions.</p>
             <img class="view-media" src="images/view-phone-insights.png" alt="האפליקציה: תובנות והנחיות" style="--ratio: 192 / 403;">
           </div>
           <div class="work-item">
-            <p class="work-caption"><b></b> Remote visit control</p>
+            <p class="work-caption"><b></b> Remote visit control.</p>
             <img class="view-media" src="images/view-phone-remote.png" alt="האפליקציה: ביקור מרחוק" style="--ratio: 192 / 403;">
           </div>
           <div class="work-item">
-            <p class="work-caption"><b></b> The activity tab.<br>routine and main events</p>
+            <p class="work-caption"><b></b> The activity tab.</p>
             <img class="view-media" src="images/view-phone-activity.png" alt="האפליקציה: לשונית הפעילות" style="--ratio: 192 / 403;">
           </div>
         </div>
@@ -198,7 +204,7 @@
           <img class="view-media" src="images/view-states-phones.jpg" alt="שלושה טלפונים, בכל אחד מצב אחר" style="--ratio: 653 / 490;">
         </div>
         <div class="work-item">
-          <p class="work-caption"><b></b> The bedside monitor displays balanced brain activity, suggesting that the current interaction may be stimulating a positive response and encouraging the family to continue.</p>
+          <p class="work-caption"><b></b> The bedside monitor indicates excessive brain activity, potentially caused by the presence of too many people in the room, and recommends reducing stimulation to avoid overwhelming the patient.</p>
           <video class="view-media" src="images/view-state-balanced.mp4" style="--ratio: 1882 / 1302;" autoplay muted loop playsinline></video>
         </div>
         <div class="work-item">
@@ -231,9 +237,9 @@
     </div>
 
     <!-- בטלפון: בסוף הגלריה, הקישור לפרויקט הבא -->
-    <a class="mobile-next" href="hed-artzi.html">
+    <a class="mobile-next" href="wikipedia-football.html">
       <span class="mobile-next__label">NEXT:</span>
-      <span class="mobile-next__name">HED ARTZI</span>
+      <span class="mobile-next__name">WIKIPEDIA&gt;<br>F00TBALL</span>
       <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
     </a>
 
@@ -246,7 +252,7 @@
   <script src="no-orphans.js?v=1"></script>
 
   <!-- הלשוניות: לחיצה על לשונית גולשת הצידה אל התוכן שלה (כמו בעמוד של הד ארצי) -->
-  <script src="event-tabs.js?v=16"></script>
+  <script src="event-tabs.js?v=26"></script>
 
   <!-- העכבר של האתר: עיגול לבן שנהיה תכלת על דברים לחיצים -->
   <script src="cursor.js?v=3"></script>

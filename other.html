@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ILLUSTRATION &amp; OTHER – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=149">
+  <title>ILLUSTRATIONS – טל המלך</title>
+  <link rel="stylesheet" href="styles.css?v=164">
   <!-- בעמוד הזה אין קו, אז המעבר מעמוד הבית לא ממשיך כאן -->
   <script>sessionStorage.removeItem("enter-line");</script>
 </head>
 <body>
 
   <!--
-    העמוד ILLUSTRATION & OTHER (הפריים Desktop - 91 בפיגמה).
+    העמוד ILLUSTRATIONS (הפריים Desktop - 91 בפיגמה).
     אוסף של עבודות קטנות: הכל בעמודה אחת באמצע, ומעל כל עבודה כיתוב קצר. העמוד כולו נגלל.
     כדי להוסיף עבודה: מעתיקים בלוק של gallery-item, ומחליפים את הכיתוב, את התמונות ואת --width (הרוחב בפיגמה).
     --fit: הרוחב המקסימלי, כדי שהעבודה תיכנס כולה בגובה המסך (גובה המסך כפול הפרופורציות של העבודה).
@@ -24,21 +24,32 @@
       <a class="project-home" href="index.html" aria-label="חזרה לעמוד הבית">
         <span class="project-header__back"><span class="project-header__back-icon"></span></span>
         <h1 class="project-header__title">
-          <span class="project-header__name">ILLUSTRATION &amp; OTHER</span>
+          <span class="project-header__name">ILLUSTRATIONS</span>
           <span class="project-header__home" aria-hidden="true">HOME</span>
         </h1>
       </a>
 
-      <a class="gallery-next" href="view.html" aria-label="הפרויקט הבא: VIEW"></a>
+      <!--
+        החץ לפרויקט הבא (כמו בעמודי הפרויקטים): במצב hover החץ מתארך ונהיה ירוק,
+        מופיע השם של הפרויקט הבא, והעבודות מתעמעמות.
+      -->
+      <div class="project-top gallery-top">
+        <a class="project-next" href="wikipedia-football.html">
+          <p class="project-next-label">NEXT: WIKIPEDIA&gt;F00TBALL</p>
+          <span class="project-next__arrow" aria-label="הפרויקט הבא: WIKIPEDIA>FOOTBALL">
+            <span class="project-next__icon"></span>
+          </span>
+        </a>
+      </div>
     </header>
 
     <!-- העבודות. <b></b> בכיתוב הוא המספר (1 >), והוא נכתב לבד -->
     <div class="gallery-list">
 
-      <!-- 1. קלפי משחק: ארבעה קלפים בשורה -->
-      <div class="work-item gallery-item" style="--width: 1226; --caption-width: 653; --fit: calc(var(--media-height) * 4 * 298 / 415 + 36 * var(--u));">
+      <!-- 1. קלפי משחק: ארבעה קלפים בשורה (1366 ברוחב, 13 ביניהם) -->
+      <div class="work-item gallery-item" style="--width: 1366; --caption-width: 653; --fit: calc(var(--media-height) * 4 * 332 / 462 + 40 * var(--u));">
         <p class="work-caption"><b></b> Illustrations for playing cards featuring a King, Queen, and Joker, inspired by Inca culture and South American deities.</p>
-        <div class="gallery-row" style="--gap: 12;">
+        <div class="gallery-row" style="--gap: 13.4;">
           <img src="images/other-cards-joker.jpg" alt="קלף הג'וקר" style="--ratio: 298 / 415;">
           <img src="images/other-cards-king.jpg" alt="קלף המלך" style="--ratio: 298 / 415;">
           <img src="images/other-cards-queen.jpg" alt="קלף המלכה" style="--ratio: 298 / 415;">
@@ -46,16 +57,16 @@
         </div>
       </div>
 
-      <!-- 2. דיוקן עצמי -->
-      <div class="work-item gallery-item" style="--width: 454; --fit: calc(var(--media-height) * 454 / 471);">
-        <p class="work-caption"><b></b> self portrait</p>
-        <img src="images/other-self-portrait.jpg" alt="דיוקן עצמי: פנים ירוקות מנייר גזור" style="--ratio: 454 / 471;">
-      </div>
-
-      <!-- 3. התווית של שפירא -->
+      <!-- 2. התווית של שפירא -->
       <div class="work-item gallery-item" style="--width: 775; --fit: var(--media-height);">
         <p class="work-caption"><b></b> A special Purim edition beer label for Shapira, a local Israeli brewery, created as part of my volunteer work with Shekel, an organization supporting people with disabilities. I collaborated with Refael, an autistic illustrator, adapting his artwork and designing the final label.</p>
         <img src="images/other-shapira-label.jpg" alt="תווית בירה לפורים של מבשלת שפירא" style="--ratio: 1;">
+      </div>
+
+      <!-- 3. דיוקן עצמי -->
+      <div class="work-item gallery-item" style="--width: 454; --fit: calc(var(--media-height) * 454 / 471);">
+        <p class="work-caption"><b></b> self portrait</p>
+        <img src="images/other-self-portrait.jpg" alt="דיוקן עצמי: פנים ירוקות מנייר גזור" style="--ratio: 454 / 471;">
       </div>
 
       <!--
@@ -82,12 +93,31 @@
         </div>
       </div>
 
+      <!-- 5. איורים בעפרונות צבעוניים: גלריה קטנה -->
+      <div class="work-item gallery-item gallery-item--fit" style="--width: 1304; --ratio: 4786 / 2486;">
+        <p class="work-caption"><b></b> A Collection of Colored Pencil Illustrations.</p>
+        <div class="mini-gallery mini-gallery--fit">
+          <div class="mini-gallery__main">
+            <img class="is-active" src="images/other-pencil-1.jpg?v=2" data-ratio="4786 / 2486" alt="איור בעפרונות צבעוניים: ברבור, סירה ונחש">
+            <img src="images/other-pencil-2.jpg" data-ratio="600 / 846" alt="איורים בעפרונות צבעוניים: עצים">
+            <img src="images/other-pencil-3.jpg" data-ratio="600 / 846" alt="איורים בעפרונות צבעוניים: צמחים וצדפים">
+            <img src="images/other-pencil-4.jpg" data-ratio="600 / 846" alt="איורים בעפרונות צבעוניים: כובעים ופלמינגו">
+          </div>
+          <div class="mini-gallery__thumbs">
+            <button class="mini-gallery__thumb is-active" type="button" aria-label="תמונה 1"><img src="images/other-pencil-1.jpg?v=2" alt=""></button>
+            <button class="mini-gallery__thumb" type="button" aria-label="תמונה 2"><img src="images/other-pencil-2.jpg" alt=""></button>
+            <button class="mini-gallery__thumb" type="button" aria-label="תמונה 3"><img src="images/other-pencil-3.jpg" alt=""></button>
+            <button class="mini-gallery__thumb" type="button" aria-label="תמונה 4"><img src="images/other-pencil-4.jpg" alt=""></button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- בטלפון: בסוף העמוד, הקישור לפרויקט הבא (במקום החץ שלמעלה) -->
-    <a class="mobile-next" href="view.html">
+    <a class="mobile-next" href="wikipedia-football.html">
       <span class="mobile-next__label">NEXT:</span>
-      <span class="mobile-next__name">VIEW</span>
+      <span class="mobile-next__name">WIKIPEDIA&gt;<br>F00TBALL</span>
       <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
     </a>
   </main>
@@ -97,6 +127,20 @@
 
   <!-- בלי מילה בודדת בשורה האחרונה של פסקה -->
   <script src="no-orphans.js?v=1"></script>
+
+  <!-- החץ לפרויקט הבא: כמה הוא מתארך ב-hover, כדי שיגיע בדיוק עד השם (כמו בעמודי הפרויקטים) -->
+  <script>
+    {
+      const nextArea = document.querySelector(".project-next");
+      const nextLabel = document.querySelector(".project-next-label");
+      const measureNextArrow = () => {
+        const labelEnd = nextLabel.offsetLeft + nextLabel.offsetWidth;
+        nextArea.style.setProperty("--next-arrow-long", nextArea.clientWidth - labelEnd + "px");
+      };
+      document.fonts.ready.then(measureNextArrow); // אחרי שהפונט נטען, כי הוא קובע את רוחב השם
+      window.addEventListener("resize", measureNextArrow);
+    }
+  </script>
 
   <!-- העכבר של האתר -->
   <script src="cursor.js?v=3"></script>

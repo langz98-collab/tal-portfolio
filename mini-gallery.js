@@ -4,7 +4,7 @@
   לחיצה על תמונה קטנה מקפיצה אותה למעלה בגדול (התמונה הקודמת נעלמת בהדרגה),
   והתמונה שהייתה למעלה חוזרת לשורה של הקטנות.
   אם יש כיתוב מעל התמונה הגדולה, הוא מתעדכן: המספר (1\5 >) והשם (data-caption).
-  אם לתמונה יש data-ratio (בעמוד ILLUSTRATION & OTHER), המסגרת מקבלת את הפרופורציות שלה.
+  אם לתמונה יש data-ratio (בעמוד ILLUSTRATIONS), המסגרת מקבלת את הפרופורציות שלה.
 */
 document.querySelectorAll(".mini-gallery").forEach((gallery) => {
   const bigImages = gallery.querySelectorAll(".mini-gallery__main img");

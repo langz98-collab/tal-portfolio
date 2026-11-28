@@ -265,10 +265,10 @@ sectionBar.classList.toggle("is-in-gallery", isInGallery());
 /*
   בטלפון: שם הפרויקט בבר (רק למעלה, בטקסט. בגלריה הוא נעלם).
   השם יושב בין הכפתורים לחץ החזרה, עם אותו רווח (12) מכל צד, כמו בין הכפתורים.
-  אם אין לו מספיק מקום בגודל 20, הוא מוקטן בדיוק כדי להיכנס (--title-size).
+  אם אין לו מספיק מקום בגודל 24, הוא מוקטן בדיוק כדי להיכנס (--title-size).
 */
 const barTitle = sectionBar.querySelector(".project-header__title");
-const titleSize = 20; // הגודל הרגיל של השם
+const titleSize = 24; // הגודל הרגיל של השם (אם יש מקום)
 const titleGap = 12;  // הרווח מהכפתורים (כמו הרווח בין הכפתורים)
 
 function measureTitleRoom() {
@@ -282,7 +282,7 @@ function measureTitleRoom() {
 
   // השם נגמר במקום קבוע (12 לפני החץ), אז המקום שלו: מסוף הכפתורים (ועוד 12) ועד שם
   const titleBox = barTitle.getBoundingClientRect();
-  const titleWidth = titleBox.width * titleSize / parseFloat(getComputedStyle(barTitle).fontSize); // הרוחב בגודל 20
+  const titleWidth = titleBox.width * titleSize / parseFloat(getComputedStyle(barTitle).fontSize); // הרוחב בגודל 24
   const room = titleBox.right - (buttonsEnd + titleGap);
   sectionBar.style.setProperty("--title-size", Math.min(titleSize, titleSize * room / titleWidth) + "px");
 }

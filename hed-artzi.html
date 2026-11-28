@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HED ARTZI – טל המלך</title>
-  <link rel="stylesheet" href="styles.css?v=149">
+  <link rel="stylesheet" href="styles.css?v=164">
   <!-- מגיעים מעמוד הבית? הקו מתחיל איפה שהקו של עמוד הבית נגמר (event-tabs.js ממשיך את המעבר) -->
   <script>
     {
@@ -27,7 +27,7 @@
     מתחתיה שתי עמודות של חומרים, והקו נמצא בצד ימין.
     שלוש לשוניות: BACKGROUND (נפתחת ראשונה), INDUSTRIAL PEACE (האירוע) ו-MUSIC & MERCH (המוצרים).
   -->
-  <main class="event-page">
+  <main class="event-page case-study">
 
     <!-- השורה העליונה -->
     <header class="event-header">
@@ -59,6 +59,12 @@
         </button>
       </div>
 
+      <!--
+        בטלפון (רק בעמודי ה-case study): במקום INFO ו-GALLERY, השם של החלק שבו נמצאים עכשיו, ומספרו בתוך מסגרת.
+        נשאר למעלה כל הגלילה, ומתחלף כשמגיעים לחלק הבא (event-tabs.js).
+      -->
+      <p class="section-now"><span class="section-now__name">BACKGROUND</span><span class="section-now__count"><span class="section-now__count-text">1/3</span></span></p>
+
       <!-- הלשוניות והחץ לפרויקט הבא (כמו בעמוד פרויקט) -->
       <div class="project-top event-top">
         <!-- הלשוניות: הלשונית הפתוחה אדומה, עם מספר החומרים. data-tab מחבר לשונית לתוכן שלה -->
@@ -72,9 +78,9 @@
           החץ לפרויקט הבא. במצב hover: החץ נהיה אדום ומתארך, הלשוניות גולשות הצידה ונעלמות,
           ובמקומן מופיע השם של הפרויקט הבא. שאר המסך מתעמעם.
         -->
-        <a class="project-next" href="wikipedia-football.html">
-          <p class="project-next-label">NEXT: WIKIPEDIA&gt;F00TBALL</p>
-          <span class="project-next__arrow" aria-label="הפרויקט הבא: WIKIPEDIA>FOOTBALL">
+        <a class="project-next" href="darom.html">
+          <p class="project-next-label">NEXT: DAR0M FILM FESTIVAL</p>
+          <span class="project-next__arrow" aria-label="הפרויקט הבא: DAROM FILM FESTIVAL">
             <span class="project-next__icon"></span>
           </span>
         </a>
@@ -176,9 +182,9 @@
     </div>
 
     <!-- בטלפון: בסוף הגלריה, הקישור לפרויקט הבא -->
-    <a class="mobile-next" href="wikipedia-football.html">
+    <a class="mobile-next" href="darom.html">
       <span class="mobile-next__label">NEXT:</span>
-      <span class="mobile-next__name">WIKIPEDIA&gt;<br>F00TBALL</span>
+      <span class="mobile-next__name">DAR0M FILM <br>FESTIVAL</span>
       <img class="mobile-next__icon" src="images/chevron-next-triple.svg" alt="">
     </a>
 
@@ -199,7 +205,7 @@
   <script src="hed-voice.js?v=6"></script>
 
   <!-- הלשוניות: לחיצה על לשונית מראה את התוכן שלה -->
-  <script src="event-tabs.js?v=16"></script>
+  <script src="event-tabs.js?v=26"></script>
 
   <!-- OVERVIEW במבט מעוף הציפור: כל החומרים יחד -->
   <script src="birdseye.js?v=9"></script>

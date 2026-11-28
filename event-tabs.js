@@ -307,24 +307,33 @@ sectionBar.classList.toggle("is-in-gallery", isInGallery());
 /*
   בטלפון: שם הפרויקט בבר (רק למעלה, בטקסט. בגלריה הוא נעלם).
   השם יושב בין הכפתורים לחץ החזרה, עם אותו רווח (12) מכל צד, כמו בין הכפתורים.
-  אם אין לו מספיק מקום בגודל 20, הוא מוקטן בדיוק כדי להיכנס (--title-size).
+  אם אין לו מספיק מקום בגודל 24, הוא מוקטן בדיוק כדי להיכנס (--title-size).
 */
 const barTitle = sectionBar.querySelector(".project-header__title");
-const titleSize = 20; // הגודל הרגיל של השם
+const titleSize = 24; // הגודל הרגיל של השם (אם יש מקום)
 const titleGap = 12;  // הרווח מהכפתורים (כמו הרווח בין הכפתורים)
 
 function measureTitleRoom() {
-  // מודדים את הכפתורים במצב של הטקסט (לרגע, בלי תנועה)
-  const wasInGallery = sectionButtons.classList.contains("is-in-gallery");
-  sectionButtons.classList.remove("is-in-gallery");
-  sectionButtons.classList.add("is-measuring");
-  const buttonsEnd = sectionButtons.getBoundingClientRect().right;
-  sectionButtons.classList.toggle("is-in-gallery", wasInGallery);
-  sectionButtons.classList.remove("is-measuring");
+  let buttonsEnd;
+  const nowBox = document.querySelector(".section-now");
+  if (nowBox && getComputedStyle(nowBox).display !== "none") {
+    // בעמודי ה-case study השם לא מוקטן: הוא תמיד בגודל 24, ונעלם בפייד כשאין לו מקום (updateSectionNow)
+    sectionBar.style.setProperty("--title-size", titleSize + "px");
+    if (typeof updateSectionNow === "function") updateSectionNow();
+    return;
+  } else {
+    // מודדים את הכפתורים במצב של הטקסט (לרגע, בלי תנועה)
+    const wasInGallery = sectionButtons.classList.contains("is-in-gallery");
+    sectionButtons.classList.remove("is-in-gallery");
+    sectionButtons.classList.add("is-measuring");
+    buttonsEnd = sectionButtons.getBoundingClientRect().right;
+    sectionButtons.classList.toggle("is-in-gallery", wasInGallery);
+    sectionButtons.classList.remove("is-measuring");
+  }
 
   // השם נגמר במקום קבוע (12 לפני החץ), אז המקום שלו: מסוף הכפתורים (ועוד 12) ועד שם
   const titleBox = barTitle.getBoundingClientRect();
-  const titleWidth = titleBox.width * titleSize / parseFloat(getComputedStyle(barTitle).fontSize); // הרוחב בגודל 20
+  const titleWidth = titleBox.width * titleSize / parseFloat(getComputedStyle(barTitle).fontSize); // הרוחב בגודל 24
   const room = titleBox.right - (buttonsEnd + titleGap);
   sectionBar.style.setProperty("--title-size", Math.min(titleSize, titleSize * room / titleWidth) + "px");
 }
@@ -332,6 +341,153 @@ function measureTitleRoom() {
 document.fonts.ready.then(measureTitleRoom); // אחרי שהפונטים נטענו, כי הם קובעים את הרוחב
 window.addEventListener("resize", measureTitleRoom);
 
+
+/*
+  בטלפון, בעמודי ה-case study (VIEW ו-HED ARTZI): בבר למעלה השם של החלק שבו נמצאים, ומספרו בתוך מסגרת (BACKGROUND [1/5]).
+  כשהקו של החלק הבא מגיע בגלילה לקו של הבר, הוא "דוחף" את השם למעלה, יחד עם הגלילה:
+  כל אות בתורה, מהראשונה ועד האחרונה (גם המספר), עולה למעלה, והאות של השם הבא עולה מלמטה במקומה.
+  בגלילה חזרה למעלה זה חוזר אחורה באותה צורה.
+*/
+const sectionNow = document.querySelector(".section-now");
+const casePanels = [...eventPanels];
+// השם של כל חלק: הטקסט של הלשונית שלו (בלי מספר החומרים)
+const sectionName = (index) =>
+  document.querySelector(`.project-tab[data-tab="${casePanels[index].dataset.tab}"]`).firstChild.textContent.trim();
+const sectionCount = (index) => `${index + 1}/${casePanels.length}`;
+
+if (sectionNow) {
+  const pushDistance = 3; // כמה גלילה (בגובה שורות) לוקחת הדחיפה כולה, כדי שרואים את הגל
+  const wave = 4;         // כמה אותיות זזות בבת אחת
+
+  // בכל מקום (השם והמספר) שתי שורות באותו מקום: הנוכחית, ומתחתיה (מחוץ לחלון) הבאה
+  const makeLine = () => {
+    const line = document.createElement("span");
+    line.className = "section-now__line";
+    return line;
+  };
+  const slots = [sectionNow.querySelector(".section-now__name"), sectionNow.querySelector(".section-now__count-text")]
+    .map((slot) => {
+      const current = makeLine();
+      const next = makeLine();
+      slot.replaceChildren(current, next);
+      return { current, next };
+    });
+
+  // כל אות בתוך span משלה, כדי שאפשר להזיז כל אחת לבד
+  function setLetters(line, text) {
+    if (line.dataset.text === text) return;
+    line.dataset.text = text;
+    line.replaceChildren(...[...text].map((letter) => {
+      const span = document.createElement("span");
+      span.className = "section-now__letter";
+      span.textContent = letter;
+      return span;
+    }));
+  }
+
+  // (function, ולא const, כדי שגם measureTitleRoom שלמעלה תוכל לקרוא לה)
+  function updateSectionNow() {
+    const barBottom = sectionBar.getBoundingClientRect().bottom; // הקו של הבר
+    const zone = slots[0].current.parentElement.clientHeight * pushDistance;
+    // החלק הנוכחי: האחרון שהדחיפה שלו כבר הסתיימה
+    let index = 0;
+    casePanels.forEach((panel, i) => {
+      if (panel.getBoundingClientRect().top <= barBottom - zone) index = i;
+    });
+    const hasNext = index + 1 < casePanels.length;
+    const push = hasNext ? Math.min(Math.max(barBottom - casePanels[index + 1].getBoundingClientRect().top, 0), zone) : 0;
+
+    setLetters(slots[0].current, sectionName(index));
+    setLetters(slots[0].next, hasNext ? sectionName(index + 1) : "");
+    setLetters(slots[1].current, sectionCount(index));
+    setLetters(slots[1].next, hasNext ? sectionCount(index + 1) : "");
+
+    // הרוחב של השם: מהשם הנוכחי לשם הבא, יחד עם הדחיפה (כך המסגרת עם המספר זזה בהדרגה, בלי רווח מיותר)
+    const nameSlot = slots[0].current.parentElement;
+    const currentWidth = slots[0].current.getBoundingClientRect().width;
+    const nextWidth = hasNext ? slots[0].next.getBoundingClientRect().width : currentWidth;
+    nameSlot.style.width = currentWidth + (nextWidth - currentWidth) * (push / zone) + "px";
+
+    // שם הפרויקט: מוצג רק אם יש לו מקום אחרי השם של החלק והמסגרת (ועוד 12). אם אין, הוא נעלם בפייד
+    const nameEnd = nameSlot.getBoundingClientRect().left + parseFloat(nameSlot.style.width);
+    const countWidth = sectionNow.querySelector(".section-now__count").getBoundingClientRect().width;
+    const gap = parseFloat(getComputedStyle(sectionNow).columnGap) || 0;
+    const titleStart = barTitle.getBoundingClientRect().right - barTitle.scrollWidth; // איפה השם מתחיל כשהוא ברוחב המלא שלו
+    sectionBar.classList.toggle("is-title-hidden", titleStart < nameEnd + gap + countWidth + titleGap);
+
+    // כל אות זזה בתורה: הגל עובר מהאות הראשונה (בשם) ועד האחרונה (במספר)
+    const lengths = slots.map((slot) => Math.max(slot.current.children.length, slot.next.children.length));
+    const total = lengths[0] + lengths[1];
+    const progress = push / zone;
+    let letterIndex = 0;
+    slots.forEach((slot, k) => {
+      for (let j = 0; j < lengths[k]; j++, letterIndex++) {
+        const t = Math.min(Math.max(progress * (total + wave) - letterIndex, 0), wave) / wave; // 0 עד 1
+        const oldLetter = slot.current.children[j];
+        const newLetter = slot.next.children[j];
+        if (oldLetter) oldLetter.style.transform = `translateY(${-t * 100}%)`;
+        if (newLetter) newLetter.style.transform = `translateY(${(1 - t) * 100}%)`;
+      }
+    });
+  }
+
+  window.addEventListener("scroll", updateSectionNow, { passive: true });
+  window.addEventListener("resize", updateSectionNow);
+  updateSectionNow();
+
+  /*
+    יישור הטקסטים בבר: השם של החלק, המספר במסגרת ושם הפרויקט יושבים על אותו קו (baseline),
+    והאמצע של האותיות הגדולות בדיוק באמצע הגובה של החץ חזרה. בלי "מדרגות" בין הפונטים.
+    מודדים בדפדפן עצמו (כל פונט יושב קצת אחרת), ומזיזים כל טקסט למעלה או למטה (translate).
+  */
+  const measureCanvas = document.createElement("canvas").getContext("2d");
+
+  // הגובה של אות גדולה (H) בפונט של האלמנט
+  function capHeight(element) {
+    const style = getComputedStyle(element);
+    measureCanvas.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    return measureCanvas.measureText("H").actualBoundingBoxAscent;
+  }
+
+  // איפה ה-baseline של הטקסט: אלמנט ריק ו"שטוח" שיושב על הקו של השורה
+  function baselineOf(textHolder) {
+    const probe = document.createElement("span");
+    probe.style.cssText = "display: inline-block; width: 0; height: 0; vertical-align: baseline;";
+    textHolder.append(probe);
+    const y = probe.getBoundingClientRect().bottom;
+    probe.remove();
+    return y;
+  }
+
+  // כמה להזיז טקסט, כדי שהאמצע של האותיות הגדולות יהיה בגובה centerY
+  function shiftToCenter(element, textHolder, centerY) {
+    element.style.translate = "";
+    return centerY + capHeight(textHolder) / 2 - baselineOf(textHolder);
+  }
+
+  function alignBarText() {
+    const back = sectionBar.querySelector(".project-header__back").getBoundingClientRect();
+    const centerY = back.top + back.height / 2;
+    const name = sectionNow.querySelector(".section-now__name");
+    const count = sectionNow.querySelector(".section-now__count");
+    const countText = sectionNow.querySelector(".section-now__count-text");
+    const titleName = barTitle.querySelector(".project-header__name");
+
+    // השם של החלק ושם הפרויקט: ישר אל האמצע של החץ
+    name.style.translate = `0 ${shiftToCenter(name, name.querySelector(".section-now__line"), centerY)}px`;
+    barTitle.style.translate = `0 ${shiftToCenter(barTitle, titleName, centerY)}px`;
+
+    // המסגרת: קודם המספר באמצע המסגרת, ואז כל המסגרת באמצע החץ
+    count.style.translate = "";
+    countText.style.translate = "";
+    const box = count.getBoundingClientRect();
+    countText.style.translate = `0 ${shiftToCenter(countText, countText.querySelector(".section-now__line"), box.top + box.height / 2)}px`;
+    count.style.translate = `0 ${centerY - (box.top + box.height / 2)}px`;
+  }
+
+  document.fonts.ready.then(alignBarText); // אחרי שהפונטים נטענו
+  window.addEventListener("resize", alignBarText);
+}
 
 // INFO: חוזרים לתחילת העמוד. GALLERY: גוללים אל הגלריה
 infoButton.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));

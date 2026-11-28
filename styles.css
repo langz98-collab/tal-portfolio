@@ -1169,10 +1169,10 @@ em.project-text__highlight {
   שני חלקים: הראש (קובץ SVG, תמיד בצד ימין) והקו (מלבן בעובי 3, שנמתח לכל הרוחב).
 */
 .project-next__icon {
-  --head-width: calc(16.23 * var(--bar-u));
+  --head-width: calc(12.17 * var(--bar-u)); /* כל החץ: 75% מהגודל בפיגמה */
   display: block;
-  width: calc(91 * var(--bar-u));
-  height: calc(29.46 * var(--bar-u));
+  width: calc(68.25 * var(--bar-u)); /* 91 בפיגמה, מוקטן ב-25% */
+  height: calc(22.1 * var(--bar-u));
   background-color: var(--color-text);
   -webkit-mask:
     url("images/arrow-next-head.svg") right center / var(--head-width) 100% no-repeat,
@@ -1209,7 +1209,7 @@ em.project-text__highlight {
 /* ---------- hover על האזור של הפרויקט הבא ---------- */
 /* 1. החץ נהיה ירוק ומתארך שמאלה עד השם (הרוחב מחושב בסקריפט, ב---next-arrow-long) */
 .project-next:hover .project-next__icon {
-  width: var(--next-arrow-long, calc(91 * var(--bar-u)));
+  width: var(--next-arrow-long, calc(68.25 * var(--bar-u)));
   background-color: var(--color-project-accent);
 }
 
@@ -2255,12 +2255,25 @@ em.project-text__highlight {
   opacity: 0;
 }
 
+/*
+  בטלפון, בעמודים בלי כפתורים בבר למעלה (About & Contact ו-ILLUSTRATIONS):
+  הכותרת בצד שמאל עד הסוף, וקצת יותר גדולה (24 במקום 20). החץ חזרה נשאר מימין.
+*/
+@media (max-width: 900px), (orientation: portrait) {
+  .about-page .project-header__title,
+  .gallery-header .project-header__title {
+    margin-left: 0;
+    margin-right: auto;
+    font-size: 24px;
+  }
+}
+
 /* =========================================
    עמוד DAROM FILM FESTIVAL (darom.html): מה שמיוחד לעמוד הזה
    ========================================= */
 /* החץ לפרויקט הבא: קצר (49, כמו בפיגמה), כי יש כאן ארבע לשוניות והן מגיעות כמעט עד הקצה */
 .theme-darom .project-next__icon {
-  width: calc(49 * var(--bar-u));
+  width: calc(36.75 * var(--bar-u)); /* 49 בפיגמה, מוקטן ב-25% */
 }
 
 /* התמונה הראשית: בפרופורציות של הסרטון (846×570) */
@@ -2624,7 +2637,7 @@ em.project-text__highlight {
 
   /*
     הכפתורים INFO ו-GALLERY בקצה השמאלי, ושם הפרויקט והחץ לחזרה בקצה הימני.
-    בין כל החלקים אותו רווח (12). השם מוקטן אם צריך כדי להיכנס (הסקריפט קובע את --title-size),
+    בין כל החלקים אותו רווח (12). השם בגודל 24, ומוקטן אם צריך כדי להיכנס (הסקריפט קובע את --title-size),
     ובגלריה הוא נעלם בהדרגה.
   */
   .project-header__title {
@@ -2673,7 +2686,7 @@ em.project-text__highlight {
   /* שם הפרויקט: עד 20, במרכז (ב-WIKIPEDIA>FOOTBALL בשתי שורות) */
   .project-header__title {
     top: 1px; /* כך האותיות עצמן באמצע הגובה של הבר, כמו הכפתורים והחץ (נמדד) */
-    font-size: var(--title-size, 20px);
+    font-size: var(--title-size, 24px);
     text-align: center;
   }
 
@@ -2941,16 +2954,21 @@ em.project-text__highlight {
     width: 100%;
   }
 
-  /* בסוף: NEXT, מתחתיו שם הפרויקט הבא, ומתחתיו שלושה חצים. הכל במרכז */
+  /*
+    בסוף: NEXT ושם הפרויקט הבא (בשורה אחת אם יש מקום, ואם אין, השם יורד שורה), ומתחתם שלושה חצים. הכל במרכז.
+    בגודל 26 (בפיגמה 35, הוקטן).
+  */
   .mobile-next {
     margin-top: 24px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    column-gap: 0.35em;
+    row-gap: 0;
     padding: 0 8px;
     font-family: var(--font-main);
-    font-size: 35px;
+    font-size: 26px;
     letter-spacing: 0.01em;
     line-height: normal;
     color: var(--color-muted);
@@ -2962,13 +2980,18 @@ em.project-text__highlight {
     color: var(--color-text);
   }
 
-  .mobile-next__name {
-    margin-top: -8px; /* שתי השורות צמודות, כמו בפיגמה (ה-8 הוא רק עד החצים) */
+  /* ירידות השורה בשם: רק אם אין מקום (הדפדפן מוריד שורה לבד) */
+  .mobile-next__name br {
+    display: none;
   }
 
+  /* החצים: בשורה משלהם, 8 מתחת לשם */
   .mobile-next__icon {
-    width: 61px;
-    height: 20.34px;
+    flex-basis: 100%;
+    width: 46px;
+    height: 15.3px;
+    margin-top: 8px;
+    object-fit: contain;
   }
 
 
@@ -3592,6 +3615,89 @@ em.project-text__highlight {
 
 
 /* =========================================
+   בטלפון, בעמודי ה-case study (VIEW ו-HED ARTZI, class="case-study"):
+   בבר למעלה, במקום INFO ו-GALLERY: השם של החלק שבו נמצאים ומספרו, בצבע של הפרויקט.
+   מימין שם הפרויקט והחץ חזרה.
+   ========================================= */
+.section-now {
+  display: none; /* במחשב יש לשוניות */
+}
+
+@media (max-width: 900px), (orientation: portrait) {
+  .case-study .section-buttons {
+    display: none;
+  }
+
+  /* שם הפרויקט נשאר גם כשגוללים לגלריה */
+  .case-study .is-in-gallery .project-header__title {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* שם הפרויקט מוותר על המקום שלו (ולא דוחף את החץ החוצה מהמסך) */
+  .case-study .event-header .project-header__title {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* אין מקום לשם הפרויקט (השם של החלק ארוך): הוא נעלם בפייד, עד שיש לו שוב מקום */
+  .case-study .event-header.is-title-hidden .project-header__title {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /*
+    השם של החלק (בצבע של הפרויקט), ו-12 אחריו המספר בתוך מסגרת לבנה ועגולה (כמו בפיגמה).
+    בכל אחד מהם: חלון בגובה שורה אחת, ובו שתי שורות באותו מקום (החלק הנוכחי והבא).
+    event-tabs.js מזיז כל אות לבד עם הגלילה.
+  */
+  .case-study .section-now {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-family: var(--font-tab); /* Inter SemiBold, 20 */
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  .section-now__name,
+  .section-now__count-text {
+    display: grid;
+    height: 1.25em;
+    line-height: 1.25;
+    clip-path: inset(0 -1px 0 -10px); /* חותך למעלה, למטה ובצד ימין (בזמן שהרוחב משתנה) */
+  }
+
+  .section-now__name {
+    color: var(--color-project-accent); /* הגובה המדויק (מול החץ) נקבע ב-event-tabs.js */
+  }
+
+  /* המסגרת של המספר: קו לבן בעובי 3, פינות עגולות (כמו הכפתורים) */
+  .section-now__count {
+    display: flex;
+    align-items: center;
+    padding: 6px 9px; /* 8 ו-12 פחות 3 של הקו */
+    border: 3px solid var(--color-text);
+    border-radius: 20px;
+    color: var(--color-text);
+  }
+
+  .section-now__line {
+    grid-area: 1 / 1; /* שתי השורות באותו מקום */
+    justify-self: start; /* כל שורה ברוחב שלה. הרוחב של השם נקבע ב-event-tabs.js (מהנוכחי לבא) */
+    white-space: pre;
+  }
+
+  .section-now__letter {
+    display: inline-block;
+    will-change: transform;
+  }
+}
+
+/* =========================================
    עמוד VIEW (view.html): case study, הפריימים Desktop - 86 עד 90 בפיגמה.
    בנוי כמו העמוד של הד ארצי (event-page), עם אותם גדלים של טקסט וכיתובים.
    כאן רק מה שמיוחד לעמוד הזה. (הרקע #131313, כמו בהד ארצי)
@@ -3670,7 +3776,7 @@ em.project-text__highlight {
 
 
 /* =========================================
-   עמוד ILLUSTRATION & OTHER (other.html): הפריים Desktop - 91 בפיגמה.
+   עמוד ILLUSTRATIONS (other.html): הפריים Desktop - 91 בפיגמה.
    עמודה אחת באמצע, ומעל כל עבודה כיתוב קצר. העמוד כולו נגלל.
    המידות ב-u (פיקסל בפיגמה, לפי רוחב המסך). --width של כל עבודה: הרוחב שלה בפיגמה.
    ========================================= */
@@ -3692,18 +3798,30 @@ em.project-text__highlight {
   height: calc(40 * var(--bar-u));
 }
 
-/* החץ לפרויקט הבא: קצר (49, כמו בפיגמה). ב-hover בצבע של האתר */
-.gallery-next {
-  width: calc(49 * var(--bar-u));
-  height: calc(30 * var(--bar-u));
-  background-color: var(--color-text);
-  -webkit-mask: url("images/arrow-next.svg") right center / 100% 100% no-repeat;
-  mask: url("images/arrow-next.svg") right center / 100% 100% no-repeat;
-  transition: background-color var(--duration-next) var(--ease-next);
+/*
+  החץ לפרויקט הבא: אותו רכיב כמו בעמודי הפרויקטים (project-next).
+  האזור שלו הוא כל השורה העליונה, והשם של הפרויקט הבא מופיע באמצע המסך (712, כמו ב-HED ARTZI ו-VIEW).
+*/
+.gallery-header {
+  position: relative;
 }
 
-.gallery-next:hover {
-  background-color: var(--color-project-accent);
+.gallery-top {
+  position: static;
+  flex: 1;
+}
+
+.gallery-page .project-next-label {
+  margin-left: calc(679 * var(--u)); /* 33 + 679 = 712: אמצע המסך */
+}
+
+/* hover על החץ: העבודות מתעמעמות ל-40% (כמו בעמודי הפרויקטים) */
+.gallery-list {
+  transition: opacity var(--duration-next) var(--ease-next);
+}
+
+.gallery-page:has(.project-next:hover) .gallery-list {
+  opacity: 0.4;
 }
 
 /* כל העבודות, אחת מתחת לשנייה, באמצע. 112 מלמעלה, 24 ביניהן */
@@ -3800,7 +3918,7 @@ em.project-text__highlight {
 @media (max-width: 900px), (orientation: portrait) {
   .gallery-page {
     --bar-u: min(calc((100vw - 16px) / 674), 1px);
-    padding: 16px 8px 40px;
+    padding: 62px 8px 40px; /* מתחת לבר הקבוע */
   }
 
   .gallery-list {
@@ -3818,8 +3936,20 @@ em.project-text__highlight {
   }
 
   /* החץ לפרויקט הבא: בטלפון הוא בסוף העמוד (mobile-next) */
-  .gallery-next {
+  .gallery-top {
     display: none;
+  }
+
+  /* הבר למעלה: קבוע, גם כשגוללים (כמו בעמודי הפרויקטים) */
+  .gallery-header {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    padding: 0 8px;
+    background-color: var(--color-background);
   }
 
   /* הגלריות: בטלפון התמונות הקטנות בשורה מתחת לתמונה הגדולה (כמו בעמודי הפרויקטים) */
